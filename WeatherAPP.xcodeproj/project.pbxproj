@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		47BAFC122C5D639600DCDE92 /* GeocodingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47BAFC112C5D639600DCDE92 /* GeocodingViewModel.swift */; };
 		47EC68B72C5D50AC001BA302 /* WeatherAPPApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47EC68B62C5D50AC001BA302 /* WeatherAPPApp.swift */; };
 		47EC68B92C5D50AC001BA302 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47EC68B82C5D50AC001BA302 /* ContentView.swift */; };
 		47EC68BB2C5D50AC001BA302 /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47EC68BA2C5D50AC001BA302 /* Item.swift */; };
@@ -15,6 +16,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		47BAFC112C5D639600DCDE92 /* GeocodingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeocodingViewModel.swift; sourceTree = "<group>"; };
 		47EC68B32C5D50AC001BA302 /* WeatherAPP.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WeatherAPP.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		47EC68B62C5D50AC001BA302 /* WeatherAPPApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherAPPApp.swift; sourceTree = "<group>"; };
 		47EC68B82C5D50AC001BA302 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -57,6 +59,7 @@
 				47EC68B82C5D50AC001BA302 /* ContentView.swift */,
 				47EC68BA2C5D50AC001BA302 /* Item.swift */,
 				47EC68BC2C5D50AD001BA302 /* Assets.xcassets */,
+				47BAFC112C5D639600DCDE92 /* GeocodingViewModel.swift */,
 				47EC68BE2C5D50AD001BA302 /* Preview Content */,
 			);
 			path = WeatherAPP;
@@ -142,6 +145,7 @@
 			files = (
 				47EC68B92C5D50AC001BA302 /* ContentView.swift in Sources */,
 				47EC68BB2C5D50AC001BA302 /* Item.swift in Sources */,
+				47BAFC122C5D639600DCDE92 /* GeocodingViewModel.swift in Sources */,
 				47EC68B72C5D50AC001BA302 /* WeatherAPPApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

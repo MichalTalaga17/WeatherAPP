@@ -6,40 +6,49 @@
 //
 
 import SwiftUI
+import WeatherKit
+import CoreLocation
 
 struct ContentView: View {
-    @State private var inputText = ""
-
-    var body: some View {
-        NavigationView {
-            VStack {
-                TextField("Enter your city", text: $inputText)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .padding()
-
-                NavigationLink(destination: DetailView(text: inputText)) {
-                    Text("Go to Detail View")
-                }
-                .padding()
-            }
-            .padding()
-            .navigationTitle("Weather")
-        }
-    }
-}
-
-struct DetailView: View {
-    let text: String
+    @StateObject private var geocodingViewModel = GeocodingViewModel()
+    @State private var cityName: String = ""
+    @State private var lat: Double = 0.0
+    @State private var lon: Double = 0.0
 
     var body: some View {
         VStack {
-            Text("You entered: \(text)")
+            TextField("Enter city name", text: $cityName)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding()
-            // Tu można dodać więcej elementów widoku
+
+            Button("Get Weather") {
+                geocodingViewModel.geocode(cityName: cityName)
+            }
+            .padding()
+            .background(Color.blue)
+            .foregroundColor(.white)
+            .cornerRadius(8)
+
+            if geocodingViewModel.isLoading {
+                ProgressView()
+            } else {
+                if let location = geocodingViewModel.location {
+                    Text("Latitude: \(location.coordinate.latitude)")
+                    Text("Longitude: \(location.coordinate.longitude)")
+                } else if let errorMessage = geocodingViewModel.errorMessage {
+                    Text(errorMessage)
+                        .foregroundColor(.red)
+                }
+            }
         }
-        .navigationTitle(text)
+        .padding()
+        .navigationTitle("City to Coordinates")
     }
 }
+
+
+
+
 
 
 #Preview {
