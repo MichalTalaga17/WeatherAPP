@@ -6,56 +6,42 @@
 //
 
 import SwiftUI
-import SwiftData
 
 struct ContentView: View {
-    @Environment(\.modelContext) private var modelContext
-    @Query private var items: [Item]
+    @State private var inputText = ""
 
     var body: some View {
-        NavigationSplitView {
-            List {
-                ForEach(items) { item in
-                    NavigationLink {
-                        Text("Item at \(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))")
-                    } label: {
-                        Text(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))
-                    }
-                }
-                .onDelete(perform: deleteItems)
-            }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
-                }
-                ToolbarItem {
-                    Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
-                    }
-                }
-            }
-        } detail: {
-            Text("Select an item")
-        }
-    }
+        NavigationView {
+            VStack {
+                TextField("Enter your city", text: $inputText)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .padding()
 
-    private func addItem() {
-        withAnimation {
-            let newItem = Item(timestamp: Date())
-            modelContext.insert(newItem)
-        }
-    }
-
-    private func deleteItems(offsets: IndexSet) {
-        withAnimation {
-            for index in offsets {
-                modelContext.delete(items[index])
+                NavigationLink(destination: DetailView(text: inputText)) {
+                    Text("Go to Detail View")
+                }
+                .padding()
             }
+            .padding()
+            .navigationTitle("Weather")
         }
     }
 }
 
+struct DetailView: View {
+    let text: String
+
+    var body: some View {
+        VStack {
+            Text("You entered: \(text)")
+                .padding()
+            // Tu można dodać więcej elementów widoku
+        }
+        .navigationTitle(text)
+    }
+}
+
+
 #Preview {
     ContentView()
-        .modelContainer(for: Item.self, inMemory: true)
 }
