@@ -6,42 +6,31 @@
 //
 
 import Foundation
-import SwiftUI
 import CoreLocation
 
 class GeocodingViewModel: NSObject, ObservableObject {
     private let geocoder = CLGeocoder()
+    
     @Published var location: CLLocation?
-    @Published var errorMessage: String?
     @Published var isLoading: Bool = false
-
-    func geocode(cityName: String) {
-        guard !cityName.isEmpty else {
-            self.errorMessage = "City name cannot be empty."
-            return
-        }
-
-        self.isLoading = true
-        self.errorMessage = nil
-
-        geocoder.geocodeAddressString(cityName) { [weak self] placemarks, error in
-            DispatchQueue.main.async {
-                self?.isLoading = false
-
-                if let error = error {
-                    self?.errorMessage = "Geocoding error"
-                    self?.location = nil
-                    return
-                }
-
-                guard let location = placemarks?.first?.location else {
-                    self?.errorMessage = "No location found for city: \(cityName)"
-                    self?.location = nil
-                    return
-                }
-
-                self?.location = location
+    @Published var errorMessage: String?
+    
+    func geocode(cityName: String) async {
+        isLoading = true
+        errorMessage = nil
+        location = nil
+        
+        do {
+            let placemarks = try await geocoder.geocodeAddressString(cityName)
+            if let location = placemarks.first?.location {
+                self.location = location
+            } else {
+                self.errorMessage = "No location found for city: \(cityName)"
             }
+        } catch {
+            self.errorMessage = "Geocoding error: \(error.localizedDescription)"
         }
+        
+        isLoading = false
     }
 }

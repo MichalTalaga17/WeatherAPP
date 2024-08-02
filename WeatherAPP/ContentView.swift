@@ -1,10 +1,3 @@
-//
-//  ContentView.swift
-//  WeatherAPP
-//
-//  Created by Michał Talaga on 02/08/2024.
-//
-
 import SwiftUI
 import WeatherKit
 import CoreLocation
@@ -12,29 +5,45 @@ import CoreLocation
 struct ContentView: View {
     @StateObject private var geocodingViewModel = GeocodingViewModel()
     @State private var cityName: String = ""
-    @State private var lat: Double = 0.0
-    @State private var lon: Double = 0.0
+    
+    // Pobieranie wartości bezpośrednio z view modelu
+    var lat: Double {
+        geocodingViewModel.location?.coordinate.latitude ?? 0.0
+    }
+    
+    var lon: Double {
+        geocodingViewModel.location?.coordinate.longitude ?? 0.0
+    }
 
     var body: some View {
         VStack {
-            TextField("Enter city name", text: $cityName)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-                .padding()
+            HStack {
+                TextField("Enter city name", text: $cityName)
+                    .padding()
+                    .background(Color.white)
+                    .border(Color.black, width: 1)
+                    .frame(maxWidth: .infinity)
 
-            Button("Get Weather") {
-                geocodingViewModel.geocode(cityName: cityName)
+                Button("Get") {
+                    Task {
+                        await geocodingViewModel.geocode(cityName: cityName)
+                    }
+                }
+                .padding()
+                .background(Color.black)
+                .foregroundColor(.white)
+                .frame(width: 80) // Ustaw szerokość przycisku
             }
             .padding()
-            .background(Color.blue)
-            .foregroundColor(.white)
-            .cornerRadius(8)
+
+            Spacer()
 
             if geocodingViewModel.isLoading {
                 ProgressView()
             } else {
                 if let location = geocodingViewModel.location {
-                    Text("Latitude: \(location.coordinate.latitude)")
-                    Text("Longitude: \(location.coordinate.longitude)")
+                    Text("Latitude: \(lat)")
+                    Text("Longitude: \(lon)")
                 } else if let errorMessage = geocodingViewModel.errorMessage {
                     Text(errorMessage)
                         .foregroundColor(.red)
@@ -45,7 +54,6 @@ struct ContentView: View {
         .navigationTitle("City to Coordinates")
     }
 }
-
 
 #Preview {
     ContentView()
