@@ -1,51 +1,39 @@
-//
-//  WeatherViewModel.swift
-//  WeatherAPP
-//
-//  Created by Michał Talaga on 02/08/2024.
-//
-
 import Foundation
-import SwiftUI
-import WeatherKit
 import CoreLocation
 
-
-class WeatherViewModel: NSObject, ObservableObject {
-    private let geocoder = CLGeocoder()
-    private let weatherService = WeatherService()
+@MainActor
+class WeatherViewModel: ObservableObject {
     @Published var weather: Weather?
-
-    func fetchWeather(for cityName: String) {
-        geocode(cityName: cityName)
-    }
-
-    private func geocode(cityName: String) {
-        geocoder.geocodeAddressString(cityName) { [weak self] placemarks, error in
-            if let error = error {
-                print("Geocoding error: \(error)")
-                return
-            }
-
-            guard let location = placemarks?.first?.location else {
-                print("No location found for city: \(cityName)")
-                return
-            }
-
-            self?.fetchWeather(for: location)
+    @Published var isLoading: Bool = false
+    @Published var errorMessage: String?
+    
+    private let apiKey = "e58dfbc15daacbeabeed6abc3e5d95ca"  // Zamień na swój klucz API
+    
+    func fetchWeather(for location: CLLocation) async {
+        isLoading = true
+        errorMessage = nil
+        
+        let urlString = "https://api.openweathermap.org/data/2.5/weather?lat=\(location.coordinate.latitude)&lon=\(location.coordinate.longitude)&appid=\(apiKey)&units=metric"
+        
+        guard let url = URL(string: urlString) else {
+            errorMessage = "Invalid URL"
+            isLoading = false
+            return
         }
-    }
-
-    private func fetchWeather(for location: CLLocation) {
-        Task {
-            do {
-                let weather = try await weatherService.weather(for: location)
-                DispatchQueue.main.async {
-                    self.weather = weather
-                }
-            } catch {
-                print("Failed to fetch weather data: \(error)")
-            }
+        
+        do {
+            let (data, _) = try await URLSession.shared.data(from: url)
+            let weatherResponse = try JSONDecoder().decode(OpenWeatherResponse.self, from: data)
+            
+            // Mapowanie odpowiedzi na nasz model `Weather`
+            self.weather = Weather(
+                temperature: weatherResponse.main.temp,
+                condition: weatherResponse.weather.first?.description ?? "Unknown"
+            )
+        } catch {
+            self.errorMessage = "Failed to fetch weather data: \(error.localizedDescription)"
         }
+        
+        isLoading = false
     }
 }
