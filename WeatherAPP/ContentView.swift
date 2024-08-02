@@ -4,8 +4,8 @@ import CoreLocation
 struct ContentView: View {
     @StateObject private var geocodingViewModel = GeocodingViewModel()
     @State private var cityName: String = ""
-    @State private var isShowingWeatherView: Bool = false
-    
+    @State private var selectedLocation: CLLocation? = nil
+
     var body: some View {
         NavigationView {
             VStack {
@@ -19,15 +19,15 @@ struct ContentView: View {
                     Button("Get") {
                         Task {
                             await geocodingViewModel.geocode(cityName: cityName)
-                            if geocodingViewModel.location != nil {
-                                isShowingWeatherView = true
+                            if let location = geocodingViewModel.location {
+                                selectedLocation = location
                             }
                         }
                     }
                     .padding()
                     .background(Color.black)
                     .foregroundColor(.white)
-                    .frame(width: 80) 
+                    .frame(width: 80) // Ustaw szerokość przycisku
                 }
                 .padding()
 
@@ -39,18 +39,20 @@ struct ContentView: View {
                     Text(errorMessage)
                         .foregroundColor(.red)
                 }
-            }
-            .padding()
-            .navigationTitle("City to Coordinates")
-            .background(
+
                 NavigationLink(
-                    destination: WeatherView(location: geocodingViewModel.location ?? CLLocation()),
-                    isActive: $isShowingWeatherView
+                    destination: WeatherView(location: selectedLocation ?? CLLocation()),
+                    isActive: Binding(
+                        get: { selectedLocation != nil },
+                        set: { _ in }
+                    )
                 ) {
                     EmptyView()
                 }
                 .hidden()
-            )
+            }
+            .padding()
+            .navigationTitle("City to Coordinates")
         }
     }
 }

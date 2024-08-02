@@ -1,32 +1,55 @@
-//
-//  OpenWeatherResponse.swift
-//  WeatherAPP
-//
-//  Created by Michał Talaga on 02/08/2024.
-//
-
 import Foundation
-import CoreLocation
 
-// Model danych z odpowiedzi API OpenWeatherMap
-struct OpenWeatherResponse: Codable {
+// Odpowiedź z API dla prognozy
+struct OpenWeatherForecastResponse: Codable {
+    let list: [WeatherForecast]
+}
+
+struct WeatherForecast: Codable, Identifiable {
+    let id = UUID()
+    let dt: Int
+    let main: Main
     let weather: [WeatherDetails]
-    let main: MainWeather
+    
+    // Konwersja daty
+    var date: Date {
+        Date(timeIntervalSince1970: TimeInterval(dt))
+    }
 }
 
-// Szczegóły pogody (np. opis, ikona)
-struct WeatherDetails: Codable {
-    let description: String
-    let icon: String
-}
-
-// Dane pogodowe (np. temperatura)
-struct MainWeather: Codable {
+struct Main: Codable {
     let temp: Double
 }
 
-// Używamy OpenWeatherResponse do przechowywania pogody
-struct Weather {
+struct WeatherDetails: Codable {
+    let description: String
+}
+
+// Użyj tylko jednej struktury dla pogody obecnej
+struct Weather: Codable {
     let temperature: Double
     let condition: String
+}
+
+// Model prognozy do wyświetlania
+struct DailyForecast: Identifiable {
+    let id = UUID()
+    let date: Date
+    let temperature: Double
+    let condition: String
+}
+
+// Struktury dla odpowiedzi JSON
+
+struct OpenWeatherCurrentResponse: Codable {
+    let main: Main
+    let weather: [WeatherDetails]
+
+    struct Main: Codable {
+        let temp: Double
+    }
+
+    struct WeatherDetails: Codable {
+        let description: String
+    }
 }

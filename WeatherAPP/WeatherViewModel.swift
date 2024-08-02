@@ -4,6 +4,7 @@ import CoreLocation
 @MainActor
 class WeatherViewModel: ObservableObject {
     @Published var weather: Weather?
+    @Published var dailyForecasts: [WeatherForecast] = []
     @Published var isLoading: Bool = false
     @Published var errorMessage: String?
     
@@ -13,7 +14,7 @@ class WeatherViewModel: ObservableObject {
         isLoading = true
         errorMessage = nil
         
-        let urlString = "https://api.openweathermap.org/data/2.5/weather?lat=\(location.coordinate.latitude)&lon=\(location.coordinate.longitude)&appid=\(apiKey)&units=metric"
+        let urlString = "https://api.openweathermap.org/data/2.5/forecast?lat=\(location.coordinate.latitude)&lon=\(location.coordinate.longitude)&appid=\(apiKey)&units=metric"
         
         guard let url = URL(string: urlString) else {
             errorMessage = "Invalid URL"
@@ -22,14 +23,29 @@ class WeatherViewModel: ObservableObject {
         }
         
         do {
-            let (data, _) = try await URLSession.shared.data(from: url)
-            let weatherResponse = try JSONDecoder().decode(OpenWeatherResponse.self, from: data)
+            let (data, response) = try await URLSession.shared.data(from: url)
             
-            // Mapowanie odpowiedzi na nasz model `Weather`
+            if let httpResponse = response as? HTTPURLResponse, !(200...299).contains(httpResponse.statusCode) {
+                errorMessage = "Server error: \(httpResponse.statusCode)"
+                isLoading = false
+                return
+            }
+            
+            let weatherResponse = try JSONDecoder().decode(OpenWeatherForecastResponse.self, from: data)
+            
+            // Przetwarzanie danych do formatu widocznego
             self.weather = Weather(
-                temperature: weatherResponse.main.temp,
-                condition: weatherResponse.weather.first?.description ?? "Unknown"
+                temperature: weatherResponse.list.first?.main.temp ?? 0.0,
+                condition: weatherResponse.list.first?.weather.first?.description ?? ""
             )
+            
+            // Filtrujemy prognozy na każdy dzień
+            let calendar = Calendar.current
+            self.dailyForecasts = weatherResponse.list
+                .filter { calendar.component(.hour, from: $0.date) == 12 }  // Przykładowo dla prognozy na 12:00
+                .prefix(5)
+                .sorted { $0.date < $1.date }
+            
         } catch {
             self.errorMessage = "Failed to fetch weather data: \(error.localizedDescription)"
         }
@@ -37,3 +53,5 @@ class WeatherViewModel: ObservableObject {
         isLoading = false
     }
 }
+
+
