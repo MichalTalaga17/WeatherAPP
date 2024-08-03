@@ -1,76 +1,66 @@
 import SwiftUI
-import CoreLocation
 
 struct ContentView: View {
     @State private var cityName = ""
     @State private var weatherData: WeatherData?
-    
-    private let apiKey = "e58dfbc15daacbeabeed6abc3e5d95ca" // Zastąp swoim kluczem API OpenWeatherMap
-    
+
     var body: some View {
         NavigationView {
             VStack {
-                TextField("Podaj nazwę miasta", text: $cityName)
-                
-                Button("Szukaj") {
-                    fetchWeatherData()
+                TextField("Podaj miasto", text: $cityName)
+                    .padding()
+                Button("Wyszukaj") {
+                    Task {
+                        do {
+                            let weatherData: () = try await API.shared.fetchWeatherData(forCity: cityName) { result in
+                                switch result {
+                                case .success(let data):
+                                    self.weatherData = data
+                                case .failure(let error):
+                                    print("Błąd: \(error)")
+                                }
+                            }
+                        } catch {
+                            print("Błąd podczas pobierania danych: \(error)")
+                        }
+                    }
                 }
-                
+
+
                 if let weatherData = weatherData {
-                    Text("Pogoda w \(weatherData.name): \(weatherData.main.temp)°C")
-                    Image(systemName: "cloud.sun.fill") // Przykładowa ikona, zastąp odpowiednią
-                } else {
-                    Text("Wprowadź nazwę miasta i kliknij Szukaj")
+                    Text("Temperatura obecnie: \(String(describing: weatherData.list.first!.main.temp)) K")
+                    Text("Odczuwalna temperatura: \(String(describing: weatherData.list.first!.main.feels_like)) K")
+//                    Text("Pogoda obecnie: \(weatherData.weather.first?.description ?? "")")
+
+//                    List(weatherData.daily) { daily in
+//                        VStack(alignment: .leading) {
+//                            Text("Dzień: \(formatDate(timestamp: daily.dt))")
+//                            Text("Temperatura min: \(daily.temp.min) K")
+//                            Text("Temperatura max: \(daily.temp.max) K")
+//                            Text("Pogoda: \(daily.weather.first?.description ?? "")")
+//                        }
+//                    }
                 }
             }
+            .padding()
             .navigationTitle("Pogoda")
         }
     }
-    
-    struct WeatherData: Codable {
-        let name: String
-        let main: Main
-    }
-    
-    struct Main: Codable {
-        let temp: Double
-    }
-    
-    func fetchWeatherData() {
-        let geocoder = CLGeocoder()
-        
-        geocoder.geocodeAddressString(cityName) { placemarks, error in
-            guard let placemark = placemarks?.first, let location = placemark.location else {
-                print("Błąd podczas geokodowania lub pobierania lokalizacji")
-                return
-            }
-            
-            let latitude = location.coordinate.latitude
-            let longitude = location.coordinate.longitude
-            
-            let urlString = "https://api.openweathermap.org/data/2.5/weather?lat=\(latitude)&lon=\(longitude)&appid=\(apiKey)&units=metric"
-            
-            guard let url = URL(string: urlString) else {
-                print("Nieprawidłowy URL")
-                return
-            }
-            
-            URLSession.shared.dataTask(with: url) { data, response, error in
-                guard let data = data else {
-                    print("Błąd podczas pobierania danych")
-                    return
-                }
-                
-                do {
-                    let weatherData = try JSONDecoder().decode(WeatherData.self, from: data)
-                    DispatchQueue.main.async {
-                        self.weatherData = weatherData
-                    }
-                } catch {
-                    print("Błąd podczas parsowania danych: \(error)")
-                }
-            }.resume()
-        }
+
+//    func fetchWeatherData() async {
+//        do {
+//            let weatherData = try await API.shared.fetchWeatherData(forCity: cityName)
+//            self.weatherData = weatherData
+//        } catch {
+//            print("Błąd podczas pobierania danych: \(error)")
+//        }
+//    }
+
+    func formatDate(timestamp: Int) -> String {
+        let date = Date(timeIntervalSince1970: Double(timestamp))
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "dd.MM.yyyy"
+        return dateFormatter.string(from: date)
     }
 }
 

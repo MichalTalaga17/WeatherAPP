@@ -53,3 +53,45 @@ struct OpenWeatherCurrentResponse: Codable {
         let description: String
     }
 }
+
+struct ForecastData: Codable {
+  let list: [Forecast]
+  let city: City
+}
+
+struct City: Codable {
+  let name: String
+}
+
+struct Forecast: Codable {
+  let dt: Int // Date in seconds since epoch
+  let main: Main
+  let weather: [WeatherDescription]
+  let dt_txt: String // Date and time in string format (ISO 8601)
+
+  struct Main: Codable {
+    let temp: Double
+    let feels_like: Double
+    let temp_min: Double
+    let temp_max: Double
+  }
+
+  struct WeatherDescription: Codable {
+    let main: String
+    let description: String
+
+  }
+}
+
+struct DailyForecast: Identifiable {
+  let id = UUID()
+  let date: Date
+  let temperature: Double
+  let condition: String
+}
+struct Weather: Identifiable {
+  let id = UUID()
+  let city: String
+  let temperature: Double
+  let condition: String
+}
