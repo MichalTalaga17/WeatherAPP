@@ -2,61 +2,79 @@ import SwiftUI
 import CoreLocation
 
 struct ContentView: View {
-    @StateObject private var geocodingViewModel = GeocodingViewModel()
-    @State private var cityName: String = ""
-    @State private var selectedLocation: CLLocation? = nil
-
+    @State private var cityName = ""
+    @State private var weatherData: WeatherData?
+    
+    private let apiKey = "e58dfbc15daacbeabeed6abc3e5d95ca" // Zastąp swoim kluczem API OpenWeatherMap
+    
     var body: some View {
         NavigationView {
             VStack {
-                HStack {
-                    TextField("Enter city name", text: $cityName)
-                        .padding()
-                        .background(Color.white)
-                        .border(Color.black, width: 1)
-                        .frame(maxWidth: .infinity)
-
-                    Button("Get") {
-                        Task {
-                            await geocodingViewModel.geocode(cityName: cityName)
-                            if let location = geocodingViewModel.location {
-                                selectedLocation = location
-                            }
-                        }
-                    }
-                    .padding()
-                    .background(Color.black)
-                    .foregroundColor(.white)
-                    .frame(width: 80) // Ustaw szerokość przycisku
+                TextField("Podaj nazwę miasta", text: $cityName)
+                
+                Button("Szukaj") {
+                    fetchWeatherData()
                 }
-                .padding()
-
-                Spacer()
-
-                if geocodingViewModel.isLoading {
-                    ProgressView()
-                } else if let errorMessage = geocodingViewModel.errorMessage {
-                    Text(errorMessage)
-                        .foregroundColor(.red)
+                
+                if let weatherData = weatherData {
+                    Text("Pogoda w \(weatherData.name): \(weatherData.main.temp)°C")
+                    Image(systemName: "cloud.sun.fill") // Przykładowa ikona, zastąp odpowiednią
+                } else {
+                    Text("Wprowadź nazwę miasta i kliknij Szukaj")
                 }
-
-                NavigationLink(
-                    destination: WeatherView(location: selectedLocation ?? CLLocation()),
-                    isActive: Binding(
-                        get: { selectedLocation != nil },
-                        set: { _ in }
-                    )
-                ) {
-                    EmptyView()
-                }
-                .hidden()
             }
-            .padding()
-            .navigationTitle("City to Coordinates")
+            .navigationTitle("Pogoda")
+        }
+    }
+    
+    struct WeatherData: Codable {
+        let name: String
+        let main: Main
+    }
+    
+    struct Main: Codable {
+        let temp: Double
+    }
+    
+    func fetchWeatherData() {
+        let geocoder = CLGeocoder()
+        
+        geocoder.geocodeAddressString(cityName) { placemarks, error in
+            guard let placemark = placemarks?.first, let location = placemark.location else {
+                print("Błąd podczas geokodowania lub pobierania lokalizacji")
+                return
+            }
+            
+            let latitude = location.coordinate.latitude
+            let longitude = location.coordinate.longitude
+            
+            let urlString = "https://api.openweathermap.org/data/2.5/weather?lat=\(latitude)&lon=\(longitude)&appid=\(apiKey)&units=metric"
+            
+            guard let url = URL(string: urlString) else {
+                print("Nieprawidłowy URL")
+                return
+            }
+            
+            URLSession.shared.dataTask(with: url) { data, response, error in
+                guard let data = data else {
+                    print("Błąd podczas pobierania danych")
+                    return
+                }
+                
+                do {
+                    let weatherData = try JSONDecoder().decode(WeatherData.self, from: data)
+                    DispatchQueue.main.async {
+                        self.weatherData = weatherData
+                    }
+                } catch {
+                    print("Błąd podczas parsowania danych: \(error)")
+                }
+            }.resume()
         }
     }
 }
 
-#Preview {
+
+#Preview{
     ContentView()
 }

@@ -6,7 +6,7 @@ struct OpenWeatherForecastResponse: Codable {
 }
 
 struct WeatherForecast: Codable, Identifiable {
-    let id = UUID()
+    var id = UUID()
     let dt: Int
     let main: Main
     let weather: [WeatherDetails]
