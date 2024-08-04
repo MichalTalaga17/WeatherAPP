@@ -6,29 +6,42 @@ struct ContentView: View {
 
     var body: some View {
         NavigationView {
-            VStack {
-                TextField("Podaj miasto", text: $cityName)
-                    .padding()
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                Button("Wyszukaj") {
-                    Task {
-                        await fetchWeatherData()
-                    }
-                }
-                .padding()
+            VStack(spacing: 0) {
+                            HStack {
+                                GeometryReader { geometry in
+                                    HStack(spacing: 3) {
+                                        TextField("Podaj miasto", text: $cityName)
+                                            .padding()
+                                            .background(Color.black.opacity(0.1))
+                                            .cornerRadius(8)
+                                            .frame(width: geometry.size.width * 0.7)
+                                        
+                                        Button(action: {
+                                            Task {
+                                                await fetchWeatherData()
+                                            }
+                                        }) {
+                                            Text("Wyszukaj")
+                                                .font(.callout)
+                                                .padding()
+                                                .background(Color.black.opacity(0.7))
+                                                .foregroundColor(.white)
+                                                .cornerRadius(8)
+                                                .frame(width: geometry.size.width * 0.3)
+                                        }
+                                    }
+                                }
+                            }
 
                 if let weatherData = weatherData {
                     ScrollView {
                         VStack(alignment: .leading, spacing: 20) {
                             // City Information Block
                             VStack(alignment: .leading, spacing: 5) {
-                                Text("Informacje o miejscu")
+                                Text("\(weatherData.city.name)")
                                     .font(.headline)
-                                Text("Miasto: \(weatherData.city.name)")
-                                Text("Kraj: \(weatherData.city.country)")
-                                Text("Populacja: \(weatherData.city.population)")
-                                Text("Współrzędne: \(weatherData.city.coord.lat), \(weatherData.city.coord.lon)")
-                                Text("Strefa czasowa: \(weatherData.city.timezone)")
+                                Text("\(weatherData.city.country)")
+                                    .font(.subheadline)
                                 Text("Wschód słońca: \(formatDate(timestamp: weatherData.city.sunrise))")
                                 Text("Zachód słońca: \(formatDate(timestamp: weatherData.city.sunset))")
                             }
