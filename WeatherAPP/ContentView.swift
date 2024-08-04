@@ -71,7 +71,7 @@ struct ContentView: View {
                         // Weather Forecast Block
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack(alignment: .top) { // Odstęp między kartami
-                                ForEach(weatherData.list.prefix(10), id: \.dt) { item in
+                                ForEach(weatherData.list.prefix(20), id: \.dt) { item in
                                     VStack(alignment: .leading) {
                                         if let timestamp = dateToTimestamp(dateString: item.dt_txt) {
                                             Text(formatDate(timestamp: Int(timestamp), formatType: .timeOnly))
@@ -80,12 +80,13 @@ struct ContentView: View {
                                             Text(item.dt_txt)
                                                 .font(.subheadline)
                                         }
-                                        Image(systemName: icon)
-                                            .resizable()
-                                                .aspectRatio(contentMode: .fit) // Możesz również użyć .fill
-                                                .frame(width: 40, height: 40)
-                                                .symbolRenderingMode(.palette)
-                                                .foregroundStyle(.black, .gray, .blue)
+//                                        Image(systemName: icon)
+//                                            .resizable()
+//                                                .aspectRatio(contentMode: .fit) // Możesz również użyć .fill
+//                                                .frame(width: 40, height: 40)
+//                                                .symbolRenderingMode(.palette)
+//                                                .foregroundStyle(.black, .gray, .blue)
+                                        weatherIcon(for: (item.weather.first?.icon)!)
                                         Text(kelvinToCelsius(item.main.temp))
                                             .font(.title2.bold())
                                         Text(kelvinToCelsius(item.main.feels_like))
@@ -113,6 +114,8 @@ struct ContentView: View {
             .padding()
             .navigationTitle("Pogoda")
         }
+        .foregroundColor(.white)
+        .bac
     }
     
     func fetchWeatherData() async {
