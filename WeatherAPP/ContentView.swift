@@ -12,6 +12,7 @@ struct ContentView: View {
                                 .padding()
                                 .background(Color.black.opacity(0.1))
                                 .cornerRadius(8)
+                                .frame(width: geometry.size.width * 0.7)
                             
                             Button(action: {
                                 Task {
@@ -24,8 +25,10 @@ struct ContentView: View {
                                     .background(Color.black.opacity(0.7))
                                     .foregroundColor(.white)
                                     .cornerRadius(8)
+                                    .frame(width: geometry.size.width * 0.3)
                             }
                         }
+                    }
                 }
                 Spacer()
                 Spacer()
