@@ -9,7 +9,7 @@ import Foundation
 
 func kelvinToCelsius(_ kelvin: Double) -> String {
     let celsius = kelvin - 273.15
-    return String(format: "%.1f °C", celsius)
+    return String(format: "%0.0f °C", celsius)
 }
 enum DateFormatType {
     case fullDateTime          // "dd.MM.yyyy HH:mm"

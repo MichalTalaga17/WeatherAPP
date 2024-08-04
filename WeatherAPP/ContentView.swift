@@ -3,81 +3,76 @@ import SwiftUI
 struct ContentView: View {
     @State private var cityName = "Zembrzyce"
     @State private var weatherData: WeatherData?
+    @State private var icon = "cloud.moon.rain.fill"
+    
     var body: some View {
-        NavigationView{
+        NavigationView {
             VStack(alignment: .leading) {
                 HStack {
-                        HStack(spacing: 10) {
-                            TextField("Podaj miasto", text: $cityName)
-                                .padding()
-                                .background(Color.black.opacity(0.1))
-                                .cornerRadius(8)
-                                .frame(width: geometry.size.width * 0.7)
-                            
-                            Button(action: {
-                                Task {
-                                    await fetchWeatherData()
-                                }
-                            }) {
-                                Text("Wyszukaj")
-                                    .font(.callout)
-                                    .padding()
-                                    .background(Color.black.opacity(0.7))
-                                    .foregroundColor(.white)
-                                    .cornerRadius(8)
-                                    .frame(width: geometry.size.width * 0.3)
+                    HStack(spacing: 10) {
+                        TextField("Podaj miasto", text: $cityName)
+                            .padding()
+                            .background(Color.black.opacity(0.1))
+                            .cornerRadius(8)
+                        
+                        Button(action: {
+                            Task {
+                                await fetchWeatherData()
                             }
+                        }) {
+                            Text("Wyszukaj")
+                                .font(.callout)
+                                .padding()
+                                .background(Color.black.opacity(0.7))
+                                .foregroundColor(.white)
+                                .cornerRadius(8)
                         }
                     }
                 }
+                .padding(.bottom, 20)
+                
                 Spacer()
-                Spacer()
-                Spacer()
+                
                 if let weatherData = weatherData, let currentWeather = weatherData.list.first {
-                    VStack(alignment: .leading, spacing: 20) {
+                    VStack(alignment: .leading, spacing: 10) {
                         
                         // City Information Block
                         HStack {
-                            VStack(alignment: .leading, spacing: 5){
+                            VStack(alignment: .leading, spacing: 5) {
                                 Text(kelvinToCelsius(currentWeather.main.temp))
-                                    .font(.largeTitle .bold())
+                                    .font(.largeTitle.bold())
                             }
                             .padding()
                             Spacer()
                             VStack(alignment: .leading, spacing: 5) {
                                 Text("\(weatherData.city.name)")
-                                    .font(.title2 .bold())
+                                    .font(.title2.bold())
                                 Text("Wschód słońca: \(formatDate(timestamp: weatherData.city.sunrise, formatType: .timeOnly))")
                                 Text("Zachód słońca: \(formatDate(timestamp: weatherData.city.sunset, formatType: .timeOnly))")
                             }
                             .padding()
-                            
                         }
                         .background(Color.blue.opacity(0.1))
                         .cornerRadius(8)
                         
                         // Current Weather Block
-                        if let currentWeather = weatherData.list.first {
-                            HStack {
-                                VStack(alignment: .leading, spacing: 5) {
-                                    Text("Temperatura: \(kelvinToCelsius(currentWeather.main.temp))")
-                                    Text("Zachmurzenie: \(currentWeather.clouds.all)%")
-                                    Text("Opis pogody: \(currentWeather.weather.first?.description ?? "")")
-                                }
-                                    .padding()
-                                Spacer()
+                        HStack {
+                            VStack(alignment: .leading, spacing: 5) {
+                                Text("Temperatura: \(kelvinToCelsius(currentWeather.main.temp))")
+                                Text("Zachmurzenie: \(currentWeather.clouds.all)%")
+                                Text("Opis pogody: \(currentWeather.weather.first?.description ?? "")")
                             }
-                            .background(Color.green.opacity(0.1))
-                            .cornerRadius(8)
-                            
+                            .padding()
+                            Spacer()
                         }
+                        .background(Color.green.opacity(0.1))
+                        .cornerRadius(8)
                         
                         // Weather Forecast Block
-                        
                         ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(alignment: .top, spacing: 10) { // Odstęp między kartami
+                            HStack(alignment: .top) { // Odstęp między kartami
                                 ForEach(weatherData.list.prefix(10), id: \.dt) { item in
-                                    VStack(alignment: .leading, spacing: 10) {
+                                    VStack(alignment: .leading) {
                                         if let timestamp = dateToTimestamp(dateString: item.dt_txt) {
                                             Text(formatDate(timestamp: Int(timestamp), formatType: .timeOnly))
                                                 .font(.subheadline)
@@ -85,43 +80,45 @@ struct ContentView: View {
                                             Text(item.dt_txt)
                                                 .font(.subheadline)
                                         }
+                                        Image(systemName: icon)
+                                            .resizable()
+                                                .aspectRatio(contentMode: .fit) // Możesz również użyć .fill
+                                                .frame(width: 40, height: 40)
+                                                .symbolRenderingMode(.palette)
+                                                .foregroundStyle(.black, .gray, .blue)
                                         Text(kelvinToCelsius(item.main.temp))
-                                            .font(.title2 .bold())
+                                            .font(.title2.bold())
                                         Text(kelvinToCelsius(item.main.feels_like))
                                             .font(.body)
                                         Text("\(item.clouds.all)%")
                                             .font(.body)
-                                        Text("\(item.weather.first?.icon ?? "")")
-                                            .font(.body)
+//                                        Text("\(item.weather.first?.icon ?? "")")
+//                                            .font(.body)
+                                        
                                     }
-                                    .padding()
-                                    .background(Color.orange.opacity(0.1))
-                                    .cornerRadius(8)
-                                    .frame(maxWidth: .infinity) // Pozwól, aby karta zajmowała dostępne miejsce
-                                    .layoutPriority(1) // Zwiększa priorytet dla szerokości karty
-                                    .frame(width: UIScreen.main.bounds.width * 0.3) // Ustaw szerokość karty na 30% szerokości ekranu
+                                    .frame(width: UIScreen.main.bounds.width * 0.25) // Ustaw szerokość karty na 30% szerokości ekranu
                                 }
                             }
+                            .padding(.all)
                         }
+                        .background(Color.orange.opacity(0.1))
+                        .cornerRadius(8)// Pozwól, aby karta zajmowała dostępne miejsce
+                        
                         Spacer()
-                        
-                        
                     }
-                    
-                }  else{
-                    HStack{}
+                } else {
+                    Spacer()
                 }
-                Spacer()
             }
             .padding()
             .navigationTitle("Pogoda")
-            Spacer()
         }
     }
     
     func fetchWeatherData() async {
         do {
-            let _: () = try await API.shared.fetchWeatherData(forCity: cityName) { result in
+            let cityNameCopy = cityName // Skopiuj wartość zmiennej
+            let _: () = try await API.shared.fetchWeatherData(forCity: cityNameCopy) { result in
                 switch result {
                 case .success(let data):
                     self.weatherData = data
@@ -133,10 +130,8 @@ struct ContentView: View {
             print("Błąd podczas pobierania danych: \(error)")
         }
     }
-    
-    
 }
 
-#Preview {
+#Preview{
     ContentView()
 }
