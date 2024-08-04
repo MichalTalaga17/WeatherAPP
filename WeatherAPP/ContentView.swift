@@ -115,7 +115,6 @@ struct ContentView: View {
             .navigationTitle("Pogoda")
         }
         .foregroundColor(.white)
-        .bac
     }
     
     func fetchWeatherData() async {
