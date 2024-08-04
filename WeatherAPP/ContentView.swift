@@ -31,7 +31,6 @@ struct ContentView: View {
                                     }
                                 }
                             }
-                            .border(Color.gray, width: 2)
                 
                 if let weatherData = weatherData {
                         VStack( spacing: 20) {
@@ -42,8 +41,8 @@ struct ContentView: View {
                                     .font(.headline)
                                 Text("\(weatherData.city.country)")
                                     .font(.subheadline)
-                                Text("Wschód słońca: \(formatDate(timestamp: weatherData.city.sunrise))")
-                                Text("Zachód słońca: \(formatDate(timestamp: weatherData.city.sunset))")
+                                Text("Wschód słońca: \(formatDate(timestamp: weatherData.city.sunrise, formatType: .timeOnly))")
+                                Text("Zachód słońca: \(formatDate(timestamp: weatherData.city.sunset, formatType: .timeOnly))")
                             }
                                 .padding()
                                 .background(Color.blue.opacity(0.1))
@@ -52,8 +51,8 @@ struct ContentView: View {
                             // Current Weather Block
                             if let currentWeather = weatherData.list.first {
                                 VStack(alignment: .leading, spacing: 5) {
-                                    Text("Temperatura: \(currentWeather.main.temp) K")
-                                    Text("Odczuwalna temperatura: \(currentWeather.main.feels_like) K")
+                                    Text("Temperatura: \(kelvinToCelsius(currentWeather.main.temp))")
+                                    Text("Odczuwalna temperatura: \(kelvinToCelsius(currentWeather.main.feels_like))")
                                     Text("Zachmurzenie: \(currentWeather.clouds.all)%")
                                     Text("Opis pogody: \(currentWeather.weather.first?.description ?? "")")
                                 }
@@ -67,10 +66,10 @@ struct ContentView: View {
                                 HStack(alignment: .top, spacing: 10) {
                                     ForEach(weatherData.list.prefix(10), id: \.dt) { item in
                                         VStack(alignment: .leading, spacing: 0) {
-                                            Text(item.dt_txt)
+                                            Text(formatDate(timestamp: dateToTimestamp(dateString: (item.dt_txt)), formatType: .timeOnly))
                                                 .font(.subheadline)
-                                            Text("\(item.main.temp) K")
-                                            Text("\(item.main.feels_like) K")
+                                            Text("\(kelvinToCelsius(item.main.temp))")
+                                            Text("\(kelvinToCelsius(item.main.feels_like))")
                                             Text("\(item.clouds.all)%")
                                             Text("\(item.weather.first?.description ?? "")")
                                         }
@@ -108,12 +107,7 @@ struct ContentView: View {
                 }
     }
 
-    func formatDate(timestamp: Int) -> String {
-        let date = Date(timeIntervalSince1970: Double(timestamp))
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "dd.MM.yyyy HH:mm"
-        return dateFormatter.string(from: date)
-    }
+    
 }
 
 #Preview {
