@@ -17,6 +17,7 @@ enum DateFormatType {
     case timeOnly              // "HH:mm"
     case dateOnly              // "dd.MM.yyyy"
     case dateWithMonthName     // "dd MMMM yyyy"
+    case hourOnly              // "HH" (new case)
 }
 
 func formatDate(timestamp: Int, formatType: DateFormatType) -> String {
@@ -36,6 +37,8 @@ func formatDate(timestamp: Int, formatType: DateFormatType) -> String {
         dateFormatter.dateFormat = "dd.MM.yyyy"
     case .dateWithMonthName:
         dateFormatter.dateFormat = "dd MMMM yyyy"
+    case .hourOnly:
+        dateFormatter.dateFormat = "HH"
     }
     
     return dateFormatter.string(from: date)

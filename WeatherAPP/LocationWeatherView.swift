@@ -3,14 +3,14 @@ import SwiftUI
 struct LocationWeatherView: View {
     let cityName: String = "Zembrzyce"
     @State private var weatherData: WeatherData?
-    @State private var icon = "cloud.moon.rain.fill"
     @State private var backgroundGradient = LinearGradient(gradient: Gradient(colors: [Color.black]), startPoint: .top, endPoint: .bottom)
         
         var body: some View {
             VStack {
-                
                 if let weatherData = weatherData, let currentWeather = weatherData.list.first {
                     VStack(alignment: .leading, spacing: 10) {
+                        
+                        Spacer()
                         // City Information Block
                         HStack {
                             VStack(alignment: .leading, spacing: 5) {
@@ -47,9 +47,9 @@ struct LocationWeatherView: View {
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack(alignment: .top) {
                                 ForEach(weatherData.list.prefix(20), id: \.dt) { item in
-                                    VStack(alignment: .leading) {
+                                    VStack(alignment: .center) {
                                         if let timestamp = dateToTimestamp(dateString: item.dt_txt) {
-                                            Text(formatDate(timestamp: Int(timestamp), formatType: .timeOnly))
+                                            Text(formatDate(timestamp: Int(timestamp), formatType: .hourOnly))
                                                 .font(.subheadline)
                                         } else {
                                             Text(item.dt_txt)
@@ -60,7 +60,7 @@ struct LocationWeatherView: View {
                                             .font(.title2.bold())
                                         Text(kelvinToCelsius(item.main.feels_like))
                                             .font(.body)
-                                        Text("\(item.clouds.all)%")
+                                        Text("\(String(format: "%.0f", item.pop * 100))%")
                                             .font(.body)
                                     }
                                     .frame(width: UIScreen.main.bounds.width * 0.25)
@@ -96,7 +96,6 @@ struct LocationWeatherView: View {
                     // Update icon based on fetched data
                     if let currentWeather = data.list.first {
                         let newIcon = iconMap[currentWeather.weather.first?.icon ?? ""] ?? "unknown"
-                        self.icon = newIcon
                         // Update the background gradient
                         self.backgroundGradient = gradientBackground(for: newIcon)
                         print("POBRANO")
