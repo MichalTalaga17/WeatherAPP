@@ -11,65 +11,122 @@ import SwiftUI
 func gradientBackground(for iconName: String) -> LinearGradient {
     // Mapowanie ikon systemowych na kody pogody
     let iconCode = iconMap.first(where: { $0.value == iconName })?.key ?? "default"
+    let isDay = iconCode.hasSuffix("d") // Określenie, czy jest dzień
     
     switch iconCode {
     case "01d":
+        // Gradient słoneczny z żółtym na górze
         return LinearGradient(
-            gradient: Gradient(colors: [Color.blue.opacity(0.3), Color.blue.opacity(0.7)]),
+            gradient: Gradient(colors: [Color.yellow.opacity(0.5), Color.blue.opacity(0.7)]),
             startPoint: .top,
             endPoint: .bottom
         )
     case "01n":
+        // Gradient nocny z ciemnym niebem
         return LinearGradient(
             gradient: Gradient(colors: [Color.black.opacity(0.8), Color.blue.opacity(0.3)]),
             startPoint: .top,
             endPoint: .bottom
         )
-    case "02d", "02n":
+    case "02d":
         return LinearGradient(
-            gradient: Gradient(colors: [Color.gray.opacity(0.3), Color.gray.opacity(0.7)]),
+            gradient: Gradient(colors: [Color.yellow.opacity(0.4), Color.gray.opacity(0.7)]),
             startPoint: .top,
             endPoint: .bottom
         )
-    case "03d", "03n", "04d", "04n":
+    case "02n":
         return LinearGradient(
-            gradient: Gradient(colors: [Color.gray.opacity(0.6), Color.gray.opacity(0.8)]),
+            gradient: Gradient(colors: [Color.gray.opacity(0.4), Color.black.opacity(0.6)]),
             startPoint: .top,
             endPoint: .bottom
         )
-    case "09d", "09n":
-        return LinearGradient(
-            gradient: Gradient(colors: [Color.blue.opacity(0.6), Color.gray.opacity(0.5)]),
+    case "03d", "03n":
+        return isDay ? LinearGradient(
+            gradient: Gradient(colors: [Color.yellow.opacity(0.3), Color.gray.opacity(0.7)]),
+            startPoint: .top,
+            endPoint: .bottom
+        ) : LinearGradient(
+            gradient: Gradient(colors: [Color.gray.opacity(0.7), Color.black.opacity(0.5)]),
             startPoint: .top,
             endPoint: .bottom
         )
-    case "10d", "10n":
+    case "04d", "04n":
+        return isDay ? LinearGradient(
+            gradient: Gradient(colors: [Color.yellow.opacity(0.3), Color.gray.opacity(0.8)]),
+            startPoint: .top,
+            endPoint: .bottom
+        ) : LinearGradient(
+            gradient: Gradient(colors: [Color.gray.opacity(0.7), Color.black.opacity(0.6)]),
+            startPoint: .top,
+            endPoint: .bottom
+        )
+    case "09d":
+        return LinearGradient(
+            gradient: Gradient(colors: [Color.yellow.opacity(0.4), Color.blue.opacity(0.6)]),
+            startPoint: .top,
+            endPoint: .bottom
+        )
+    case "09n":
         return LinearGradient(
             gradient: Gradient(colors: [Color.blue.opacity(0.5), Color.gray.opacity(0.6)]),
             startPoint: .top,
             endPoint: .bottom
         )
-    case "11d", "11n":
+    case "10d":
         return LinearGradient(
-            gradient: Gradient(colors: [Color.gray.opacity(0.8), Color.black.opacity(0.5)]),
+            gradient: Gradient(colors: [Color.yellow.opacity(0.4), Color.blue.opacity(0.5)]),
             startPoint: .top,
             endPoint: .bottom
         )
-    case "13d", "13n":
+    case "10n":
         return LinearGradient(
-            gradient: Gradient(colors: [Color.white.opacity(0.7), Color.blue.opacity(0.4)]),
+            gradient: Gradient(colors: [Color.blue.opacity(0.4), Color.gray.opacity(0.7)]),
             startPoint: .top,
             endPoint: .bottom
         )
-    case "50d", "50n":
+    case "11d":
         return LinearGradient(
-            gradient: Gradient(colors: [Color.gray.opacity(0.4), Color.blue.opacity(0.3)]),
+            gradient: Gradient(colors: [Color.yellow.opacity(0.5), Color.gray.opacity(0.8)]),
+            startPoint: .top,
+            endPoint: .bottom
+        )
+    case "11n":
+        return LinearGradient(
+            gradient: Gradient(colors: [Color.gray.opacity(0.9), Color.black.opacity(0.6)]),
+            startPoint: .top,
+            endPoint: .bottom
+        )
+    case "13d":
+        return LinearGradient(
+            gradient: Gradient(colors: [Color.yellow.opacity(0.5), Color.white.opacity(0.7)]),
+            startPoint: .top,
+            endPoint: .bottom
+        )
+    case "13n":
+        return LinearGradient(
+            gradient: Gradient(colors: [Color.white.opacity(0.5), Color.blue.opacity(0.5)]),
+            startPoint: .top,
+            endPoint: .bottom
+        )
+    case "50d":
+        return LinearGradient(
+            gradient: Gradient(colors: [Color.yellow.opacity(0.4), Color.gray.opacity(0.3)]),
+            startPoint: .top,
+            endPoint: .bottom
+        )
+    case "50n":
+        return LinearGradient(
+            gradient: Gradient(colors: [Color.gray.opacity(0.5), Color.blue.opacity(0.4)]),
             startPoint: .top,
             endPoint: .bottom
         )
     default:
-        return LinearGradient(
-            gradient: Gradient(colors: [Color.black.opacity(0.8), Color.blue.opacity(0.3)]),
+        return isDay ? LinearGradient(
+            gradient: Gradient(colors: [Color.yellow.opacity(0.4), Color.blue.opacity(0.3)]),
+            startPoint: .top,
+            endPoint: .bottom
+        ) : LinearGradient(
+            gradient: Gradient(colors: [Color.black.opacity(0.8), Color.blue.opacity(0.2)]),
             startPoint: .top,
             endPoint: .bottom
         )
