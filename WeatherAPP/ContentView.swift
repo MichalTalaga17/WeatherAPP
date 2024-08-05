@@ -110,14 +110,16 @@ struct ContentView: View {
         .padding()
         .background(backgroundGradient) // Używaj gradientu z zmiennej stanu
         .foregroundColor(.white)
+        Button("test"){
+            NavigationLink(destination: SearchView()){}
+        }
     }
     
     
     
     func fetchWeatherData() async {
         do {
-            let cityNameCopy = cityName
-            let _: () = try await API.shared.fetchWeatherData(forCity: cityNameCopy) { result in
+            let _: () = try await API.shared.fetchWeatherData(forCity: cityName) { result in
                 switch result {
                 case .success(let data):
                     self.weatherData = data
