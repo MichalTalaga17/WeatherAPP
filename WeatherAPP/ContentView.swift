@@ -4,6 +4,8 @@ struct ContentView: View {
     @State private var cityName = "Zembrzyce"
     @State private var weatherData: WeatherData?
     @State private var icon = "cloud.moon.rain.fill"
+    @State private var backgroundGradient = LinearGradient(gradient: Gradient(colors: [Color.black]), startPoint: .top, endPoint: .bottom)
+    
     
     var body: some View {
         NavigationView {
@@ -35,7 +37,6 @@ struct ContentView: View {
                 
                 if let weatherData = weatherData, let currentWeather = weatherData.list.first {
                     VStack(alignment: .leading, spacing: 10) {
-                        
                         // City Information Block
                         HStack {
                             VStack(alignment: .leading, spacing: 5) {
@@ -52,7 +53,7 @@ struct ContentView: View {
                             }
                             .padding()
                         }
-                        .background(Color.blue.opacity(0.1))
+                        .background(Color.white.opacity(0.05))
                         .cornerRadius(8)
                         
                         // Current Weather Block
@@ -65,12 +66,12 @@ struct ContentView: View {
                             .padding()
                             Spacer()
                         }
-                        .background(Color.green.opacity(0.1))
+                        .background(Color.white.opacity(0.05))
                         .cornerRadius(8)
                         
                         // Weather Forecast Block
                         ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(alignment: .top) { // Odstęp między kartami
+                            HStack(alignment: .top) {
                                 ForEach(weatherData.list.prefix(20), id: \.dt) { item in
                                     VStack(alignment: .leading) {
                                         if let timestamp = dateToTimestamp(dateString: item.dt_txt) {
@@ -80,12 +81,6 @@ struct ContentView: View {
                                             Text(item.dt_txt)
                                                 .font(.subheadline)
                                         }
-//                                        Image(systemName: icon)
-//                                            .resizable()
-//                                                .aspectRatio(contentMode: .fit) // Możesz również użyć .fill
-//                                                .frame(width: 40, height: 40)
-//                                                .symbolRenderingMode(.palette)
-//                                                .foregroundStyle(.black, .gray, .blue)
                                         weatherIcon(for: (item.weather.first?.icon)!)
                                         Text(kelvinToCelsius(item.main.temp))
                                             .font(.title2.bold())
@@ -93,17 +88,14 @@ struct ContentView: View {
                                             .font(.body)
                                         Text("\(item.clouds.all)%")
                                             .font(.body)
-//                                        Text("\(item.weather.first?.icon ?? "")")
-//                                            .font(.body)
-                                        
                                     }
-                                    .frame(width: UIScreen.main.bounds.width * 0.25) // Ustaw szerokość karty na 30% szerokości ekranu
+                                    .frame(width: UIScreen.main.bounds.width * 0.25)
                                 }
                             }
                             .padding(.all)
                         }
-                        .background(Color.orange.opacity(0.1))
-                        .cornerRadius(8)// Pozwól, aby karta zajmowała dostępne miejsce
+                        .background(Color.white.opacity(0.05))
+                        .cornerRadius(8)
                         
                         Spacer()
                     }
@@ -113,41 +105,26 @@ struct ContentView: View {
             }
             .padding()
             .navigationTitle("Pogoda")
-            .background(gradientBackground)
+            .background(backgroundGradient) // Używaj gradientu z zmiennej stanu
         }
         .foregroundColor(.white)
     }
     
     
-    var isDaytime: Bool {
-            let hour = Calendar.current.component(.hour, from: Date())
-            return hour >= 5 && hour < 19
-        }
-        
-    
-    var gradientBackground: LinearGradient {
-            if isDaytime {
-                return LinearGradient(
-                    gradient: Gradient(colors: [Color.blue.opacity(0.3), Color.blue.opacity(0.7)]),
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-            } else {
-                return LinearGradient(
-                    gradient: Gradient(colors: [Color.black.opacity(0.8), Color.blue.opacity(0.3)]),
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-            }
-        }
-    
     func fetchWeatherData() async {
         do {
-            let cityNameCopy = cityName // Skopiuj wartość zmiennej
+            let cityNameCopy = cityName
             let _: () = try await API.shared.fetchWeatherData(forCity: cityNameCopy) { result in
                 switch result {
                 case .success(let data):
                     self.weatherData = data
+                    // Update icon based on fetched data
+                    if let currentWeather = data.list.first {
+                        let newIcon = iconMap[currentWeather.weather.first?.icon ?? ""] ?? "unknown"
+                        self.icon = newIcon
+                        // Update the background gradient
+                        self.backgroundGradient = gradientBackground(for: newIcon)
+                    }
                 case .failure(let error):
                     print("Błąd: \(error)")
                 }
@@ -158,6 +135,6 @@ struct ContentView: View {
     }
 }
 
-#Preview{
+#Preview {
     ContentView()
 }
