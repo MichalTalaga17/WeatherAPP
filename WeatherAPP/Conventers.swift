@@ -22,6 +22,8 @@ enum DateFormatType {
 func formatDate(timestamp: Int, formatType: DateFormatType) -> String {
     let date = Date(timeIntervalSince1970: Double(timestamp))
     let dateFormatter = DateFormatter()
+    dateFormatter.timeZone = TimeZone(secondsFromGMT: 0) // Set timezone to GMT
+    dateFormatter.locale = Locale(identifier: "en_US_POSIX") // Set locale to avoid unexpected localization
     
     switch formatType {
     case .fullDateTime:

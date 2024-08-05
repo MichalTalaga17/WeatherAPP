@@ -113,9 +113,33 @@ struct ContentView: View {
             }
             .padding()
             .navigationTitle("Pogoda")
+            .background(gradientBackground)
         }
         .foregroundColor(.white)
     }
+    
+    
+    var isDaytime: Bool {
+            let hour = Calendar.current.component(.hour, from: Date())
+            return hour >= 5 && hour < 19
+        }
+        
+    
+    var gradientBackground: LinearGradient {
+            if isDaytime {
+                return LinearGradient(
+                    gradient: Gradient(colors: [Color.blue.opacity(0.3), Color.blue.opacity(0.7)]),
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            } else {
+                return LinearGradient(
+                    gradient: Gradient(colors: [Color.black.opacity(0.8), Color.blue.opacity(0.3)]),
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            }
+        }
     
     func fetchWeatherData() async {
         do {
