@@ -3,6 +3,8 @@ import SwiftUI
 struct ContentView: View {
     @State private var cityName = ""
     
+    
+    
     var body: some View {
         NavigationView {
             VStack(alignment: .leading) {
@@ -29,9 +31,14 @@ struct ContentView: View {
                 }
                 .padding(.bottom, 20)
                 Spacer()
+                
+                CircularProgressView(
+                    progress: 0.78,
+                                gradientColors: [Color.yellow, Color.orange] // Ustal kolor gradientu
+                            )
+                                .frame(width: 150, height: 150)
             }
             .padding()
-            
             .background(LinearGradient(
                 gradient: Gradient(colors: [Color.yellow.opacity(0.5), Color.blue.opacity(0.7)]),
                 startPoint: .bottom,
