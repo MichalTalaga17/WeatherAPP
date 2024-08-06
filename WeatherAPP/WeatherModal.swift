@@ -17,6 +17,8 @@ struct WeatherData: Codable {
         let pop: Double
         let sys: Sys
         let dt_txt: String
+        let rain: Rain?
+        let snow: Snow?
 
         struct Main: Codable {
             let temp: Double
@@ -50,7 +52,26 @@ struct WeatherData: Codable {
         struct Sys: Codable {
             let pod: String
         }
+        
+        struct Rain: Codable {
+            let h1: Double?
+            let h3: Double?
 
+            enum CodingKeys: String, CodingKey {
+                case h1 = "1h"
+                case h3 = "3h"
+            }
+        }
+        
+        struct Snow: Codable {
+            let h1: Double?
+            let h3: Double?
+
+            enum CodingKeys: String, CodingKey {
+                case h1 = "1h"
+                case h3 = "3h"
+            }
+        }
     }
 
     struct City: Codable {

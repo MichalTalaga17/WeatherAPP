@@ -15,7 +15,6 @@ class API {
                 completion(.failure(error ?? NSError(domain: "No data", code: -1, userInfo: nil)))
                 return
             }
-            print("1.1\( data)")
 
             do {
                 let weatherData = try JSONDecoder().decode(WeatherData.self, from: data)
@@ -23,7 +22,6 @@ class API {
             } catch {
                 completion(.failure(error))            }
         }.resume()
-        print(4)
     }
 }
 

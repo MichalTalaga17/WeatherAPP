@@ -17,7 +17,7 @@ struct ContentView: View {
                             .background(Color.black.opacity(0.1))
                             .cornerRadius(8)
                         
-                        NavigationLink(destination: LocationWeatherView()) {
+                        NavigationLink(destination: LocationWeatherView(cityName: cityName)) {
                             Text("Szukaj")
                                 .font(.callout)
                                 .padding()
@@ -38,6 +38,7 @@ struct ContentView: View {
                 endPoint: .top
             ))
         }
+        
     }
     
 }
