@@ -34,11 +34,21 @@ struct Lab: View {
 
                     // Set frame width of each column using (containerWidth * percentage)
                         HStack (spacing:10) {
-                            HStack{
-                                VStack (alignment: .leading){
-                                    Text("\(kelvinToCelsius(currentWeather.main.feels_like))")
+                            HStack(spacing:30){
+                                VStack (alignment: .leading, spacing: 5){
+                                    Image(systemName: "sunrise.fill")
+                                        .symbolRenderingMode(.palette)
+                                        .foregroundStyle(.white, .yellow)
+                                        .font(.title)
+                                    Text("\(formatDate(timestamp: weatherData.city.sunrise, formatType: .timeOnly))")
                                 }
-                                Spacer()
+                                VStack (alignment: .leading, spacing: 5){
+                                    Image(systemName: "sunset.fill")
+                                        .symbolRenderingMode(.palette)
+                                        .foregroundStyle(.white, .yellow)
+                                        .font(.title)
+                                    Text("\(formatDate(timestamp: weatherData.city.sunset, formatType: .timeOnly))")
+                                }
                                 
                             }
                                 .padding()
@@ -58,8 +68,6 @@ struct Lab: View {
                     
                     HStack {
                         VStack(alignment: .leading, spacing: 5) {
-                            Text("Wschód słońca: \(formatDate(timestamp: weatherData.city.sunrise, formatType: .timeOnly))")
-                            Text("Zachód słońca: \(formatDate(timestamp: weatherData.city.sunset, formatType: .timeOnly))")
                             Text("Wilgotność: \(currentWeather.main.humidity)%")
                             Text("Ciśnienie: \(currentWeather.main.pressure) hPa")
                             Text("Zachmurzenie: \(currentWeather.clouds.all)%")
@@ -155,5 +163,5 @@ struct Lab: View {
     }
     
     #Preview {
-        Lab(cityName: "Zembrzyce")
+        Lab(cityName: "Nowy Jork")
     }

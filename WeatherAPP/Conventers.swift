@@ -9,7 +9,7 @@ import Foundation
 
 func kelvinToCelsius(_ kelvin: Double) -> String {
     let celsius = kelvin - 273.15
-    return String(format: "%0.0f °C", celsius)
+    return String(format: "%0.0f°", celsius)
 }
 enum DateFormatType {
     case fullDateTime          // "dd.MM.yyyy HH:mm"
@@ -17,14 +17,14 @@ enum DateFormatType {
     case timeOnly              // "HH:mm"
     case dateOnly              // "dd.MM.yyyy"
     case dateWithMonthName     // "dd MMMM yyyy"
-    case hourOnly              // "HH" (new case)
+    case hourOnly              // "HH"
 }
 
 func formatDate(timestamp: Int, formatType: DateFormatType) -> String {
     let date = Date(timeIntervalSince1970: Double(timestamp))
     let dateFormatter = DateFormatter()
-    dateFormatter.timeZone = TimeZone(secondsFromGMT: 0) // Set timezone to GMT
-    dateFormatter.locale = Locale(identifier: "en_US_POSIX") // Set locale to avoid unexpected localization
+    dateFormatter.timeZone = TimeZone(secondsFromGMT: 7200) // Set timezone to CET(my timezone)
+    dateFormatter.locale = Locale(identifier: "en_US_POSIX")
     
     switch formatType {
     case .fullDateTime:
