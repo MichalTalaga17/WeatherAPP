@@ -56,8 +56,9 @@ struct Lab: View {
                                 .background(Color.white.opacity(0.05))
                                 .cornerRadius(8)
                             
-                            HStack {
-                                Text("Column 50% Width")
+                            VStack {
+                                Text("\(currentWeather.clouds.all)%")
+                                Text("\(convertMetersToKilometers(meters: Double(currentWeather.visibility))) km")
                             }
                                 .padding()
                                 .frame(width: containerWidth * 0.5 - 5, height: 100)
@@ -70,8 +71,6 @@ struct Lab: View {
                         VStack(alignment: .leading, spacing: 5) {
                             Text("Wilgotność: \(currentWeather.main.humidity)%")
                             Text("Ciśnienie: \(currentWeather.main.pressure) hPa")
-                            Text("Zachmurzenie: \(currentWeather.clouds.all)%")
-                            Text("Widoczność: \(currentWeather.visibility) m")
                             Text("Prędkość wiatru: \(String(format: "%.0f", currentWeather.wind.speed)) m/s \(windDirection(from: currentWeather.wind.deg))")
                             Text("Opady deszczu: \(String(format: "%.0f", currentWeather.rain?.h1 ?? 0)) mm")
                             

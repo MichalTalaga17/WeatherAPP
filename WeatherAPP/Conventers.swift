@@ -7,6 +7,10 @@
 
 import Foundation
 
+func convertMetersToKilometers(meters: Double) -> Double {
+    return meters / 1000.0
+}
+
 func kelvinToCelsius(_ kelvin: Double) -> String {
     let celsius = kelvin - 273.15
     return String(format: "%0.0f°", celsius)
