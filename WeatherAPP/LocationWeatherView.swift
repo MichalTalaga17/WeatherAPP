@@ -67,37 +67,62 @@ struct LocationWeatherView: View {
                     }
                     
                     HStack {
-                        VStack {
+                        VStack(spacing: 15) {
                             HStack{
                                 VStack{
                                     Text("\(currentWeather.main.humidity)%")
+                                        .font(.title2 .bold())
                                     Text("Wilgotność")
                                 }
                                 .frame(width: containerWidth * 0.5-20)
-                                .border(/*@START_MENU_TOKEN@*/Color.black/*@END_MENU_TOKEN@*/)
                                 Spacer()
                                 VStack{
                                     Text("\(currentWeather.main.pressure) hPa")
+                                        .font(.title2 .bold())
                                     Text("Ciśnienie")
                                 }
                                 .frame(width: containerWidth * 0.5-20)
-                                .border(/*@START_MENU_TOKEN@*/Color.black/*@END_MENU_TOKEN@*/)
                             }
-                            .border(/*@START_MENU_TOKEN@*/Color.black/*@END_MENU_TOKEN@*/)
-//                            Text(": \(currentWeather.main.pressure) hPa")
-//                            Text("Prędkość wiatru: \(String(format: "%.0f", currentWeather.wind.speed)) m/s \(windDirection(from: currentWeather.wind.deg))")
-//                            Text("Opady deszczu: \(String(format: "%.0f", currentWeather.rain?.h1 ?? 0)) mm")
-//                            
-//                            if let snow = currentWeather.snow {
-//                                Text("Opady śniegu: \(snow.h1 ?? 0) mm")
-//                            }
+                            HStack{
+                                VStack{
+                                    Text("\(String(format: "%.0f", currentWeather.wind.speed)) m/s \(windDirection(from: currentWeather.wind.deg))")
+                                        .font(.title2 .bold())
+                                    Text("Wiatr")
+                                }
+                                .frame(width: containerWidth * 0.5-20)
+                                Spacer()
+                                VStack{
+                                    if let snow = currentWeather.snow {
+                                        Text("\(String(format: "%.0f", snow.h1 ?? 0)) mm")
+                                            .font(.title2 .bold())
+                                        Text("Opady śniegu")
+                                    }else{
+                                        if let rain = currentWeather.rain {
+                                            Text("\(String(format: "%.0f", rain.h1 ?? 0)) mm")
+                                                .font(.title2 .bold())
+                                            Text("Opady deszczu")
+                                        }else{
+                                            Text("\(String(format: "%.0f", currentWeather.rain?.h1 ?? 0)) mm")
+                                                .font(.title2 .bold())
+                                            Text("Opady deszczu")
+                                        }
+                                    }
+                                    
+                                }
+                                .frame(width: containerWidth * 0.5-20)
+                            }
+                            
+                            
+                            
                         }
+                        
+                        .padding(.vertical)
                     }
                     .background(Color.white.opacity(0.05))
                     .cornerRadius(8)
                     
                     ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(alignment: .top) {
+                        HStack(alignment: .top, spacing: 5) {
                             ForEach(weatherData.list.prefix(20), id: \.dt) { item in
                                 VStack(alignment: .center) {
                                     if let timestamp = dateToTimestamp(dateString: item.dt_txt) {
@@ -119,7 +144,7 @@ struct LocationWeatherView: View {
                             }
                         }
                         
-                        .padding(15)
+                        .padding(.vertical, 15.0)
                     }
                     .background(Color.white.opacity(0.05))
                     .cornerRadius(8)
@@ -135,6 +160,7 @@ struct LocationWeatherView: View {
                     print("Ulubione")
                 } label: {
                     Text("Dodaj do ulubionych")
+                        .font(.caption)
                         .padding()
                         .background(Color.white.opacity(0.1))
                         .cornerRadius(30)
@@ -147,19 +173,20 @@ struct LocationWeatherView: View {
         .foregroundColor(.white)
         .navigationBarBackButtonHidden(true)
         .toolbar {
-                    ToolbarItem(placement: .topBarLeading) {
-                        Button(action: {
-                            self.presentationMode.wrappedValue.dismiss()
-                        }) {
-                            Text("Wróć")
-                                .font(.callout)
-                                .padding(10)
-                                .background(Color.white.opacity(0.1))
-                                .cornerRadius(20)
-                        }
-                        .foregroundColor(.white)
-                    }
+            ToolbarItem(placement: .topBarLeading) {
+                Button(action: {
+                    self.presentationMode.wrappedValue.dismiss()
+                }) {
+                    Text("Wróć")
+                        .font(.caption)
+                        .padding(.horizontal, 15)
+                        .padding(.vertical, 8)
+                        .background(Color.white.opacity(0.1))
+                        .cornerRadius(20)
                 }
+                .foregroundColor(.white)
+            }
+        }
         .onAppear {
             Task {
                 await fetchWeatherData()
