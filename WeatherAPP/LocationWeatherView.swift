@@ -26,24 +26,8 @@ struct LocationWeatherView: View {
                     .padding()
                     .background(Color.white.opacity(0.05))
                     .cornerRadius(8)
-                    HStack{
-                        VStack{
-                            Text(kelvinToCelsius(currentWeather.main.temp))
-                                .font(.largeTitle.bold())
-                        }
-                        .padding()
-                        .background(Color.white.opacity(0.05))
-                        .cornerRadius(8)
-                        
-                        VStack{
-                            Text(kelvinToCelsius(currentWeather.main.temp))
-                                .font(.largeTitle.bold())
-                        }
-                        .padding()
-                        .background(Color.white.opacity(0.05))
-                        .cornerRadius(8)
-                        
-                    }
+                    
+                    
                     HStack {
                         VStack(alignment: .leading, spacing: 5) {
                             Text(kelvinToCelsius(currentWeather.main.temp))
@@ -52,7 +36,7 @@ struct LocationWeatherView: View {
                             Text("Zachód słońca: \(formatDate(timestamp: weatherData.city.sunset, formatType: .timeOnly))")
                             Text("Temperatura: \(kelvinToCelsius(currentWeather.main.temp))")
                             Text("Odczuwalna: \(kelvinToCelsius(currentWeather.main.feels_like))")
-                            Text("Min: \(kelvinToCelsius(currentWeather.main.temp_min)), Max: \(kelvinToCelsius(currentWeather.main.temp_max))")
+                            
                             Text("Wilgotność: \(currentWeather.main.humidity)%")
                             Text("Ciśnienie: \(currentWeather.main.pressure) hPa")
                             Text("Zachmurzenie: \(currentWeather.clouds.all)%")
