@@ -20,11 +20,11 @@ struct LocationWeatherView: View {
                             Spacer()
                         }
                         Text(kelvinToCelsius(currentWeather.main.temp))
-                            .font(.system(size: 50))
+                            .font(.system(size: 60))
                         Text(currentWeather.weather.first?.description ?? "")
                             .font(.headline)
                         Text("Od \(kelvinToCelsius(currentWeather.main.temp_min)) do \(kelvinToCelsius(currentWeather.main.temp_max))")
-                            .font(.headline)
+                            .font(.callout)
                     }
                     .padding(15)
                     
@@ -93,16 +93,16 @@ struct LocationWeatherView: View {
                                 Spacer()
                                 VStack{
                                     if let snow = currentWeather.snow {
-                                        Text("\(String(format: "%.0f", snow.h1 ?? 0)) mm")
+                                        Text("\(String(format: "%.0f", snow.h3 ?? 0)) mm")
                                             .font(.title2 .bold())
                                         Text("Opady śniegu")
                                     }else{
                                         if let rain = currentWeather.rain {
-                                            Text("\(String(format: "%.0f", rain.h1 ?? 0)) mm")
+                                            Text("\(String(format: "%.0f", rain.h3 ?? 0)) mm")
                                                 .font(.title2 .bold())
                                             Text("Opady deszczu")
                                         }else{
-                                            Text("\(String(format: "%.0f", currentWeather.rain?.h1 ?? 0)) mm")
+                                            Text("\(String(format: "%.0f", currentWeather.rain?.h3 ?? 0)) mm")
                                                 .font(.title2 .bold())
                                             Text("Opady deszczu")
                                         }
