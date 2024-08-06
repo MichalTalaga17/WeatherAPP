@@ -7,14 +7,16 @@
 
 import Foundation
 
-func convertMetersToKilometers(meters: Double) -> Double {
-    return meters / 1000.0
+
+func convertMetersToKilometers(meters: Double) -> Int {
+    return Int(meters / 1000.0)
 }
 
 func kelvinToCelsius(_ kelvin: Double) -> String {
     let celsius = kelvin - 273.15
     return String(format: "%0.0f°", celsius)
 }
+
 enum DateFormatType {
     case fullDateTime          // "dd.MM.yyyy HH:mm"
     case dayOfWeek             // "EEEE"
@@ -24,10 +26,10 @@ enum DateFormatType {
     case hourOnly              // "HH"
 }
 
-func formatDate(timestamp: Int, formatType: DateFormatType) -> String {
+func formatDate(timestamp: Int, formatType: DateFormatType, timeZone: TimeZone) -> String {
     let date = Date(timeIntervalSince1970: Double(timestamp))
     let dateFormatter = DateFormatter()
-    dateFormatter.timeZone = TimeZone(secondsFromGMT: 7200) // Set timezone to CET(my timezone)
+    dateFormatter.timeZone = timeZone
     dateFormatter.locale = Locale(identifier: "en_US_POSIX")
     
     switch formatType {
@@ -61,25 +63,24 @@ func dateToTimestamp(dateString: String) -> TimeInterval? {
 }
 
 func windDirection(from degrees: Int) -> String {
-        switch degrees {
-        case 0..<23, 338...360:
-            return "N"
-        case 23..<68:
-            return "NE"
-        case 68..<113:
-            return "E"
-        case 113..<158:
-            return "SE"
-        case 158..<203:
-            return "S"
-        case 203..<248:
-            return "SW"
-        case 248..<293:
-            return "W"
-        case 293..<338:
-            return "NW"
-        default:
-            return "N/A"
-        }
+    switch degrees {
+    case 0..<23, 338...360:
+        return "N"
+    case 23..<68:
+        return "NE"
+    case 68..<113:
+        return "E"
+    case 113..<158:
+        return "SE"
+    case 158..<203:
+        return "S"
+    case 203..<248:
+        return "SW"
+    case 248..<293:
+        return "W"
+    case 293..<338:
+        return "NW"
+    default:
+        return "N/A"
     }
-
+}

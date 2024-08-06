@@ -4,13 +4,13 @@ struct Lab: View {
     let cityName: String
     @State private var weatherData: WeatherData?
     @State private var backgroundGradient = LinearGradient(gradient: Gradient(colors: [Color.black]), startPoint: .top, endPoint: .bottom)
+    @State private var timeZone: TimeZone?
     
     var body: some View {
         VStack {
-            if let weatherData = weatherData, let currentWeather = weatherData.list.first {
+            if let weatherData = weatherData, let currentWeather = weatherData.list.first, let timeZone = timeZone {
                 Spacer()
                 VStack(alignment: .leading, spacing: 10) {
-                    
                     VStack(alignment: .center, spacing: 5) {
                         HStack {
                             Spacer()
@@ -24,48 +24,45 @@ struct Lab: View {
                             .font(.headline)
                         Text("Od \(kelvinToCelsius(currentWeather.main.temp_min)) do \(kelvinToCelsius(currentWeather.main.temp_max))")
                             .font(.headline)
-                        
-                        
-                        
                     }
                     .padding()
                     
-                    var containerWidth:CGFloat = UIScreen.main.bounds.width-32
-
-                    // Set frame width of each column using (containerWidth * percentage)
-                        HStack (spacing:10) {
-                            HStack(spacing:30){
-                                VStack (alignment: .leading, spacing: 5){
-                                    Image(systemName: "sunrise.fill")
-                                        .symbolRenderingMode(.palette)
-                                        .foregroundStyle(.white, .yellow)
-                                        .font(.title)
-                                    Text("\(formatDate(timestamp: weatherData.city.sunrise, formatType: .timeOnly))")
-                                }
-                                VStack (alignment: .leading, spacing: 5){
-                                    Image(systemName: "sunset.fill")
-                                        .symbolRenderingMode(.palette)
-                                        .foregroundStyle(.white, .yellow)
-                                        .font(.title)
-                                    Text("\(formatDate(timestamp: weatherData.city.sunset, formatType: .timeOnly))")
-                                }
-                                
+                    let containerWidth: CGFloat = UIScreen.main.bounds.width - 32
+                    
+                    HStack(spacing: 10) {
+                        HStack(spacing: 30) {
+                            VStack(alignment: .leading, spacing: 5) {
+                                Image(systemName: "sunrise.fill")
+                                    .symbolRenderingMode(.palette)
+                                    .foregroundStyle(.white, .yellow)
+                                    .font(.title)
+                                Text("\(formatDate(timestamp: weatherData.city.sunrise, formatType: .timeOnly, timeZone: timeZone))")
                             }
-                                .padding()
-                                .frame(width: containerWidth * 0.5 - 5, height: 100)
-                                .background(Color.white.opacity(0.05))
-                                .cornerRadius(8)
-                            
+                            VStack(alignment: .leading, spacing: 5) {
+                                Image(systemName: "sunset.fill")
+                                    .symbolRenderingMode(.palette)
+                                    .foregroundStyle(.white, .yellow)
+                                    .font(.title)
+                                Text("\(formatDate(timestamp: weatherData.city.sunset, formatType: .timeOnly, timeZone: timeZone))")
+                            }
+                        }
+                        .padding()
+                        .frame(width: containerWidth * 0.5 - 5, height: 100)
+                        .background(Color.white.opacity(0.05))
+                        .cornerRadius(8)
+                        HStack{
+                            Image(systemName: "eyeglasses")
+                                .font(.title)
                             VStack {
                                 Text("\(currentWeather.clouds.all)%")
                                 Text("\(convertMetersToKilometers(meters: Double(currentWeather.visibility))) km")
                             }
-                                .padding()
-                                .frame(width: containerWidth * 0.5 - 5, height: 100)
-                                .background(Color.white.opacity(0.05))
-                                .cornerRadius(8)
                         }
-                    
+                        .padding()
+                        .frame(width: containerWidth * 0.5 - 5, height: 100)
+                        .background(Color.white.opacity(0.05))
+                        .cornerRadius(8)
+                    }
                     
                     HStack {
                         VStack(alignment: .leading, spacing: 5) {
@@ -73,7 +70,6 @@ struct Lab: View {
                             Text("Ciśnienie: \(currentWeather.main.pressure) hPa")
                             Text("Prędkość wiatru: \(String(format: "%.0f", currentWeather.wind.speed)) m/s \(windDirection(from: currentWeather.wind.deg))")
                             Text("Opady deszczu: \(String(format: "%.0f", currentWeather.rain?.h1 ?? 0)) mm")
-                            
                             
                             if let snow = currentWeather.snow {
                                 Text("Opady śniegu: \(snow.h1 ?? 0) mm")
@@ -90,7 +86,7 @@ struct Lab: View {
                             ForEach(weatherData.list.prefix(20), id: \.dt) { item in
                                 VStack(alignment: .center) {
                                     if let timestamp = dateToTimestamp(dateString: item.dt_txt) {
-                                        Text(formatDate(timestamp: Int(timestamp), formatType: .hourOnly))
+                                        Text(formatDate(timestamp: Int(timestamp), formatType: .hourOnly, timeZone: timeZone))
                                             .font(.subheadline)
                                     } else {
                                         Text(item.dt_txt)
@@ -114,53 +110,53 @@ struct Lab: View {
                     
                     Spacer()
                 }
-                
-                } else {
-                    Spacer()
-                }
+            } else {
                 Spacer()
-                HStack {
-                    Button {
-                        print("Ulubione")
-                    } label: {
-                        Text("Dodaj do ulubionych")
-                            .padding()
-                            .background(Color.white.opacity(0.1))
-                            .cornerRadius(30)
-                    }
-                }
-                .padding(.bottom)
             }
-                .padding()
-                .background(backgroundGradient)
-                .foregroundColor(.white)
-                .onAppear {
-                    Task {
-                        await fetchWeatherData()
-                    }
+            Spacer()
+            HStack {
+                Button {
+                    print("Ulubione")
+                } label: {
+                    Text("Dodaj do ulubionych")
+                        .padding()
+                        .background(Color.white.opacity(0.1))
+                        .cornerRadius(30)
                 }
+            }
+            .padding(.bottom)
         }
-        
-        func fetchWeatherData() async {
-            do {
-                let _: () = try await API.shared.fetchWeatherData(forCity: cityName) { result in
-                    switch result {
-                    case .success(let data):
-                        self.weatherData = data
-                        if let currentWeather = data.list.first {
-                            let newIcon = iconMap[currentWeather.weather.first?.icon ?? ""] ?? "unknown"
-                            self.backgroundGradient = gradientBackground(for: newIcon)
-                        }
-                    case .failure(let error):
-                        print("Błąd: \(error)")
-                    }
-                }
-            } catch {
-                print("Błąd podczas pobierania danych: \(error)")
+        .padding()
+        .background(backgroundGradient)
+        .foregroundColor(.white)
+        .onAppear {
+            Task {
+                await fetchWeatherData()
             }
         }
     }
     
-    #Preview {
-        Lab(cityName: "Nowy Jork")
+    func fetchWeatherData() async {
+        do {
+            let _: () = try await API.shared.fetchWeatherData(forCity: cityName) { result in
+                switch result {
+                case .success(let data):
+                    self.weatherData = data
+                    if let currentWeather = data.list.first {
+                        let newIcon = iconMap[currentWeather.weather.first?.icon ?? ""] ?? "unknown"
+                        self.backgroundGradient = gradientBackground(for: newIcon)
+                    }
+                    self.timeZone = TimeZone(secondsFromGMT: data.city.timezone)
+                case .failure(let error):
+                    print("Błąd: \(error)")
+                }
+            }
+        } catch {
+            print("Błąd podczas pobierania danych: \(error)")
+        }
     }
+}
+
+#Preview {
+    Lab(cityName: "Nowy Jork")
+}

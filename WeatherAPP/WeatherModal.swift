@@ -6,7 +6,7 @@ struct WeatherData: Codable {
     let cnt: Int
     let list: [List]
     let city: City
-
+    
     struct List: Codable {
         let dt: Int
         let main: Main
@@ -19,7 +19,7 @@ struct WeatherData: Codable {
         let dt_txt: String
         let rain: Rain?
         let snow: Snow?
-
+        
         struct Main: Codable {
             let temp: Double
             let feels_like: Double
@@ -31,24 +31,24 @@ struct WeatherData: Codable {
             let humidity: Int
             let temp_kf: Double
         }
-
+        
         struct Weather: Codable {
             let id: Int
             let main: String
             let description: String
             let icon: String
         }
-
+        
         struct Clouds: Codable {
             let all: Int
         }
-
+        
         struct Wind: Codable {
             let speed: Double
             let deg: Int
             let gust: Double?
         }
-
+        
         struct Sys: Codable {
             let pod: String
         }
@@ -56,7 +56,7 @@ struct WeatherData: Codable {
         struct Rain: Codable {
             let h1: Double?
             let h3: Double?
-
+            
             enum CodingKeys: String, CodingKey {
                 case h1 = "1h"
                 case h3 = "3h"
@@ -66,14 +66,14 @@ struct WeatherData: Codable {
         struct Snow: Codable {
             let h1: Double?
             let h3: Double?
-
+            
             enum CodingKeys: String, CodingKey {
                 case h1 = "1h"
                 case h3 = "3h"
             }
         }
     }
-
+    
     struct City: Codable {
         let id: Int
         let name: String
@@ -83,7 +83,7 @@ struct WeatherData: Codable {
         let timezone: Int
         let sunrise: Int
         let sunset: Int
-
+        
         struct Coord: Codable {
             let lat: Double
             let lon: Double
