@@ -31,12 +31,6 @@ struct ContentView: View {
                 }
                 .padding(.bottom, 20)
                 Spacer()
-                
-                CircularProgressView(
-                    progress: 0.78,
-                                gradientColors: [Color.yellow, Color.orange] // Ustal kolor gradientu
-                            )
-                                .frame(width: 150, height: 150)
             }
             .padding()
             .background(LinearGradient(

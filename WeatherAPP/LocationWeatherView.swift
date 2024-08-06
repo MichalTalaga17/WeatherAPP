@@ -26,7 +26,7 @@ struct LocationWeatherView: View {
                         Text("Od \(kelvinToCelsius(currentWeather.main.temp_min)) do \(kelvinToCelsius(currentWeather.main.temp_max))")
                             .font(.headline)
                     }
-                    .padding()
+                    .padding(15)
                     
                     let containerWidth: CGFloat = UIScreen.main.bounds.width - 32
                     
@@ -47,15 +47,16 @@ struct LocationWeatherView: View {
                                 Text("\(formatDate(timestamp: weatherData.city.sunset, formatType: .timeOnly, timeZone: timeZone))")
                             }
                         }
-                        .padding()
+                        .padding(15)
                         .frame(width: containerWidth * 0.5 - 5, height: 100)
                         .background(Color.white.opacity(0.05))
                         .cornerRadius(8)
-                        HStack{
-                            Image(systemName: "eyeglasses")
-                                .font(.title)
+                        HStack(spacing: 20){
+                            Image(systemName: "smoke.fill")
+                                .font(.largeTitle)
                             VStack {
                                 Text("\(currentWeather.clouds.all)%")
+                                    .font(.title .bold())
                                 Text("\(convertMetersToKilometers(meters: Double(currentWeather.visibility))) km")
                             }
                         }
@@ -66,18 +67,31 @@ struct LocationWeatherView: View {
                     }
                     
                     HStack {
-                        VStack(alignment: .leading, spacing: 5) {
-                            Text("Wilgotność: \(currentWeather.main.humidity)%")
-                            Text("Ciśnienie: \(currentWeather.main.pressure) hPa")
-                            Text("Prędkość wiatru: \(String(format: "%.0f", currentWeather.wind.speed)) m/s \(windDirection(from: currentWeather.wind.deg))")
-                            Text("Opady deszczu: \(String(format: "%.0f", currentWeather.rain?.h1 ?? 0)) mm")
-                            
-                            if let snow = currentWeather.snow {
-                                Text("Opady śniegu: \(snow.h1 ?? 0) mm")
+                        VStack {
+                            HStack{
+                                VStack{
+                                    Text("\(currentWeather.main.humidity)%")
+                                    Text("Wilgotność")
+                                }
+                                .frame(width: containerWidth * 0.5-20)
+                                .border(/*@START_MENU_TOKEN@*/Color.black/*@END_MENU_TOKEN@*/)
+                                Spacer()
+                                VStack{
+                                    Text("\(currentWeather.main.pressure) hPa")
+                                    Text("Ciśnienie")
+                                }
+                                .frame(width: containerWidth * 0.5-20)
+                                .border(/*@START_MENU_TOKEN@*/Color.black/*@END_MENU_TOKEN@*/)
                             }
+                            .border(/*@START_MENU_TOKEN@*/Color.black/*@END_MENU_TOKEN@*/)
+//                            Text(": \(currentWeather.main.pressure) hPa")
+//                            Text("Prędkość wiatru: \(String(format: "%.0f", currentWeather.wind.speed)) m/s \(windDirection(from: currentWeather.wind.deg))")
+//                            Text("Opady deszczu: \(String(format: "%.0f", currentWeather.rain?.h1 ?? 0)) mm")
+//                            
+//                            if let snow = currentWeather.snow {
+//                                Text("Opady śniegu: \(snow.h1 ?? 0) mm")
+//                            }
                         }
-                        .padding()
-                        Spacer()
                     }
                     .background(Color.white.opacity(0.05))
                     .cornerRadius(8)
@@ -104,7 +118,8 @@ struct LocationWeatherView: View {
                                 .frame(width: UIScreen.main.bounds.width * 0.25)
                             }
                         }
-                        .padding([.top, .bottom, .trailing])
+                        
+                        .padding(15)
                     }
                     .background(Color.white.opacity(0.05))
                     .cornerRadius(8)
@@ -138,7 +153,7 @@ struct LocationWeatherView: View {
                         }) {
                             Text("Wróć")
                                 .font(.callout)
-                                .padding(10 )
+                                .padding(10)
                                 .background(Color.white.opacity(0.1))
                                 .cornerRadius(20)
                         }

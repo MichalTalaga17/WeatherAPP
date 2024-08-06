@@ -16,7 +16,7 @@ struct CircularProgressView: View {
             Circle()
                 .stroke(
                     Color.white.opacity(0.05),
-                    lineWidth: 30
+                    lineWidth: 14
                 )
             
             Circle()
@@ -29,15 +29,15 @@ struct CircularProgressView: View {
                         endAngle: .degrees(350)
                     ),
                     style: StrokeStyle(
-                        lineWidth: 20,
+                        lineWidth: 10,
                         lineCap: .round
                     )
                 )
                 .rotationEffect(.degrees(-90))
                 .animation(.easeOut, value: progress)
             
-            Text(String(format: "%.0f%%", progress * 100))
-                .font(.title)
+            Text(String(format: "%.0f%", progress * 100))
+                .font(.callout)
                 .bold()
                 .foregroundColor(.clear)
                 .background(
