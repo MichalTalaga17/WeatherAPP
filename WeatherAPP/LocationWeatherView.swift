@@ -216,5 +216,5 @@ struct LocationWeatherView: View {
 }
 
 #Preview {
-    LocationWeatherView(cityName: "Zembrzyce")
+    LocationWeatherView(cityName: "Nowy Jork")
 }
