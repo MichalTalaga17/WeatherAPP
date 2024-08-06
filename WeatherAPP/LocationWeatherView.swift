@@ -8,42 +8,61 @@ struct LocationWeatherView: View {
     var body: some View {
         VStack {
             if let weatherData = weatherData, let currentWeather = weatherData.list.first {
+                Spacer()
                 VStack(alignment: .leading, spacing: 10) {
                     
-                    Spacer()
-                    HStack {
-                        VStack(alignment: .leading, spacing: 5) {
+                    VStack(alignment: .center, spacing: 5) {
+                        HStack {
+                            Spacer()
+                            Text("\(weatherData.city.name)")
+                                .font(.title2.bold())
+                            Spacer()
+                        }
+                        
+                        Text(currentWeather.weather.first?.description ?? "")
+                        
+                        
+                    }
+                    .padding()
+                    .background(Color.white.opacity(0.05))
+                    .cornerRadius(8)
+                    HStack{
+                        VStack{
                             Text(kelvinToCelsius(currentWeather.main.temp))
                                 .font(.largeTitle.bold())
                         }
                         .padding()
-                        Spacer()
-                        VStack(alignment: .leading, spacing: 5) {
-                            Text("\(weatherData.city.name)")
-                                .font(.title2.bold())
-                            Text("Wschód słońca: \(formatDate(timestamp: weatherData.city.sunrise, formatType: .timeOnly))")
-                            Text("Zachód słońca: \(formatDate(timestamp: weatherData.city.sunset, formatType: .timeOnly))")
+                        .background(Color.white.opacity(0.05))
+                        .cornerRadius(8)
+                        
+                        VStack{
+                            Text(kelvinToCelsius(currentWeather.main.temp))
+                                .font(.largeTitle.bold())
                         }
                         .padding()
+                        .background(Color.white.opacity(0.05))
+                        .cornerRadius(8)
+                        
                     }
-                    .background(Color.white.opacity(0.05))
-                    .cornerRadius(8)
-                    
                     HStack {
                         VStack(alignment: .leading, spacing: 5) {
+                            Text(kelvinToCelsius(currentWeather.main.temp))
+                                .font(.largeTitle.bold())
+                            Text("Wschód słońca: \(formatDate(timestamp: weatherData.city.sunrise, formatType: .timeOnly))")
+                            Text("Zachód słońca: \(formatDate(timestamp: weatherData.city.sunset, formatType: .timeOnly))")
                             Text("Temperatura: \(kelvinToCelsius(currentWeather.main.temp))")
                             Text("Odczuwalna: \(kelvinToCelsius(currentWeather.main.feels_like))")
                             Text("Min: \(kelvinToCelsius(currentWeather.main.temp_min)), Max: \(kelvinToCelsius(currentWeather.main.temp_max))")
                             Text("Wilgotność: \(currentWeather.main.humidity)%")
                             Text("Ciśnienie: \(currentWeather.main.pressure) hPa")
                             Text("Zachmurzenie: \(currentWeather.clouds.all)%")
-                            Text("Opis pogody: \(currentWeather.weather.first?.description ?? "")")
                             Text("Widoczność: \(currentWeather.visibility) m")
                             Text("Prędkość wiatru: \(String(format: "%.0f", currentWeather.wind.speed)) m/s \(windDirection(from: currentWeather.wind.deg))")
-                            Text("Opady deszczu: \(currentWeather.rain?.h1 ?? 0) mm (1h), \(currentWeather.rain?.h3 ?? 0) mm (3h)")
+                            Text("Opady deszczu: \(String(format: "%.0f", currentWeather.rain?.h1 ?? 0)) mm")
+                            
                             
                             if let snow = currentWeather.snow {
-                                Text("Opady śniegu: \(snow.h1 ?? 0) mm (1h), \(snow.h3 ?? 0) mm (3h)")
+                                Text("Opady śniegu: \(snow.h1 ?? 0) mm")
                             }
                         }
                         .padding()
