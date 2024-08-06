@@ -15,44 +15,51 @@ struct Lab: View {
                         HStack {
                             Spacer()
                             Text("\(weatherData.city.name)")
-                                .font(.title2.bold())
+                                .font(.title3)
                             Spacer()
                         }
-                        
+                        Text(kelvinToCelsius(currentWeather.main.temp))
+                            .font(.system(size: 50))
                         Text(currentWeather.weather.first?.description ?? "")
+                            .font(.headline)
+                        Text("Od \(kelvinToCelsius(currentWeather.main.temp_min)) do \(kelvinToCelsius(currentWeather.main.temp_max))")
+                            .font(.headline)
+                        
                         
                         
                     }
                     .padding()
-                    .background(Color.white.opacity(0.05))
-                    .cornerRadius(8)
                     
                     var containerWidth:CGFloat = UIScreen.main.bounds.width-32
 
                     // Set frame width of each column using (containerWidth * percentage)
-                        HStack (spacing:0) {
-                            HStack {
-                                Text("Column 25% Width")
+                        HStack (spacing:10) {
+                            HStack{
+                                VStack (alignment: .leading){
+                                    Text("\(kelvinToCelsius(currentWeather.main.feels_like))")
+                                }
+                                Spacer()
+                                
                             }
-                                .frame(width: containerWidth * 0.5)
-                                .background(Color.red)
+                                .padding()
+                                .frame(width: containerWidth * 0.5 - 5, height: 100)
+                                .background(Color.white.opacity(0.05))
+                                .cornerRadius(8)
+                            
                             HStack {
-                                Text("Column 25% Width")
+                                Text("Column 50% Width")
                             }
-                            .frame(width: containerWidth * 0.5)
-                                .background(Color.red)
+                                .padding()
+                                .frame(width: containerWidth * 0.5 - 5, height: 100)
+                                .background(Color.white.opacity(0.05))
+                                .cornerRadius(8)
                         }
                     
                     
                     HStack {
                         VStack(alignment: .leading, spacing: 5) {
-                            Text(kelvinToCelsius(currentWeather.main.temp))
-                                .font(.largeTitle.bold())
                             Text("Wschód słońca: \(formatDate(timestamp: weatherData.city.sunrise, formatType: .timeOnly))")
                             Text("Zachód słońca: \(formatDate(timestamp: weatherData.city.sunset, formatType: .timeOnly))")
-                            Text("Temperatura: \(kelvinToCelsius(currentWeather.main.temp))")
-                            Text("Odczuwalna: \(kelvinToCelsius(currentWeather.main.feels_like))")
-                            
                             Text("Wilgotność: \(currentWeather.main.humidity)%")
                             Text("Ciśnienie: \(currentWeather.main.pressure) hPa")
                             Text("Zachmurzenie: \(currentWeather.clouds.all)%")
