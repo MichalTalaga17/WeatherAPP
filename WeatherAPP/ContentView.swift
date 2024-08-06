@@ -1,6 +1,9 @@
 import SwiftUI
+import SwiftData
 
 struct ContentView: View {
+    @Environment(\.modelContext) private var modelContext
+    @Query private var cities: [City]
     @State private var cityName = ""
     
     
@@ -29,8 +32,15 @@ struct ContentView: View {
                         }
                     }
                 }
-                .padding(.bottom, 20)
-                
+                .padding(.bottom, 40)
+                List {
+                    ForEach(cities) { item in
+                        NavigationLink(destination: LocationWeatherView(cityName: cityName)) {
+                            Text(item.name)
+                        }
+                    }
+                    .onDelete(perform: deleteItems)
+                }
                 Spacer()
             }
             .padding()
@@ -39,11 +49,22 @@ struct ContentView: View {
                 startPoint: .bottom,
                 endPoint: .top
             ))
+            
+            
         }
         
     }
+    private func deleteItems(offsets: IndexSet) {
+        withAnimation {
+            for index in offsets {
+                modelContext.delete(cities[index])
+            }
+        }
+    }
+    
     
 }
+
 
 #Preview {
     ContentView()

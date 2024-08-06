@@ -1,6 +1,9 @@
 import SwiftUI
+import SwiftData
 
 struct LocationWeatherView: View {
+    @Environment(\.modelContext) private var modelContext
+    @Query private var cities: [City]
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     let cityName: String
     @State private var weatherData: WeatherData?
@@ -157,7 +160,13 @@ struct LocationWeatherView: View {
             Spacer()
             HStack {
                 Button {
-                    print("Ulubione")
+                    let newCity = City(name: cityName)
+                    
+                    do {
+                        modelContext.insert(newCity)
+                    } catch {
+                        print("Error saving context: \(error)")
+                    }
                 } label: {
                     Text("Dodaj do ulubionych")
                         .font(.caption)
