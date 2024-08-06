@@ -9,6 +9,9 @@ struct LocationWeatherView: View {
     @State private var weatherData: WeatherData?
     @State private var backgroundGradient = LinearGradient(gradient: Gradient(colors: [Color.black]), startPoint: .top, endPoint: .bottom)
     @State private var timeZone: TimeZone?
+    @State private var showAlert: Bool = false
+    @State private var alertTitle: String = ""
+    @State private var alertMessage: String = ""
     
     var body: some View {
         VStack {
@@ -114,11 +117,7 @@ struct LocationWeatherView: View {
                                 }
                                 .frame(width: containerWidth * 0.5-20)
                             }
-                            
-                            
-                            
                         }
-                        
                         .padding(.vertical)
                     }
                     .background(Color.white.opacity(0.05))
@@ -146,7 +145,6 @@ struct LocationWeatherView: View {
                                 .frame(width: UIScreen.main.bounds.width * 0.25)
                             }
                         }
-                        
                         .padding(.vertical, 15.0)
                     }
                     .background(Color.white.opacity(0.05))
@@ -164,6 +162,7 @@ struct LocationWeatherView: View {
                     
                     do {
                         modelContext.insert(newCity)
+                        try modelContext.save() // Dodajemy zapisywanie kontekstu
                     } catch {
                         print("Error saving context: \(error)")
                     }
@@ -201,6 +200,15 @@ struct LocationWeatherView: View {
                 await fetchWeatherData()
             }
         }
+        .alert(isPresented: $showAlert) {
+            Alert(
+                title: Text(alertTitle),
+                message: Text(alertMessage),
+                dismissButton: .default(Text("Got it!")) {
+                    self.presentationMode.wrappedValue.dismiss()
+                }
+            )
+        }
     }
     
     func fetchWeatherData() async {
@@ -215,15 +223,22 @@ struct LocationWeatherView: View {
                     }
                     self.timeZone = TimeZone(secondsFromGMT: data.city.timezone)
                 case .failure(let error):
-                    print("Błąd: \(error)")
+                    self.alertTitle = "Błąd"
+                    self.alertMessage = "Nie udało się pobrać danych o pogodzie: \(error.localizedDescription)"
+                    self.showAlert = true
                 }
             }
         } catch {
             print("Błąd podczas pobierania danych: \(error)")
+            self.alertTitle = "Błąd"
+            self.alertMessage = "Nie udało się pobrać danych o pogodzie: \(error.localizedDescription)"
+            self.showAlert = true
         }
     }
 }
 
 #Preview {
-    LocationWeatherView(cityName: "Nowy Jork")
+    LocationWeatherView(cityName: "wągrzywerowice")
+        .modelContainer(for: City.self)
 }
+

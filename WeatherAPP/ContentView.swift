@@ -6,6 +6,9 @@ struct ContentView: View {
     @Query private var cities: [City]
     @State private var cityName = ""
     
+    @State private var showAlert: Bool = false
+    @State private var alertTitle: String = ""
+    @State private var alertMessage: String = ""
     
     
     var body: some View {
@@ -33,14 +36,19 @@ struct ContentView: View {
                     }
                 }
                 .padding(.bottom, 40)
-                List {
                     ForEach(cities) { item in
-                        NavigationLink(destination: LocationWeatherView(cityName: cityName)) {
+                        NavigationLink(destination: LocationWeatherView(cityName: item.name)) {
                             Text(item.name)
+                            Spacer()
                         }
+                        .padding()
+                        .background(Color.black.opacity(0.1))
+                        .cornerRadius(8)
+                        .foregroundStyle(Color.white)
+                        
                     }
                     .onDelete(perform: deleteItems)
-                }
+                    .background(Color.white.opacity(0))
                 Spacer()
             }
             .padding()
@@ -68,4 +76,5 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
+        .modelContainer(for: City.self, inMemory: true)
 }

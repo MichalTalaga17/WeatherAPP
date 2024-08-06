@@ -7,9 +7,8 @@ class API {
         let urlString = "https://api.openweathermap.org/data/2.5/forecast?q=\(city)&lang=pl&appid=e58dfbc15daacbeabeed6abc3e5d95ca"
         guard let url = URL(string: urlString) else {
             completion(.failure(NSError(domain: "Invalid URL", code: -1, userInfo: nil)))
-            return
+            return()
         }
-
         URLSession.shared.dataTask(with: url) { data, response, error in
             guard let data = data else {
                 completion(.failure(error ?? NSError(domain: "No data", code: -1, userInfo: nil)))
