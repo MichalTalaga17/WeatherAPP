@@ -124,34 +124,36 @@ struct LocationWeatherView: View {
                     .background(Color.white.opacity(0.05))
                     .cornerRadius(8)
                     
-                    ScrollView(.horizontal, showsIndicators: false) {
-                                            HStack(alignment: .top, spacing: 5) {
-                                                ForEach(forecastData.list.prefix(20), id: \.dt) { item in
-                                                    VStack(alignment: .center) {
-                                                        if let timestamp = dateToTimestamp(dateString: item.dt_txt) {
-                                                            Text(formatDate(timestamp: Int(timestamp), formatType: .hourOnly, timeZone: timeZone))
-                                                                .font(.subheadline)
-                                                        } else {
-                                                            Text(item.dt_txt)
-                                                                .font(.subheadline)
-                                                        }
-                                                        weatherIcon(for: (item.weather.first?.icon)!)
-                                                        Text(kelvinToCelsius(item.main.temp))
-                                                            .font(.title2.bold())
-                                                        Text(kelvinToCelsius(item.main.feels_like))
-                                                            .font(.body)
-                                                        Text("\(String(format: "%.0f", item.pop * 100))%")
-                                                            .font(.body)
-                                                    }
-                                                    .frame(width: UIScreen.main.bounds.width * 0.25)
-                                                }
-                                            }
-                                            .padding(.vertical, 15.0)
+                    if let forecastData = forecastData {
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(alignment: .top, spacing: 5) {
+                                ForEach(Array(forecastData.list.prefix(20)), id: \.dt) { item in
+                                    VStack(alignment: .center) {
+                                        if let timestamp = dateToTimestamp(dateString: item.dt_txt) {
+                                            Text(formatDate(timestamp: Int(timestamp), formatType: .hourOnly, timeZone: timeZone))
+                                                .font(.subheadline)
+                                        } else {
+                                            Text(item.dt_txt)
+                                                .font(.subheadline)
                                         }
-                                        .background(Color.white.opacity(0.05))
-                                        .cornerRadius(8)
-                                        
-                                        Spacer()
+                                        weatherIcon(for: item.weather.first?.icon ?? "defaultIcon")
+                                        Text(kelvinToCelsius(item.main.temp))
+                                            .font(.title2.bold())
+                                        Text(kelvinToCelsius(item.main.feels_like))
+                                            .font(.body)
+                                        Text("\(String(format: "%.0f", item.pop * 100))%")
+                                            .font(.body)
+                                    }
+                                    .frame(width: UIScreen.main.bounds.width * 0.25)
+                                }
+                            }
+                            .padding(.vertical, 15.0)
+                        }
+                        .background(Color.white.opacity(0.05))
+                        .cornerRadius(8)
+                    }
+                    
+                    Spacer()
                 }
             } else {
                 Spacer()
@@ -214,7 +216,7 @@ struct LocationWeatherView: View {
         .onAppear {
             Task {
                 await fetchCurrentWeatherData()
-                await fetchCurrentWeatherData()
+                await fetchWeatherData()
             }
         }
         .alert(isPresented: $showAlert) {
@@ -227,28 +229,32 @@ struct LocationWeatherView: View {
             )
         }
     }
+    
+    private func showAlert(title: String, message: String) {
+        self.alertTitle = title
+        self.alertMessage = message
+        self.showAlert = true
+    }
+    
     func fetchWeatherData() async {
-            do {
-                let _: () = try await API.shared.fetchForecastData(forCity: cityName) { result in
-                    switch result {
-                    case .success(let data):
-                        self.forecastData = data
-                        self.timeZone = TimeZone(secondsFromGMT: data.city.timezone)
-                    case .failure(let error):
-                        self.alertTitle = "Błąd"
-                        self.alertMessage = "Nie udało się pobrać danych o pogodzie: \(error.localizedDescription)"
-                        self.showAlert = true
-                    }
+        do {
+            let _: () = try await API.shared.fetchForecastData(forCity: cityName) { result in
+                switch result {
+                case .success(let data):
+                    self.forecastData = data
+                    self.timeZone = TimeZone(secondsFromGMT: data.city.timezone)
+                case .failure(let error):
+                    showAlert(title: "Błąd", message: "Nie udało się pobrać danych o pogodzie: \(error.localizedDescription)")
                 }
-            } catch {
-                print("Błąd podczas pobierania danych: \(error)")
-                self.alertTitle = "Błąd"
-                self.alertMessage = "Nie udało się pobrać danych o pogodzie: \(error.localizedDescription)"
-                self.showAlert = true
             }
+        } catch {
+            showAlert(title: "Błąd", message: "Nie udało się pobrać danych o pogodzie: \(error.localizedDescription)")
         }
+    }
+    
     func fetchCurrentWeatherData() async {
         do {
+            print(cityName)
             try await API.shared.fetchCurrentWeatherData(forCity: cityName) { result in
                 switch result {
                 case .success(let data):
@@ -257,22 +263,16 @@ struct LocationWeatherView: View {
                     self.backgroundGradient = gradientBackground(for: newIcon)
                     self.timeZone = TimeZone(secondsFromGMT: data.timezone)
                 case .failure(let error):
-                    self.alertTitle = "Błąd"
-                    self.alertMessage = "Nie udało się pobrać danych o pogodzie: \(error.localizedDescription)"
-                    self.showAlert = true
+                    showAlert(title: "Błąd", message: "Nie udało się pobrać danych o pogodzie: \(error.localizedDescription)")
                 }
             }
         } catch {
-            print("Błąd podczas pobierania danych: \(error)")
-            self.alertTitle = "Błąd"
-            self.alertMessage = "Nie udało się pobrać danych o pogodzie: \(error.localizedDescription)"
-            self.showAlert = true
+            showAlert(title: "Błąd", message: "Nie udało się pobrać danych o pogodzie: \(error.localizedDescription)")
         }
     }
 }
 
 #Preview {
-    LocationWeatherView(cityName: "Zembrzyce", favourite: true)
+    LocationWeatherView(cityName: "Nowy Jork", favourite: true)
         .modelContainer(for: City.self)
 }
-

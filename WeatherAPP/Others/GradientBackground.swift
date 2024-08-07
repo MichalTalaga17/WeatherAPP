@@ -11,7 +11,6 @@ import SwiftUI
 func gradientBackground(for iconName: String) -> LinearGradient {
     let iconCode = iconMap.first(where: { $0.value == iconName })?.key ?? "default"
     let isDay = iconCode.hasSuffix("d")
-    print(iconName)
     switch iconName {
     case "01d":
         return LinearGradient(

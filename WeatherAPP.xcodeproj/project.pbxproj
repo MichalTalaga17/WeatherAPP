@@ -68,6 +68,25 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		47AE548B2C63899E00A33BB3 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				47EC68B82C5D50AC001BA302 /* ContentView.swift */,
+				47BAFC4C2C6103E200DCDE92 /* LocationWeatherView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		47AE548C2C6389BC00A33BB3 /* Others */ = {
+			isa = PBXGroup;
+			children = (
+				47BAFC2B2C60263600DCDE92 /* Icons.swift */,
+				47BAFC4A2C60F11100DCDE92 /* GradientBackground.swift */,
+				47BAFC292C5FDDCF00DCDE92 /* Conventers.swift */,
+			);
+			path = Others;
+			sourceTree = "<group>";
+		};
 		47BAFC422C60DC4300DCDE92 /* APPTests */ = {
 			isa = PBXGroup;
 			children = (
@@ -117,12 +136,9 @@
 			children = (
 				47EC68B62C5D50AC001BA302 /* WeatherAPPApp.swift */,
 				47BAFC5A2C62CF4D00DCDE92 /* Models */,
-				47BAFC4A2C60F11100DCDE92 /* GradientBackground.swift */,
-				47BAFC292C5FDDCF00DCDE92 /* Conventers.swift */,
-				47BAFC2B2C60263600DCDE92 /* Icons.swift */,
-				47BAFC4C2C6103E200DCDE92 /* LocationWeatherView.swift */,
+				47AE548C2C6389BC00A33BB3 /* Others */,
+				47AE548B2C63899E00A33BB3 /* Views */,
 				47BAFC792C63776000DCDE92 /* API_files */,
-				47EC68B82C5D50AC001BA302 /* ContentView.swift */,
 				47EC68BC2C5D50AD001BA302 /* Assets.xcassets */,
 				47EC68BE2C5D50AD001BA302 /* Preview Content */,
 			);
@@ -429,6 +445,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"WeatherAPP/Preview Content\"";
@@ -459,6 +476,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"WeatherAPP/Preview Content\"";
