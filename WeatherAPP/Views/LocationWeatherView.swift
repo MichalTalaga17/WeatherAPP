@@ -101,20 +101,19 @@ struct LocationWeatherView: View {
                                 .frame(width: containerWidth * 0.5-20)
                                 Spacer()
                                 VStack{
-                                    if let snow = currentWeatherData.snow, let snow1h = snow.h1 {
-                                            Text("\(String(format: "%.0f", snow1h)) mm")
-                                                .font(.title2 .bold())
-                                            Text("Śnieg")
-                                        } else if let rain = currentWeatherData.rain, let rain1h = rain.h1 {
-                                            Text("\(String(format: "%.0f", rain1h)) mm")
-                                                .font(.title2 .bold())
-                                            Text("Deszcz")
-                                        } else {
-                                            Text("0")
-                                                .font(.title2 .bold())
-                                            Text("Opady")
-                                        }
-                                    
+                                    if let snow = currentWeatherData.snow, let snow1h = snow.hour1 {
+                                        Text("\(String(format: "%.0f", snow1h)) mm")
+                                            .font(.title2.bold())
+                                        Text("Śnieg")
+                                    } else if let rain = currentWeatherData.rain, let rain1h = rain.hour1 {
+                                        Text("\(String(format: "%.0f", rain1h)) mm")
+                                            .font(.title2.bold())
+                                        Text("Deszcz")
+                                    } else {
+                                        Text("0")
+                                            .font(.title2.bold())
+                                        Text("Opady")
+                                    }
                                 }
                                 .frame(width: containerWidth * 0.5-20)
                             }
