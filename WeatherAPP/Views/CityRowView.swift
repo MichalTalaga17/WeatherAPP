@@ -12,7 +12,7 @@ struct CityRowView: View {
                 Text(city.name)
                 Spacer()
                 if let temperature = city.temperature {
-                    Text("\(String(format: "%.1f", temperature))°C")
+                    Text(kelvinToCelsius(temperature))
                 }
                 if let icon = city.weatherIcon {
                     weatherIcon(for: icon)
@@ -25,18 +25,6 @@ struct CityRowView: View {
     }
     
     func fetchWeatherData(for city: City) async {
-        do {
-            try await fetchCurrentWeatherData(forCity: city) { result in
-                switch result {
-                case .success(let data):
-                    print("Fetched data for \(city.name): \(data)")
-                case .failure(let error):
-                    // Handle error here if needed
-                    print("Error fetching data for \(city.name): \(error)")
-                }
-            }
-        } catch {
-            print("Error fetching data for \(city.name): \(error.localizedDescription)")
-        }
+        await fetchCurrentWeatherData(forCity: city) { _ in }
     }
 }

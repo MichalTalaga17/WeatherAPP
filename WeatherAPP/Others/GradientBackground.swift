@@ -2,7 +2,7 @@
 //  gradientBackground.swift
 //  WeatherAPP
 //
-//  Created by Michał Talaga on 05/08/2024.
+//  Created by Michał Talaga
 //
 
 import Foundation
@@ -11,6 +11,7 @@ import SwiftUI
 func gradientBackground(for iconName: String) -> LinearGradient {
     let iconCode = iconMap.first(where: { $0.value == iconName })?.key ?? "default"
     let isDay = iconCode.hasSuffix("d")
+    
     switch iconName {
     case "01d":
         return LinearGradient(
@@ -26,7 +27,7 @@ func gradientBackground(for iconName: String) -> LinearGradient {
         )
     case "02d":
         return LinearGradient(
-            gradient: Gradient(colors: [ Color.gray.opacity(0.7), Color.yellow.opacity(0.2)]),
+            gradient: Gradient(colors: [Color.gray.opacity(0.7), Color.yellow.opacity(0.2)]),
             startPoint: .top,
             endPoint: .bottom
         )
@@ -37,22 +38,14 @@ func gradientBackground(for iconName: String) -> LinearGradient {
             endPoint: .bottom
         )
     case "03d", "03n":
-        return isDay ? LinearGradient(
-            gradient: Gradient(colors: [Color.gray.opacity(0.8), Color.gray.opacity(0.4)]),
-            startPoint: .top,
-            endPoint: .bottom
-        ) : LinearGradient(
-            gradient: Gradient(colors: [Color.gray.opacity(0.35), Color.black.opacity(0.5)]),
+        return LinearGradient(
+            gradient: Gradient(colors: [Color.gray.opacity(0.8), isDay ? Color.gray.opacity(0.4) : Color.black.opacity(0.5)]),
             startPoint: .top,
             endPoint: .bottom
         )
     case "04d", "04n":
-        return isDay ? LinearGradient(
-            gradient: Gradient(colors: [Color.yellow.opacity(0.1), Color.gray.opacity(0.8)]),
-            startPoint: .top,
-            endPoint: .bottom
-        ) : LinearGradient(
-            gradient: Gradient(colors: [Color.gray.opacity(0.7), Color.black.opacity(0.6)]),
+        return LinearGradient(
+            gradient: Gradient(colors: [Color.yellow.opacity(0.1), isDay ? Color.gray.opacity(0.8) : Color.black.opacity(0.6)]),
             startPoint: .top,
             endPoint: .bottom
         )
@@ -70,7 +63,7 @@ func gradientBackground(for iconName: String) -> LinearGradient {
         )
     case "10n":
         return LinearGradient(
-            gradient: Gradient(colors: [ Color.gray.opacity(0.7),Color.black.opacity(0.4)]),
+            gradient: Gradient(colors: [Color.gray.opacity(0.7), Color.black.opacity(0.4)]),
             startPoint: .top,
             endPoint: .bottom
         )
@@ -94,13 +87,13 @@ func gradientBackground(for iconName: String) -> LinearGradient {
         )
     case "13n":
         return LinearGradient(
-            gradient: Gradient(colors: [Color.black.opacity(0.5), Color.white.opacity(0.5) ]),
+            gradient: Gradient(colors: [Color.black.opacity(0.5), Color.white.opacity(0.5)]),
             startPoint: .top,
             endPoint: .bottom
         )
     case "50d":
         return LinearGradient(
-            gradient: Gradient(colors: [Color.gray.opacity(0.8),Color.yellow.opacity(0.2)]),
+            gradient: Gradient(colors: [Color.gray.opacity(0.8), Color.yellow.opacity(0.2)]),
             startPoint: .top,
             endPoint: .bottom
         )

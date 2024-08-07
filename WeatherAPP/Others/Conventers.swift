@@ -2,7 +2,7 @@
 //  Conventers.swift
 //  WeatherAPP
 //
-//  Created by Michał Talaga on 04/08/2024.
+//  Created by Michał Talaga
 //
 
 import Foundation

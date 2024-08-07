@@ -253,7 +253,6 @@ struct LocationWeatherView: View {
     
     func fetchCurrentWeatherData() async {
         do {
-            print(cityName)
             try await API.shared.fetchCurrentWeatherData(forCity: cityName) { result in
                 switch result {
                 case .success(let data):

@@ -78,7 +78,7 @@ struct ContentView: View {
             try await fetchCurrentWeatherData(forCity: city) { result in
                 switch result {
                 case .success(let data):
-                    print("Fetched data for \(city.name): \(data)")
+                    print("")
                 case .failure(let error):
                     showAlert(title: "Błąd", message: "Nie udało się pobrać danych o pogodzie: \(error.localizedDescription)")
                 }

@@ -2,7 +2,7 @@
 //  Icons.swift
 //  WeatherAPP
 //
-//  Created by Michał Talaga on 04/08/2024.
+//  Created by Michał Talaga
 //
 
 import Foundation
@@ -28,7 +28,7 @@ let iconMap: [String: String] = [
     "50d": "cloud.fog.fill",
     "50n": "cloud.fog.fill",
 ]
-// Słownik mapujący ikony na domyślne kolory
+
 let iconColorsMap: [String: [Color]] = [
     "01d": [.yellow],
     "01n": [.gray, .white],
