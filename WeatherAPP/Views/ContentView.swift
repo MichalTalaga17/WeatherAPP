@@ -9,6 +9,7 @@ struct ContentView: View {
     @State private var showAlert: Bool = false
     @State private var alertTitle: String = ""
     @State private var alertMessage: String = ""
+    @State private var currentWeatherData: CurrentResponse?
     
     
     var body: some View {
@@ -42,6 +43,7 @@ struct ContentView: View {
                 .padding(.bottom, 40)
                     ForEach(cities) { item in
                         NavigationLink(destination: LocationWeatherView(cityName: item.name, favourite: true)) {
+                            await fetchCurrentWeatherData()
                             Text(item.name)
                             Spacer()
                         }
@@ -71,6 +73,24 @@ struct ContentView: View {
             for index in offsets {
                 modelContext.delete(cities[index])
             }
+        }
+    }
+    func fetchCurrentWeatherData() async {
+        do {
+            print(cityName)
+            try await API.shared.fetchCurrentWeatherData(forCity: cityName) { result in
+                switch result {
+                case .success(let data):
+                    self.currentWeatherData = data
+                    let newIcon = data.weather.first?.icon ?? "unknown"
+                    self.backgroundGradient = gradientBackground(for: newIcon)
+                    self.timeZone = TimeZone(secondsFromGMT: data.timezone)
+                case .failure(let error):
+                    showAlert(title: "Błąd", message: "Nie udało się pobrać danych o pogodzie: \(error.localizedDescription)")
+                }
+            }
+        } catch {
+            showAlert(title: "Błąd", message: "Nie udało się pobrać danych o pogodzie: \(error.localizedDescription)")
         }
     }
     
