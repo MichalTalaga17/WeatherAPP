@@ -6,12 +6,14 @@ struct LocationWeatherView: View {
     @Query private var cities: [City]
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     let cityName: String
+    @State var favourite: Bool
     @State private var weatherData: WeatherData?
     @State private var backgroundGradient = LinearGradient(gradient: Gradient(colors: [Color.black]), startPoint: .top, endPoint: .bottom)
     @State private var timeZone: TimeZone?
     @State private var showAlert: Bool = false
     @State private var alertTitle: String = ""
     @State private var alertMessage: String = ""
+    
     
     var body: some View {
         VStack {
@@ -157,21 +159,36 @@ struct LocationWeatherView: View {
             }
             Spacer()
             HStack {
-                Button {
-                    let newCity = City(name: cityName)
-                    
-                    do {
-                        modelContext.insert(newCity)
-                        try modelContext.save() // Dodajemy zapisywanie kontekstu
-                    } catch {
-                        print("Error saving context: \(error)")
+                if favourite {
+                    Button {
+                        if let city = cities.first(where: { $0.name == cityName }) {
+                            modelContext.delete(city)
+                            favourite.toggle()
+                        }
+                    } label: {
+                        Text("Usuń z ulubionych")
+                            .font(.caption)
+                            .padding()
+                            .background(Color.white.opacity(0.1))
+                            .cornerRadius(30)
                     }
-                } label: {
-                    Text("Dodaj do ulubionych")
-                        .font(.caption)
-                        .padding()
-                        .background(Color.white.opacity(0.1))
-                        .cornerRadius(30)
+                } else {
+                    Button {
+                        let newCity = City(name: cityName)
+                        do {
+                            modelContext.insert(newCity)
+                            try modelContext.save() // Dodajemy zapisywanie kontekstu
+                            favourite.toggle()
+                        } catch {
+                            print("Error saving context: \(error)")
+                        }
+                    } label: {
+                        Text("Dodaj do ulubionych")
+                            .font(.caption)
+                            .padding()
+                            .background(Color.white.opacity(0.1))
+                            .cornerRadius(30)
+                    }
                 }
             }
             .padding(.bottom)
@@ -238,7 +255,7 @@ struct LocationWeatherView: View {
 }
 
 #Preview {
-    LocationWeatherView(cityName: "wągrzywerowice")
+    LocationWeatherView(cityName: "Zembrzyce", favourite: true)
         .modelContainer(for: City.self)
 }
 

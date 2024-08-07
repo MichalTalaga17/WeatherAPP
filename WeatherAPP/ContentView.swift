@@ -5,7 +5,7 @@ struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var cities: [City]
     @State private var cityName = ""
-    
+    @State private var cityName2 = ""
     @State private var showAlert: Bool = false
     @State private var alertTitle: String = ""
     @State private var alertMessage: String = ""
@@ -25,7 +25,7 @@ struct ContentView: View {
                             .background(Color.black.opacity(0.1))
                             .cornerRadius(8)
                         
-                        NavigationLink(destination: LocationWeatherView(cityName: cityName)) {
+                        NavigationLink(destination: LocationWeatherView(cityName: cityName2, favourite: false)) {
                             Text("Szukaj")
                                 .font(.callout)
                                 .padding()
@@ -33,11 +33,15 @@ struct ContentView: View {
                                 .foregroundColor(.white)
                                 .cornerRadius(8)
                         }
+                        .simultaneousGesture(TapGesture().onEnded {
+                            cityName2 = cityName
+                            cityName = ""
+                        })
                     }
                 }
                 .padding(.bottom, 40)
                     ForEach(cities) { item in
-                        NavigationLink(destination: LocationWeatherView(cityName: item.name)) {
+                        NavigationLink(destination: LocationWeatherView(cityName: item.name, favourite: true)) {
                             Text(item.name)
                             Spacer()
                         }

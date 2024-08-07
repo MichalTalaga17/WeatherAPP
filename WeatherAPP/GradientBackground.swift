@@ -9,10 +9,9 @@ import Foundation
 import SwiftUI
 
 func gradientBackground(for iconName: String) -> LinearGradient {
-    // Mapowanie ikon systemowych na kody pogody
     let iconCode = iconMap.first(where: { $0.value == iconName })?.key ?? "default"
-    let isDay = iconCode.hasSuffix("d") // Określenie, czy jest dzień
-    
+    let isDay = iconCode.hasSuffix("d")
+    print(iconName)
     switch iconName {
     case "01d":
         return LinearGradient(
