@@ -66,15 +66,9 @@ class API {
                 return
             }
             
-            if let responseString = String(data: data, encoding: .utf8) {
-                print("Raw response data: \(responseString)")
-            } else {
-                print("Unable to convert response data to string.")
-            }
             
             do {
                 let currentWeatherData = try JSONDecoder().decode(CurrentResponse.self, from: data)
-                print("Weather data received: \(currentWeatherData)")
                 completion(.success(currentWeatherData))
             } catch {
                 print("JSON decoding error: \(error.localizedDescription)")
