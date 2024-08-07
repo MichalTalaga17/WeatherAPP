@@ -7,31 +7,32 @@ struct LocationWeatherView: View {
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     let cityName: String
     @State var favourite: Bool
-    @State private var weatherData: WeatherData?
+    @State private var currentWeatherData: CurrentResponse?
+    
+    @State private var forecastData: ForecastData?
     @State private var backgroundGradient = LinearGradient(gradient: Gradient(colors: [Color.black]), startPoint: .top, endPoint: .bottom)
     @State private var timeZone: TimeZone?
     @State private var showAlert: Bool = false
     @State private var alertTitle: String = ""
     @State private var alertMessage: String = ""
     
-    
     var body: some View {
         VStack {
-            if let weatherData = weatherData, let currentWeather = weatherData.list.first, let timeZone = timeZone {
+            if let currentWeatherData = currentWeatherData, let timeZone = timeZone {
                 Spacer()
                 VStack(alignment: .leading, spacing: 10) {
                     VStack(alignment: .center, spacing: 5) {
                         HStack {
                             Spacer()
-                            Text("\(weatherData.city.name)")
+                            Text("\(currentWeatherData.name), \(currentWeatherData.sys.country)")
                                 .font(.title3)
                             Spacer()
                         }
-                        Text(kelvinToCelsius(currentWeather.main.temp))
+                        Text(kelvinToCelsius(currentWeatherData.main.temp))
                             .font(.system(size: 60))
-                        Text(currentWeather.weather.first?.description ?? "")
+                        Text(currentWeatherData.weather.first?.description ?? "")
                             .font(.headline)
-                        Text("Od \(kelvinToCelsius(currentWeather.main.temp_min)) do \(kelvinToCelsius(currentWeather.main.temp_max))")
+                        Text("Od \(kelvinToCelsius(currentWeatherData.main.temp_min)) do \(kelvinToCelsius(currentWeatherData.main.temp_max))")
                             .font(.callout)
                     }
                     .padding(15)
@@ -45,14 +46,14 @@ struct LocationWeatherView: View {
                                     .symbolRenderingMode(.palette)
                                     .foregroundStyle(.white, .yellow)
                                     .font(.title)
-                                Text("\(formatDate(timestamp: weatherData.city.sunrise, formatType: .timeOnly, timeZone: timeZone))")
+                                Text("\(formatDate(timestamp: currentWeatherData.sys.sunrise, formatType: .timeOnly, timeZone: timeZone))")
                             }
                             VStack(alignment: .leading, spacing: 5) {
                                 Image(systemName: "sunset.fill")
                                     .symbolRenderingMode(.palette)
                                     .foregroundStyle(.white, .yellow)
                                     .font(.title)
-                                Text("\(formatDate(timestamp: weatherData.city.sunset, formatType: .timeOnly, timeZone: timeZone))")
+                                Text("\(formatDate(timestamp: currentWeatherData.sys.sunset, formatType: .timeOnly, timeZone: timeZone))")
                             }
                         }
                         .padding(15)
@@ -63,9 +64,9 @@ struct LocationWeatherView: View {
                             Image(systemName: "smoke.fill")
                                 .font(.largeTitle)
                             VStack {
-                                Text("\(currentWeather.clouds.all)%")
+                                Text("\(currentWeatherData.clouds.all)%")
                                     .font(.title .bold())
-                                Text("\(convertMetersToKilometers(meters: Double(currentWeather.visibility))) km")
+                                Text("\(convertMetersToKilometers(meters: Double(currentWeatherData.visibility))) km")
                             }
                         }
                         .padding()
@@ -78,14 +79,14 @@ struct LocationWeatherView: View {
                         VStack(spacing: 15) {
                             HStack{
                                 VStack{
-                                    Text("\(currentWeather.main.humidity)%")
+                                    Text("\(currentWeatherData.main.humidity)%")
                                         .font(.title2 .bold())
                                     Text("Wilgotność")
                                 }
                                 .frame(width: containerWidth * 0.5-20)
                                 Spacer()
                                 VStack{
-                                    Text("\(currentWeather.main.pressure) hPa")
+                                    Text("\(currentWeatherData.main.pressure) hPa")
                                         .font(.title2 .bold())
                                     Text("Ciśnienie")
                                 }
@@ -93,28 +94,26 @@ struct LocationWeatherView: View {
                             }
                             HStack{
                                 VStack{
-                                    Text("\(String(format: "%.0f", currentWeather.wind.speed)) m/s \(windDirection(from: currentWeather.wind.deg))")
+                                    Text("\(String(format: "%.0f", currentWeatherData.wind.speed)) m/s \(windDirection(from: currentWeatherData.wind.deg))")
                                         .font(.title2 .bold())
                                     Text("Wiatr")
                                 }
                                 .frame(width: containerWidth * 0.5-20)
                                 Spacer()
                                 VStack{
-                                    if let snow = currentWeather.snow {
-                                        Text("\(String(format: "%.0f", snow.h3 ?? 0)) mm")
-                                            .font(.title2 .bold())
-                                        Text("Opady śniegu")
-                                    }else{
-                                        if let rain = currentWeather.rain {
-                                            Text("\(String(format: "%.0f", rain.h3 ?? 0)) mm")
+                                    if let snow = currentWeatherData.snow, let snow1h = snow.h1 {
+                                            Text("\(String(format: "%.0f", snow1h)) mm")
                                                 .font(.title2 .bold())
-                                            Text("Opady deszczu")
-                                        }else{
-                                            Text("\(String(format: "%.0f", currentWeather.rain?.h3 ?? 0)) mm")
+                                            Text("Śnieg")
+                                        } else if let rain = currentWeatherData.rain, let rain1h = rain.h1 {
+                                            Text("\(String(format: "%.0f", rain1h)) mm")
                                                 .font(.title2 .bold())
-                                            Text("Opady deszczu")
+                                            Text("Deszcz")
+                                        } else {
+                                            Text("0")
+                                                .font(.title2 .bold())
+                                            Text("Opady")
                                         }
-                                    }
                                     
                                 }
                                 .frame(width: containerWidth * 0.5-20)
@@ -126,33 +125,33 @@ struct LocationWeatherView: View {
                     .cornerRadius(8)
                     
                     ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(alignment: .top, spacing: 5) {
-                            ForEach(weatherData.list.prefix(20), id: \.dt) { item in
-                                VStack(alignment: .center) {
-                                    if let timestamp = dateToTimestamp(dateString: item.dt_txt) {
-                                        Text(formatDate(timestamp: Int(timestamp), formatType: .hourOnly, timeZone: timeZone))
-                                            .font(.subheadline)
-                                    } else {
-                                        Text(item.dt_txt)
-                                            .font(.subheadline)
-                                    }
-                                    weatherIcon(for: (item.weather.first?.icon)!)
-                                    Text(kelvinToCelsius(item.main.temp))
-                                        .font(.title2.bold())
-                                    Text(kelvinToCelsius(item.main.feels_like))
-                                        .font(.body)
-                                    Text("\(String(format: "%.0f", item.pop * 100))%")
-                                        .font(.body)
-                                }
-                                .frame(width: UIScreen.main.bounds.width * 0.25)
-                            }
-                        }
-                        .padding(.vertical, 15.0)
-                    }
-                    .background(Color.white.opacity(0.05))
-                    .cornerRadius(8)
-                    
-                    Spacer()
+                                            HStack(alignment: .top, spacing: 5) {
+                                                ForEach(forecastData.list.prefix(20), id: \.dt) { item in
+                                                    VStack(alignment: .center) {
+                                                        if let timestamp = dateToTimestamp(dateString: item.dt_txt) {
+                                                            Text(formatDate(timestamp: Int(timestamp), formatType: .hourOnly, timeZone: timeZone))
+                                                                .font(.subheadline)
+                                                        } else {
+                                                            Text(item.dt_txt)
+                                                                .font(.subheadline)
+                                                        }
+                                                        weatherIcon(for: (item.weather.first?.icon)!)
+                                                        Text(kelvinToCelsius(item.main.temp))
+                                                            .font(.title2.bold())
+                                                        Text(kelvinToCelsius(item.main.feels_like))
+                                                            .font(.body)
+                                                        Text("\(String(format: "%.0f", item.pop * 100))%")
+                                                            .font(.body)
+                                                    }
+                                                    .frame(width: UIScreen.main.bounds.width * 0.25)
+                                                }
+                                            }
+                                            .padding(.vertical, 15.0)
+                                        }
+                                        .background(Color.white.opacity(0.05))
+                                        .cornerRadius(8)
+                                        
+                                        Spacer()
                 }
             } else {
                 Spacer()
@@ -214,7 +213,8 @@ struct LocationWeatherView: View {
         }
         .onAppear {
             Task {
-                await fetchWeatherData()
+                await fetchCurrentWeatherData()
+                await fetchCurrentWeatherData()
             }
         }
         .alert(isPresented: $showAlert) {
@@ -227,18 +227,35 @@ struct LocationWeatherView: View {
             )
         }
     }
-    
     func fetchWeatherData() async {
+            do {
+                let _: () = try await API.shared.fetchForecastData(forCity: cityName) { result in
+                    switch result {
+                    case .success(let data):
+                        self.forecastData = data
+                        self.timeZone = TimeZone(secondsFromGMT: data.city.timezone)
+                    case .failure(let error):
+                        self.alertTitle = "Błąd"
+                        self.alertMessage = "Nie udało się pobrać danych o pogodzie: \(error.localizedDescription)"
+                        self.showAlert = true
+                    }
+                }
+            } catch {
+                print("Błąd podczas pobierania danych: \(error)")
+                self.alertTitle = "Błąd"
+                self.alertMessage = "Nie udało się pobrać danych o pogodzie: \(error.localizedDescription)"
+                self.showAlert = true
+            }
+        }
+    func fetchCurrentWeatherData() async {
         do {
-            let _: () = try await API.shared.fetchWeatherData(forCity: cityName) { result in
+            try await API.shared.fetchCurrentWeatherData(forCity: cityName) { result in
                 switch result {
                 case .success(let data):
-                    self.weatherData = data
-                    if let currentWeather = data.list.first {
-                        let newIcon = iconMap[currentWeather.weather.first?.icon ?? ""] ?? "unknown"
-                        self.backgroundGradient = gradientBackground(for: newIcon)
-                    }
-                    self.timeZone = TimeZone(secondsFromGMT: data.city.timezone)
+                    self.currentWeatherData = data
+                    let newIcon = data.weather.first?.icon ?? "unknown"
+                    self.backgroundGradient = gradientBackground(for: newIcon)
+                    self.timeZone = TimeZone(secondsFromGMT: data.timezone)
                 case .failure(let error):
                     self.alertTitle = "Błąd"
                     self.alertMessage = "Nie udało się pobrać danych o pogodzie: \(error.localizedDescription)"

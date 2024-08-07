@@ -1,6 +1,6 @@
 import Foundation
 
-struct WeatherData: Codable {
+struct ForecastData: Codable {
     let cod: String
     let message: Int
     let cnt: Int
