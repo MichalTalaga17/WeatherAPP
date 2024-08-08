@@ -7,104 +7,75 @@
 
 import WidgetKit
 import SwiftUI
+import AppIntents
 
-struct Provider: TimelineProvider {
+struct Provider: AppIntentTimelineProvider {
     func placeholder(in context: Context) -> SimpleEntry {
-        SimpleEntry(date: Date(), city: "Twoje Miasto", temperature: 20, icon: "cloud.sun")
+        SimpleEntry(date: Date(), configuration: ConfigurationAppIntent())
     }
-
-    func getSnapshot(in context: Context, completion: @escaping (SimpleEntry) -> ()) {
-        // Przykładowe dane do podglądu
-        let entry = SimpleEntry(date: Date(), city: "Warszawa", temperature: 15, icon: "cloud.rain")
-        completion(entry)
+    
+    func snapshot(for configuration: ConfigurationAppIntent, in context: Context) async -> SimpleEntry {
+        SimpleEntry(date: Date(), configuration: configuration)
     }
-
-    func getTimeline(in context: Context, completion: @escaping (Timeline<SimpleEntry>) -> ()) {
-        // Przykładowe dane do harmonogramu
-        let entries: [SimpleEntry] = [
-            SimpleEntry(date: Date(), city: "Kraków", temperature: 18, icon: "sun.max")
-        ]
-        // Ustawienie polityki odświeżania widgetu
-        let timeline = Timeline(entries: entries, policy: .atEnd)
-        completion(timeline)
+    
+    func timeline(for configuration: ConfigurationAppIntent, in context: Context) async -> Timeline<SimpleEntry> {
+        var entries: [SimpleEntry] = []
+        
+        let currentDate = Date()
+        for hourOffset in 0 ..< 5 {
+            let entryDate = Calendar.current.date(byAdding: .hour, value: hourOffset, to: currentDate)!
+            let entry = SimpleEntry(date: entryDate, configuration: configuration)
+            entries.append(entry)
+        }
+        
+        return Timeline(entries: entries, policy: .atEnd)
     }
 }
 
 struct SimpleEntry: TimelineEntry {
     let date: Date
-    let city: String
-    let temperature: Double
-    let icon: String
+    let configuration: ConfigurationAppIntent
 }
 
-extension View {
-    func widgetBackground(backgroundView: some View) -> some View {
-        if #available(watchOS 10.0, iOSApplicationExtension 17.0, iOS 17.0, macOSApplicationExtension 14.0, *) {
-            return containerBackground(for: .widget) {
-                backgroundView
-            }
-        } else {
-            return background(backgroundView)
-        }
-    }
-}
-
-struct WidgetView: View {
-    let entry: SimpleEntry
-
+struct WeatherWidgetEntryView: View {
+    var entry: Provider.Entry
+    
     var body: some View {
-        HStack {
+        VStack(alignment: .leading) {
+            Text(entry.configuration.firstText)
+                .font(.headline)
             Spacer()
-            VStack {
-                Text(entry.city)
-                    .font(.headline)
-                Text("\(entry.temperature, specifier: "%.1f")°C")
-                    .font(.headline)
-                Image(systemName: entry.icon)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 50, height: 50)
+            HStack {
+                Text(entry.configuration.secondText)
+                    .font(.title)
+                
+                Text(entry.configuration.thirdText)
             }
-            .padding()
-            .cornerRadius(8)
-            .frame(height: 160)
-            .widgetBackground(backgroundView: Color.clear)
-            Spacer()
-        }
-        .background(LinearGradient(
-            gradient: Gradient(colors: [Color.yellow.opacity(0.3), Color.blue.opacity(0.3)]),
-            startPoint: .bottomLeading,
-            endPoint: .topTrailing
-        ))
-    }
-}
-extension WidgetConfiguration {
-    func disableContentMarginsIfNeeded() -> some WidgetConfiguration {
-        if #available(iOSApplicationExtension 17.0, *) {
-            return self.contentMarginsDisabled()
-        } else {
-            return self
         }
     }
 }
 
-
-
-struct SimpleWeatherWidget: Widget {
-    let kind: String = "SimpleWeatherWidget"
-
+struct WeatherWidget: Widget {
+    let kind: String = "WeatherWidget"
+    
     var body: some WidgetConfiguration {
-        StaticConfiguration(kind: kind, provider: Provider()) { entry in
-            WidgetView(entry: entry)
+        AppIntentConfiguration(kind: kind, intent: ConfigurationAppIntent.self, provider: Provider()) { entry in
+            WeatherWidgetEntryView(entry: entry)
+                .containerBackground(Color.red.opacity(0.2), for: .widget)
         }
-        .disableContentMarginsIfNeeded()
-        .configurationDisplayName("Prosta Pogoda")
-        .description("Szybki podgląd temperatury i pogody")
     }
 }
+
 
 #Preview(as: .systemSmall) {
-    SimpleWeatherWidget()
-}timeline: {
-    SimpleEntry(date: Date(), city: "Warszawa", temperature: 20, icon: "cloud.sun")
+    WeatherWidget()
+} timeline: {
+    // Utwórz instancję ConfigurationAppIntent z parametrami
+    let intent = ConfigurationAppIntent()
+    intent.firstText = "Zembrzyce"
+    intent.secondText = "20"
+    intent.thirdText = "Chmury"
+    return [
+        SimpleEntry(date: .now, configuration: intent)
+    ]
 }
