@@ -18,6 +18,7 @@
 		47761B462C63B4990027DE18 /* CityRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47761B452C63B4990027DE18 /* CityRowView.swift */; };
 		479252B62C6576930032CE7F /* SimpleWeather.swift in Sources */ = {isa = PBXBuildFile; fileRef = 479252B52C6576930032CE7F /* SimpleWeather.swift */; };
 		479252B82C6576BC0032CE7F /* fetch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 479252B72C6576BC0032CE7F /* fetch.swift */; };
+		479252B92C6585D30032CE7F /* Icons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47BAFC2B2C60263600DCDE92 /* Icons.swift */; };
 		47BAFC262C5EE1F100DCDE92 /* WeatherModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47BAFC252C5EE1F100DCDE92 /* WeatherModal.swift */; };
 		47BAFC282C5EE21200DCDE92 /* API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47BAFC272C5EE21200DCDE92 /* API.swift */; };
 		47BAFC2A2C5FDDCF00DCDE92 /* Conventers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47BAFC292C5FDDCF00DCDE92 /* Conventers.swift */; };
@@ -372,6 +373,7 @@
 				474873EF2C64FD19003C1D5E /* WeatherWidgetBundle.swift in Sources */,
 				474873F52C64FD19003C1D5E /* AppIntent.swift in Sources */,
 				474873F12C64FD19003C1D5E /* WeatherWidgetLiveActivity.swift in Sources */,
+				479252B92C6585D30032CE7F /* Icons.swift in Sources */,
 				474873F32C64FD19003C1D5E /* WeatherWidget.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

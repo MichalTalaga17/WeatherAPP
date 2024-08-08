@@ -12,66 +12,76 @@ struct SimpleEntry: TimelineEntry {
 
 // Provider dostarcza dane dla widżetu
 struct Provider: TimelineProvider {
-    // Placeholder pokazuje przykładowe dane podczas ładowania widżetu
     func placeholder(in context: Context) -> SimpleEntry {
         SimpleEntry(date: Date(), city: "Miasto", temperature: 20.0, icon: "01d")
     }
     
-    // Snapshot pokazuje dane w galerii widżetów
     func getSnapshot(in context: Context, completion: @escaping (SimpleEntry) -> ()) {
         let entry = SimpleEntry(date: Date(), city: "Warszawa", temperature: 18.0, icon: "01d")
         completion(entry)
     }
     
-    // Timeline generuje rzeczywiste dane do wyświetlenia w widżecie
     func getTimeline(in context: Context, completion: @escaping (Timeline<SimpleEntry>) -> ()) {
         var entries: [SimpleEntry] = []
+        
+        let now = Date()
+        let updateDate = Calendar.current.date(byAdding: .minute, value: 1, to: now)!
 
         if let userDefaults = UserDefaults(suiteName: "group.me.michaltalaga.WeatherAPP") {
             let city = userDefaults.string(forKey: "City") ?? "Nieznane"
-            let temperature = userDefaults.double(forKey: "Temperature")
-            let icon = userDefaults.string(forKey: "Icon") ?? "01d"
-
-            let entry = SimpleEntry(date: .now, city: city, temperature: temperature, icon: icon)
-            entries.append(entry)
+            print(city)
+            
+            fetchCurrentWeatherData(forCity: city) { result in
+                switch result {
+                case .success(let data):
+                    let entry = SimpleEntry(
+                        date: now,
+                        city: data.name,
+                        temperature: data.main.temp,
+                        icon: data.weather.first?.icon ?? "BRAK"
+                    )
+                    entries.append(entry)
+                    
+                    // Dodaj kolejne wpisy dla przyszłych odświeżeń
+                    let nextUpdateDate = Calendar.current.date(byAdding: .second, value: 10, to: now)!
+                    let timeline = Timeline(entries: entries, policy: .after(nextUpdateDate))
+                    completion(timeline)
+                case .failure(let error):
+                    print("Błąd pobierania danych o pogodzie: \(error.localizedDescription)")
+                    
+                    // W przypadku błędu użyj domyślnych danych
+                    let entry = SimpleEntry(date: now, city: "Nieznane", temperature: 0.0, icon: "01d")
+                    entries.append(entry)
+                    
+                    let timeline = Timeline(entries: entries, policy: .after(updateDate))
+                    completion(timeline)
+                }
+            }
         } else {
-            let entry = SimpleEntry(date: .now, city: "Domyślne Miasto", temperature: 0.0, icon: "01d")
+            // Użyj domyślnych danych
+            let entry = SimpleEntry(date: now, city: "Nieznane", temperature: 0.0, icon: "01d")
             entries.append(entry)
+            
+            let timeline = Timeline(entries: entries, policy: .after(updateDate))
+            completion(timeline)
         }
-
-        // Zwrócenie całego harmonogramu za pomocą completion
-        let timeline = Timeline(entries: entries, policy: .atEnd)
-        completion(timeline)
     }
 }
 
 // Widok widżetu
 struct WeatherWidgetEntryView: View {
     var entry: SimpleEntry
-
+    
     var body: some View {
         VStack(alignment: .leading) {
             Text(entry.city)
                 .font(.headline)
-                .task {
-                    fetchCurrentWeatherData(forCity: entry.city) { result in
-                        switch result {
-                        case .success(let weather):
-                            // Aktualizacja widoku z użyciem pobranych danych pogodowych
-                            print("Temperature: \(weather.main.temp)")
-                            print("Icon: \(weather.weather.first?.icon ?? "BRAK")")
-                        case .failure(let error):
-                            // Obsługa błędu
-                            print("Error fetching weather data: \(error.localizedDescription)")
-                        }
-                    }
-                }
             Spacer()
             HStack {
                 Text("\(Int(entry.temperature))°C")
                     .font(.title)
                 
-                Text(entry.icon)
+                weatherIcon(for: entry.icon)
                     .font(.title)
             }
         }
@@ -87,7 +97,7 @@ struct WeatherWidgetEntryView: View {
 // Konfiguracja widżetu
 struct WeatherWidget: Widget {
     let kind: String = "WeatherWidget"
-
+    
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: Provider()) { entry in
             WeatherWidgetEntryView(entry: entry)
@@ -118,41 +128,30 @@ func fetchCurrentWeatherData(forCity city: String, completion: @escaping (Result
     let urlString = "https://api.openweathermap.org/data/2.5/weather?q=\(encodedCity)&lang=pl&appid=e58dfbc15daacbeabeed6abc3e5d95ca&units=metric"
     
     guard let url = URL(string: urlString) else {
-        completion(.failure(NSError(domain: "Invalid URL", code: -1, userInfo: [NSLocalizedDescriptionKey: "The URL is malformed."])))
+        completion(.failure(NSError(domain: "Invalid URL", code: -1, userInfo: nil)))
         return
     }
     
     URLSession.shared.dataTask(with: url) { data, response, error in
         if let error = error {
-            print("Network error: \(error.localizedDescription)")
-            completion(.failure(NSError(domain: "NetworkError", code: -1, userInfo: [NSLocalizedDescriptionKey: "Network error occurred: \(error.localizedDescription)"])))
-            return
-        }
-        
-        guard let httpResponse = response as? HTTPURLResponse else {
-            completion(.failure(NSError(domain: "InvalidResponse", code: -1, userInfo: [NSLocalizedDescriptionKey: "The response is not an HTTP response."])))
-            return
-        }
-        
-        guard (200...299).contains(httpResponse.statusCode) else {
-            let errorMessage = "HTTP Error: \(httpResponse.statusCode)"
-            print(errorMessage)
-            completion(.failure(NSError(domain: "HTTPError", code: httpResponse.statusCode, userInfo: [NSLocalizedDescriptionKey: errorMessage])))
+            completion(.failure(error))
             return
         }
         
         guard let data = data else {
-            completion(.failure(NSError(domain: "NoData", code: -1, userInfo: [NSLocalizedDescriptionKey: "No data received from server."])))
+            completion(.failure(NSError(domain: "No data", code: -1, userInfo: nil)))
             return
         }
         
         do {
-            let weatherResponse = try JSONDecoder().decode(SimpleWeather.self, from: data)
-            completion(.success(weatherResponse))
+            let simpleWeatherData = try JSONDecoder().decode(SimpleWeather.self, from: data)
+            DispatchQueue.main.async {
+                completion(.success(simpleWeatherData))
+            }
         } catch {
-            print("JSON decoding error: \(error.localizedDescription)")
-            completion(.failure(NSError(domain: "JSONDecodingError", code: -1, userInfo: [NSLocalizedDescriptionKey: "Failed to decode JSON data: \(error.localizedDescription)"])))
+            completion(.failure(error))
         }
+        
     }.resume()
 }
 

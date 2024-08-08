@@ -31,7 +31,6 @@ struct ContentView: View {
                 updateBackgroundGradient()
                 if let userDefaults = UserDefaults(suiteName: "group.me.michaltalaga.WeatherAPP"){
                     var id = cities.first?.id
-                    print(cities)
                     userDefaults.set(cities.first?.name, forKey: "City")
                 }
             }
