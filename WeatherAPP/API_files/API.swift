@@ -69,6 +69,8 @@ class API {
             do {
                 let currentWeatherData = try JSONDecoder().decode(CurrentResponse.self, from: data)
                 completion(.success(currentWeatherData))
+                
+                print(currentWeatherData)
             } catch {
                 print("JSON decoding error: \(error.localizedDescription)")
                 completion(.failure(NSError(domain: "JSONDecodingError", code: -1, userInfo: [NSLocalizedDescriptionKey: "Failed to decode JSON data: \(error.localizedDescription)"])))

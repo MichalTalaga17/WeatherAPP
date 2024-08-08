@@ -61,8 +61,12 @@ struct LocationWeatherView: View {
                         .background(Color.white.opacity(0.05))
                         .cornerRadius(8)
                         HStack(spacing: 20){
-                            Image(systemName: "smoke.fill")
-                                .font(.largeTitle)
+                            if let firstWeather = currentWeatherData.weather.first {
+                                let icon = firstWeather.icon
+                                weatherIcon(for: icon)
+                                    .font(.largeTitle)
+                            }
+                            
                             VStack {
                                 Text("\(currentWeatherData.clouds.all)%")
                                     .font(.title .bold())
@@ -243,34 +247,34 @@ struct LocationWeatherView: View {
                     self.forecastData = data
                     self.timeZone = TimeZone(secondsFromGMT: data.city.timezone)
                 case .failure(let error):
-                    showAlert(title: "Błąd", message: "Nie udało się pobrać danych o pogodzie: \(error.localizedDescription)")
+                    showAlert(title: "Błąd", message: "Nie udało się pobrać danych o pogodzie:")
+                    print("\(error.localizedDescription)")
                 }
             }
         } catch {
-            showAlert(title: "Błąd", message: "Nie udało się pobrać danych o pogodzie: \(error.localizedDescription)")
+            showAlert(title: "Błąd", message: "Nie udało się pobrać danych o pogodzie:")
+            print("\(error.localizedDescription)")
         }
     }
     
     func fetchCurrentWeatherData() async {
-        do {
-            try await API.shared.fetchCurrentWeatherData(forCity: cityName) { result in
-                switch result {
-                case .success(let data):
-                    self.currentWeatherData = data
-                    let newIcon = data.weather.first?.icon ?? "unknown"
-                    self.backgroundGradient = gradientBackground(for: newIcon)
-                    self.timeZone = TimeZone(secondsFromGMT: data.timezone)
-                case .failure(let error):
-                    showAlert(title: "Błąd", message: "Nie udało się pobrać danych o pogodzie: \(error.localizedDescription)")
-                }
+        API.shared.fetchCurrentWeatherData(forCity: cityName) { result in
+            switch result {
+            case .success(let data):
+                self.currentWeatherData = data
+                let newIcon = data.weather.first?.icon ?? "unknown"
+                self.backgroundGradient = gradientBackground(for: newIcon)
+                self.timeZone = TimeZone(secondsFromGMT: data.timezone)
+            case .failure(let error):
+                showAlert(title: "Błąd", message: "Nie udało się pobrać danych o pogodzie:")
+                print("\(error.localizedDescription)")
             }
-        } catch {
-            showAlert(title: "Błąd", message: "Nie udało się pobrać danych o pogodzie: \(error.localizedDescription)")
+            
         }
     }
 }
-
-#Preview {
-    LocationWeatherView(cityName: "Nowy Jork", favourite: true)
-        .modelContainer(for: City.self)
-}
+    
+    #Preview {
+        LocationWeatherView(cityName: "Białogard", favourite: true)
+            .modelContainer(for: City.self)
+    }

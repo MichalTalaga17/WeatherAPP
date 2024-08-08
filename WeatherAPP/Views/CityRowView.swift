@@ -8,14 +8,17 @@ struct CityRowView: View {
 
     var body: some View {
         NavigationLink(destination: LocationWeatherView(cityName: city.name, favourite: true)) {
-            HStack {
+            HStack(spacing: 5) {
                 Text(city.name)
+                    .font(.title2)
                 Spacer()
-                if let temperature = city.temperature {
-                    Text(kelvinToCelsius(temperature))
-                }
-                if let icon = city.weatherIcon {
-                    weatherIcon(for: icon)
+                HStack{
+                    if let temperature = city.temperature {
+                        Text(kelvinToCelsius(temperature))
+                    }
+                    if let icon = city.weatherIcon {
+                        weatherIcon(for: icon)
+                    }
                 }
             }
         }
