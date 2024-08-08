@@ -15,6 +15,7 @@ struct CityRowView: View {
                 HStack{
                     if let temperature = city.temperature {
                         Text(kelvinToCelsius(temperature))
+                            .font(.title3)
                     }
                     if let icon = city.weatherIcon {
                         weatherIcon(for: icon)

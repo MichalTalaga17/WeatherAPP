@@ -9,6 +9,11 @@ struct ContentView: View {
     @State private var showAlert: Bool = false
     @State private var alertTitle: String = ""
     @State private var alertMessage: String = ""
+    @State private var backgroundGradient: LinearGradient = LinearGradient(
+        gradient: Gradient(colors: [Color.yellow.opacity(0.5), Color.blue.opacity(0.7)]),
+        startPoint: .bottom,
+        endPoint: .top
+    )
     
     var body: some View {
         NavigationView {
@@ -18,13 +23,12 @@ struct ContentView: View {
                 Spacer()
             }
             .padding()
-            .background(LinearGradient(
-                gradient: Gradient(colors: [Color.yellow.opacity(0.5), Color.blue.opacity(0.7)]),
-                startPoint: .bottom,
-                endPoint: .top
-            ))
+            .background(backgroundGradient)
             .alert(isPresented: $showAlert) {
                 Alert(title: Text(alertTitle), message: Text(alertMessage), dismissButton: .default(Text("OK")))
+            }
+            .onAppear {
+                updateBackgroundGradient()
             }
         }
     }
@@ -78,7 +82,9 @@ struct ContentView: View {
             try await fetchCurrentWeatherData(forCity: city) { result in
                 switch result {
                 case .success(let data):
-                    print("")
+                    if city.id == cities.first?.id, let icon = data.weather.first?.icon {
+                        self.backgroundGradient = gradientBackground(for: icon)
+                    }
                 case .failure(let error):
                     showAlert(title: "Błąd", message: "Nie udało się pobrać danych o pogodzie: \(error.localizedDescription)")
                 }
@@ -96,6 +102,12 @@ struct ContentView: View {
         }
     }
     
+    private func updateBackgroundGradient() {
+        if let firstCity = cities.first, let icon = firstCity.weatherIcon {
+            self.backgroundGradient = gradientBackground(for: icon)
+        }
+    }
+    
     func showAlert(title: String, message: String) {
         self.alertTitle = title
         self.alertMessage = message
@@ -103,11 +115,6 @@ struct ContentView: View {
     }
 }
 
-
-
-func kelvinToCelsius(_ kelvin: Double) -> Double {
-    return kelvin - 273.15
-}
 
 func fetchCurrentWeatherData(forCity city: City, completion: @escaping (Result<CurrentResponse, Error>) -> Void) {
     let encodedCity = city.name.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
