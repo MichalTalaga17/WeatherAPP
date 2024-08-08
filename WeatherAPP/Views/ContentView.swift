@@ -29,6 +29,11 @@ struct ContentView: View {
             }
             .onAppear {
                 updateBackgroundGradient()
+                if let userDefaults = UserDefaults(suiteName: "group.me.michaltalaga.WeatherAPP"){
+                    var id = cities.first?.id
+                    print(cities)
+                    userDefaults.set(cities.first?.name, forKey: "City")
+                }
             }
         }
     }
@@ -61,6 +66,7 @@ struct ContentView: View {
         }
         .padding(.bottom, 40)
     }
+    
     
     private var cityListView: some View {
         ForEach(cities) { city in
@@ -146,7 +152,9 @@ func fetchCurrentWeatherData(forCity city: City, completion: @escaping (Result<C
         } catch {
             completion(.failure(error))
         }
+        
     }.resume()
+    
 }
 
 #Preview {
