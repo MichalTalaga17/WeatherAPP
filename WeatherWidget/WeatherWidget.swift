@@ -186,49 +186,33 @@ struct WeatherWidgetMediumEntryView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
-                Text("\(entry.city)")
+                Text(entry.city)
                     .font(.headline)
                     .bold()
                 Spacer()
                 Text("\(Int(entry.temperature))°C")
                     .font(.largeTitle)
             }
-            
-            HStack(spacing: 15) {
-                HStack {
-                    Image(systemName: "thermometer")
-                    Text("Feels like: \(Int(entry.feelsLike))°C")
+            Spacer()
+            HStack{
+                VStack(alignment: .leading ,spacing: 15) {
+                    WeatherFeatureView(iconName: "thermometer", text: "\(Int(entry.feelsLike))°C")
+                    WeatherFeatureView(iconName: "drop.fill", text: "\(entry.humidity)%")
                 }
+                Spacer()
                 
-                HStack {
-                    Image(systemName: "drop.fill")
-                    Text("Humidity: \(entry.humidity)%")
+                VStack(alignment: .leading ,spacing: 15) {
+                    WeatherFeatureView(iconName: "wind", text: "\(Int(entry.windSpeed)) m/s")
+                    WeatherFeatureView(iconName: "cloud", text: "\(entry.cloudiness)%")
+                }
+                Spacer()
+                
+                VStack(alignment: .leading ,spacing: 15) {
+                    WeatherFeatureView(iconName: "eye", text: "\(entry.visibility / 1000) km")
+                    WeatherFeatureView(iconName: "gauge", text: "\(entry.pressure) hPa")
                 }
             }
             
-            HStack(spacing: 15) {
-                HStack {
-                    Image(systemName: "wind")
-                    Text("Wind: \(Int(entry.windSpeed)) m/s")
-                }
-                
-                HStack {
-                    Image(systemName: "cloud")
-                    Text("Clouds: \(entry.cloudiness)%")
-                }
-            }
-            
-            HStack(spacing: 15) {
-                HStack {
-                    Image(systemName: "eye")
-                    Text("Visibility: \(entry.visibility / 1000) km")
-                }
-                
-                HStack {
-                    Image(systemName: "gauge")
-                    Text("Pressure: \(entry.pressure) hPa")
-                }
-            }
         }
         .padding()
         .containerBackground(for: .widget) {
@@ -266,6 +250,17 @@ struct WeatherWidgetMedium: Widget {
         .configurationDisplayName("Medium Weather Widget")
         .description("Shows more detailed weather information.")
         .supportedFamilies([.systemMedium])
+    }
+}
+struct WeatherFeatureView: View {
+    let iconName: String
+    let text: String
+    
+    var body: some View {
+        HStack {
+            Image(systemName: iconName)
+            Text(text)
+        }
     }
 }
 

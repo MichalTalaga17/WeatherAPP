@@ -291,3 +291,4 @@ struct ForecastScroll: View {
         .cornerRadius(8)
     }
 }
+
