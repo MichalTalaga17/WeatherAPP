@@ -22,6 +22,10 @@
 		479252C12C665E5A0032CE7F /* API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47BAFC272C5EE21200DCDE92 /* API.swift */; };
 		479252C22C665E820032CE7F /* WeatherModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47BAFC252C5EE1F100DCDE92 /* WeatherModal.swift */; };
 		479252C32C665F270032CE7F /* Conventers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47BAFC292C5FDDCF00DCDE92 /* Conventers.swift */; };
+		479252C62C66C9440032CE7F /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 479252C42C66C93A0032CE7F /* Models.swift */; };
+		479252C92C66C9C50032CE7F /* Providers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 479252C72C66C9B10032CE7F /* Providers.swift */; };
+		479252CC2C66C9F00032CE7F /* Views.swift in Sources */ = {isa = PBXBuildFile; fileRef = 479252CA2C66C9E40032CE7F /* Views.swift */; };
+		479252CF2C66CA140032CE7F /* Widgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 479252CD2C66CA0D0032CE7F /* Widgets.swift */; };
 		47BAFC262C5EE1F100DCDE92 /* WeatherModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47BAFC252C5EE1F100DCDE92 /* WeatherModal.swift */; };
 		47BAFC282C5EE21200DCDE92 /* API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47BAFC272C5EE21200DCDE92 /* API.swift */; };
 		47BAFC2A2C5FDDCF00DCDE92 /* Conventers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47BAFC292C5FDDCF00DCDE92 /* Conventers.swift */; };
@@ -82,6 +86,10 @@
 		474873F82C64FD1A003C1D5E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		47761B452C63B4990027DE18 /* CityRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CityRowView.swift; sourceTree = "<group>"; };
 		479252BE2C66504B0032CE7F /* ForecastWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForecastWidget.swift; sourceTree = "<group>"; };
+		479252C42C66C93A0032CE7F /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		479252C72C66C9B10032CE7F /* Providers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Providers.swift; sourceTree = "<group>"; };
+		479252CA2C66C9E40032CE7F /* Views.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views.swift; sourceTree = "<group>"; };
+		479252CD2C66CA0D0032CE7F /* Widgets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Widgets.swift; sourceTree = "<group>"; };
 		47BAFC252C5EE1F100DCDE92 /* WeatherModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherModal.swift; sourceTree = "<group>"; };
 		47BAFC272C5EE21200DCDE92 /* API.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = API.swift; sourceTree = "<group>"; };
 		47BAFC292C5FDDCF00DCDE92 /* Conventers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Conventers.swift; sourceTree = "<group>"; };
@@ -139,12 +147,16 @@
 			isa = PBXGroup;
 			children = (
 				474873EE2C64FD19003C1D5E /* WeatherWidgetBundle.swift */,
+				479252BE2C66504B0032CE7F /* ForecastWidget.swift */,
+				479252CD2C66CA0D0032CE7F /* Widgets.swift */,
 				474873F02C64FD19003C1D5E /* WeatherWidgetLiveActivity.swift */,
+				479252CA2C66C9E40032CE7F /* Views.swift */,
+				479252C72C66C9B10032CE7F /* Providers.swift */,
 				474873F22C64FD19003C1D5E /* WeatherWidget.swift */,
 				474873F42C64FD19003C1D5E /* AppIntent.swift */,
-				479252BE2C66504B0032CE7F /* ForecastWidget.swift */,
 				474873F62C64FD1A003C1D5E /* Assets.xcassets */,
 				474873F82C64FD1A003C1D5E /* Info.plist */,
+				479252C42C66C93A0032CE7F /* Models.swift */,
 			);
 			path = WeatherWidget;
 			sourceTree = "<group>";
@@ -371,13 +383,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				479252C62C66C9440032CE7F /* Models.swift in Sources */,
 				479252C22C665E820032CE7F /* WeatherModal.swift in Sources */,
 				474873EF2C64FD19003C1D5E /* WeatherWidgetBundle.swift in Sources */,
 				474873F52C64FD19003C1D5E /* AppIntent.swift in Sources */,
 				479252C02C6651110032CE7F /* ForecastWidget.swift in Sources */,
+				479252CF2C66CA140032CE7F /* Widgets.swift in Sources */,
 				474873F12C64FD19003C1D5E /* WeatherWidgetLiveActivity.swift in Sources */,
+				479252CC2C66C9F00032CE7F /* Views.swift in Sources */,
 				479252B92C6585D30032CE7F /* Icons.swift in Sources */,
 				479252C32C665F270032CE7F /* Conventers.swift in Sources */,
+				479252C92C66C9C50032CE7F /* Providers.swift in Sources */,
 				474873F32C64FD19003C1D5E /* WeatherWidget.swift in Sources */,
 				479252C12C665E5A0032CE7F /* API.swift in Sources */,
 				479252BD2C662CD00032CE7F /* CurrentModal.swift in Sources */,
