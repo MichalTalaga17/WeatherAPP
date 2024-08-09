@@ -16,11 +16,16 @@ WeatherApp is a weather application built in SwiftUI, utilizing `SwiftData` for 
 - **`LocationWeatherView.swift`**: A detailed view showing the full weather forecast for the selected city.
 - **`API.swift`**: A class responsible for fetching weather data from the OpenWeatherMap API.
 - **`CurrentResponse.swift` & `ForecastData.swift`**: Data models for mapping JSON responses from the API to Swift structures.
-- **`WeatherWidget.swift`**: Code responsible for creating the widget, integrating with WidgetKit, and managing widget data.
+- **`Wigets files`**: Code responsible for creating the widget, integrating with WidgetKit, and managing widget data.
 
 ### Widget
 
-- **`WeatherWidget.swift`**: File responsible for configuring the widget. The widget displays the weather icon, current temperature, and city name. It uses data saved in `UserDefaults` by the app through `App Groups`.
+- **`WeatherWidgetMedium`**: Medium-sized widget with detailed weather information. Displays the city name, temperature, feels like temperature, humidity, wind speed, cloudiness, visibility, and pressure.
+
+- **`WeatherWidget`**: Small widget with basic weather information. Shows the city name, current temperature, and weather icon.
+
+- **`WeatherWidgetForecast`**: Medium-sized widget with a forecast for the next few hours. Presents the city name along with forecasted temperatures and icons for the upcoming hours.
+
 
 ## Requirements
 
