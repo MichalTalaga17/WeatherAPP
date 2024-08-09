@@ -28,11 +28,11 @@ struct LocationWeatherView: View {
                                 .font(.title3)
                             Spacer()
                         }
-                        Text(kelvinToCelsius(currentWeatherData.main.temp))
+                        Text("\(Int(currentWeatherData.main.temp))°")
                             .font(.system(size: 60))
                         Text(currentWeatherData.weather.first?.description ?? "")
                             .font(.headline)
-                        Text("Od \(kelvinToCelsius(currentWeatherData.main.temp_min)) do \(kelvinToCelsius(currentWeatherData.main.temp_max))")
+                        Text("Od \(Int(currentWeatherData.main.temp_min))° do \(Int(currentWeatherData.main.temp_max))°")
                             .font(.callout)
                     }
                     .padding(15)

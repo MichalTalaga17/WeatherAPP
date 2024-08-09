@@ -9,9 +9,10 @@ import WidgetKit
 import SwiftUI
 
 @main
-struct WeatherWidgetBundle: WidgetBundle {
+struct WeatherWidgets: WidgetBundle {
+    @WidgetBundleBuilder
     var body: some Widget {
-        WeatherWidget()
-//        WeatherWidgetLiveActivity()
+        WeatherWidget()          // Mały widżet
+        WeatherWidgetMedium()    // Średni widżet
     }
 }
