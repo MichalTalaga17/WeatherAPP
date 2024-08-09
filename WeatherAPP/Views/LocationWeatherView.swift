@@ -128,32 +128,7 @@ struct LocationWeatherView: View {
                     .cornerRadius(8)
                     
                     if let forecastData = forecastData {
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(alignment: .top, spacing: 5) {
-                                ForEach(Array(forecastData.list.prefix(20)), id: \.dt) { item in
-                                    VStack(alignment: .center) {
-                                        if let timestamp = dateToTimestamp(dateString: item.dt_txt) {
-                                            Text(formatDate(timestamp: Int(timestamp), formatType: .hourOnly, timeZone: timeZone))
-                                                .font(.subheadline)
-                                        } else {
-                                            Text(item.dt_txt)
-                                                .font(.subheadline)
-                                        }
-                                        weatherIcon(for: item.weather.first?.icon ?? "defaultIcon")
-                                        Text(kelvinToCelsius(item.main.temp))
-                                            .font(.title2.bold())
-                                        Text(kelvinToCelsius(item.main.feels_like))
-                                            .font(.body)
-                                        Text("\(String(format: "%.0f", item.pop * 100))%")
-                                            .font(.body)
-                                    }
-                                    .frame(width: UIScreen.main.bounds.width * 0.25)
-                                }
-                            }
-                            .padding(.vertical, 15.0)
-                        }
-                        .background(Color.white.opacity(0.05))
-                        .cornerRadius(8)
+                        ForecastScroll(data: forecastData, timezone: timeZone)
                     }
                     
                     Spacer()
@@ -280,6 +255,39 @@ struct LocationWeatherView: View {
 }
     
     #Preview {
-        LocationWeatherView(cityName: "Białogard", favourite: true)
+        LocationWeatherView(cityName: "Zembrzyce", favourite: true)
             .modelContainer(for: City.self)
     }
+
+struct ForecastScroll: View {
+    let data: ForecastData
+    let timezone: TimeZone
+    var body: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(alignment: .top, spacing: 5) {
+                ForEach(Array(data.list.prefix(20)), id: \.dt) { item in
+                    VStack(alignment: .center) {
+                        if let timestamp = dateToTimestamp(dateString: item.dt_txt) {
+                            Text(formatDate(timestamp: Int(timestamp), formatType: .hourOnly, timeZone: timezone))
+                                .font(.subheadline)
+                        } else {
+                            Text(item.dt_txt)
+                                .font(.subheadline)
+                        }
+                        weatherIcon(for: item.weather.first?.icon ?? "defaultIcon")
+                        Text(kelvinToCelsius(item.main.temp))
+                            .font(.title2.bold())
+                        Text(kelvinToCelsius(item.main.feels_like))
+                            .font(.body)
+                        Text("\(String(format: "%.0f", item.pop * 100))%")
+                            .font(.body)
+                    }
+                    .frame(width: UIScreen.main.bounds.width * 0.25)
+                }
+            }
+            .padding(.vertical, 15.0)
+        }
+        .background(Color.white.opacity(0.05))
+        .cornerRadius(8)
+    }
+}
