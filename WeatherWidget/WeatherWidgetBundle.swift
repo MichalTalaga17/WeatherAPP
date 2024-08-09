@@ -14,5 +14,6 @@ struct WeatherWidgets: WidgetBundle {
     var body: some Widget {
         WeatherWidget()          // Mały widżet
         WeatherWidgetMedium()    // Średni widżet
+        WeatherWidgetForecast()
     }
 }
