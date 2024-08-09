@@ -68,7 +68,7 @@ struct Provider: TimelineProvider {
         var entries: [SimpleEntry] = []
         
         let now = Date()
-        let updateDate = Calendar.current.date(byAdding: .minute, value: 1, to: now)!
+        let updateDate = Calendar.current.date(byAdding: .minute, value: 5, to: now)!
         
         if let userDefaults = UserDefaults(suiteName: "group.me.michaltalaga.WeatherAPP") {
             let city = userDefaults.string(forKey: "City") ?? "Nieznane"
@@ -97,7 +97,7 @@ struct Provider: TimelineProvider {
                     entries.append(entry)
                     
                     // Dodaj kolejne wpisy dla przyszłych odświeżeń
-                    let nextUpdateDate = Calendar.current.date(byAdding: .second, value: 10, to: now)!
+                    let nextUpdateDate = Calendar.current.date(byAdding: .minute, value: 5, to: now)!
                     let timeline = Timeline(entries: entries, policy: .after(nextUpdateDate))
                     completion(timeline)
                 case .failure(let error):

@@ -13,10 +13,12 @@ import Intents
 struct ForecastEntry: TimelineEntry {
     let date: Date
     let forecast: [ForecastItem]
+    let timeZone: TimeZone
+    let cityName: String
 }
 
 struct ForecastItem {
-    let time: String
+    let time: Int
     let temperature: Double
     let iconName: String
 }
@@ -25,37 +27,67 @@ struct ForecastItem {
 struct ForecastProvider: TimelineProvider {
     func placeholder(in context: Context) -> ForecastEntry {
         ForecastEntry(date: Date(), forecast: [
-            ForecastItem(time: "08:00", temperature: 15.0, iconName: "sun.max"),
-            ForecastItem(time: "12:00", temperature: 20.0, iconName: "cloud.sun"),
-            ForecastItem(time: "16:00", temperature: 18.0, iconName: "cloud.rain"),
-        ])
+            ForecastItem(time: 1691572800, temperature: 15.0, iconName: "sun.max"),
+            ForecastItem(time: 1691587200, temperature: 20.0, iconName: "cloud.sun"),
+            ForecastItem(time: 1691601600, temperature: 18.0, iconName: "cloud.rain"),
+            ForecastItem(time: 1691616000, temperature: 16.0, iconName: "cloud.moon")
+        ], timeZone: TimeZone.current, cityName: "Miasto")
     }
     
     func getSnapshot(in context: Context, completion: @escaping (ForecastEntry) -> ()) {
-        let entry = ForecastEntry(date: Date(), forecast: [
-            ForecastItem(time: "08:00", temperature: 15.0, iconName: "sun.max"),
-            ForecastItem(time: "12:00", temperature: 20.0, iconName: "cloud.sun"),
-            ForecastItem(time: "16:00", temperature: 18.0, iconName: "cloud.rain"),
-        ])
-        completion(entry)
+        fetchForecastData { result in
+            switch result {
+            case .success(let (forecast, timeZone, cityName)):
+                let entry = ForecastEntry(date: Date(), forecast: forecast, timeZone: timeZone, cityName: cityName)
+                completion(entry)
+            case .failure:
+                let entry = ForecastEntry(date: Date(), forecast: [], timeZone: TimeZone.current, cityName: "Nieznane")
+                completion(entry)
+            }
+        }
     }
     
     func getTimeline(in context: Context, completion: @escaping (Timeline<ForecastEntry>) -> ()) {
-        var entries: [ForecastEntry] = []
-        let currentDate = Date()
-        
-        // Create a timeline entry for the next hour
-        let nextUpdateDate = Calendar.current.date(byAdding: .hour, value: 1, to: currentDate)!
-        let entry = ForecastEntry(date: currentDate, forecast: [
-            ForecastItem(time: "08:00", temperature: 15.0, iconName: "sun.max"),
-            ForecastItem(time: "12:00", temperature: 20.0, iconName: "cloud.sun"),
-            ForecastItem(time: "16:00", temperature: 18.0, iconName: "cloud.rain"),
-        ])
-        entries.append(entry)
-        
-        // Create the timeline with an update frequency of 1 hour
-        let timeline = Timeline(entries: entries, policy: .after(nextUpdateDate))
-        completion(timeline)
+        fetchForecastData { result in
+            switch result {
+            case .success(let (forecast, timeZone, cityName)):
+                let entry = ForecastEntry(date: Date(), forecast: forecast, timeZone: timeZone, cityName: cityName)
+                let nextUpdateDate = Calendar.current.date(byAdding: .minute, value: 30, to: Date())!
+                let timeline = Timeline(entries: [entry], policy: .after(nextUpdateDate))
+                completion(timeline)
+            case .failure:
+                let entry = ForecastEntry(date: Date(), forecast: [], timeZone: TimeZone.current, cityName: "Nieznane")
+                let nextUpdateDate = Calendar.current.date(byAdding: .minute, value: 30, to: Date())!
+                let timeline = Timeline(entries: [entry], policy: .after(nextUpdateDate))
+                completion(timeline)
+            }
+        }
+    }
+    
+    private func fetchForecastData(completion: @escaping (Result<([ForecastItem], TimeZone, String), Error>) -> Void) {
+        if let userDefaults = UserDefaults(suiteName: "group.me.michaltalaga.WeatherAPP") {
+            let city = userDefaults.string(forKey: "City") ?? "Nieznane"
+            API.shared.fetchForecastData(forCity: city) { result in
+                switch result {
+                case .success(let data):
+                    let forecastItems = data.list.prefix(6).map { item in
+                        ForecastItem(
+                            time: Int(item.dt),
+                            temperature: item.main.temp,
+                            iconName: iconName(for: item.weather.first?.icon ?? "defaultIcon")
+                        )
+                    }
+                    let timeZone = TimeZone(secondsFromGMT: data.city.timezone) ?? TimeZone.current
+                    completion(.success((forecastItems, timeZone, city)))
+                case .failure(let error):
+                    completion(.failure(error))
+                }
+            }
+        }
+    }
+    
+    private func iconName(for icon: String) -> String {
+        return iconMap[icon] ?? "questionmark"
     }
 }
 
@@ -64,19 +96,32 @@ struct ForecastWidgetEntryView: View {
     var entry: ForecastProvider.Entry
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text("Prognoza pogody")
-                .font(.headline)
-                .bold()
-            
-            ForEach(entry.forecast, id: \.time) { item in
-                HStack {
-                    Image(systemName: item.iconName)
-                    Text("\(item.time): \(Int(item.temperature))°C")
+        VStack(alignment: .center, spacing: 10) {
+            HStack{
+                Text(entry.cityName)
+                    .font(.callout)
+                    .bold()
+            }
+            Spacer()
+            HStack(alignment: .top) {
+                ForEach(entry.forecast, id: \.time) { item in
+                    VStack {
+                        Text(formatDate(timestamp: item.time, formatType: .timeOnly, timeZone: entry.timeZone))
+                            .font(.footnote)
+                            .frame(maxHeight: .infinity)
+                        Image(systemName: item.iconName)
+                            .font(.title)
+                            .padding(.vertical, 5)
+                            .frame(maxHeight: .infinity)
+                        Text(kelvinToCelsius(item.temperature))
+                            .font(.caption2)
+                            .frame(maxHeight: .infinity)
+                    }
+                    .frame(maxWidth: .infinity)
                 }
             }
         }
-        .padding()
+        .padding(.vertical)
         .containerBackground(for: .widget) {
             LinearGradient(gradient: Gradient(colors: [Color.blue.opacity(0.8), Color.black]), startPoint: .top, endPoint: .bottom)
                 .edgesIgnoringSafeArea(.all)
@@ -99,5 +144,4 @@ struct WeatherWidgetForecast: Widget {
         .description("Wyświetla prognozę pogody na kilka nadchodzących godzin.")
     }
 }
-
 
