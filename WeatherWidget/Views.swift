@@ -26,14 +26,13 @@ struct ForecastWidgetEntryView: View {
                     VStack {
                         Text(formatDate(timestamp: item.time, formatType: .timeOnly, timeZone: entry.timeZone))
                             .font(.footnote)
-                            .frame(maxHeight: .infinity)
+                        Spacer()
                         Image(systemName: item.iconName)
                             .font(.title)
                             .padding(.vertical, 5)
-                            .frame(maxHeight: .infinity)
+                        Spacer()
                         Text(kelvinToCelsius(item.temperature))
                             .font(.caption2)
-                            .frame(maxHeight: .infinity)
                     }
                     .frame(maxWidth: .infinity)
                 }
@@ -55,13 +54,15 @@ struct WeatherWidgetEntryView: View {
     
     var body: some View {
         VStack(alignment: .center, spacing: 30) {
-            Text("\(entry.city) \(Int(entry.temperature))°")
-                .font(.subheadline)
             HStack (alignment: .center) {
                 Spacer()
-                weatherIcon(for: entry.icon)
+                Image(systemName: entry.icon)
+                    .font(.largeTitle)
                 Spacer()
             }
+            Text("\(entry.city) \(Int(entry.temperature))°")
+                .font(.subheadline)
+            
         }
         .padding(.vertical)
         .cornerRadius(8)

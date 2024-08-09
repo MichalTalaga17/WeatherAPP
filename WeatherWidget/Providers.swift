@@ -82,6 +82,10 @@ struct ForecastProvider: TimelineProvider {
     }
 }
 
+private func iconName(for icon: String) -> String {
+    return iconMap[icon] ?? "questionmark"
+}
+
 // MARK: - Dostawca danych dla podstawowego widgetu
 
 struct WeatherProvider: TimelineProvider {
@@ -152,7 +156,7 @@ struct WeatherProvider: TimelineProvider {
                         visibility: data.visibility,
                         sunrise: Date(timeIntervalSince1970: TimeInterval(data.sys.sunrise)),
                         sunset: Date(timeIntervalSince1970: TimeInterval(data.sys.sunset)),
-                        icon: data.weather.first?.icon ?? "01d"
+                        icon: iconName(for: data.weather.first?.icon ?? "01d")
                     )
                     entries.append(entry)
                     
