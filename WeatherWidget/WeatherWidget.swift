@@ -26,7 +26,7 @@ struct Provider: TimelineProvider {
         
         let now = Date()
         let updateDate = Calendar.current.date(byAdding: .minute, value: 1, to: now)!
-
+        
         if let userDefaults = UserDefaults(suiteName: "group.me.michaltalaga.WeatherAPP") {
             let city = userDefaults.string(forKey: "City") ?? "Nieznane"
             print(city)
@@ -73,23 +73,22 @@ struct WeatherWidgetEntryView: View {
     var entry: SimpleEntry
     
     var body: some View {
-        VStack(alignment: .leading) {
-            Text(entry.city)
-                .font(.headline)
-            Spacer()
-            HStack {
-                Text("\(Int(entry.temperature))°C")
-                    .font(.title)
-                
+        VStack(alignment: .center, spacing: 30) {
+            Text("\(entry.city) \(Int(entry.temperature))°")
+                .font(.subheadline)
+            HStack (alignment: .center) {
+                Spacer()
                 weatherIcon(for: entry.icon)
-                    .font(.title)
+                Spacer()
             }
         }
-        .padding()
-        .background(Color.red.opacity(0.2))
+        .padding(.vertical)
         .cornerRadius(8)
+        .foregroundColor(.white)
         .containerBackground(for: .widget) {
-            Color.red.opacity(0.2)
+            LinearGradient(gradient: Gradient(colors: [Color.blue.opacity(0.8), Color.black]), startPoint: .top, endPoint: .bottom)
+                .edgesIgnoringSafeArea(.all)
+            Color.black.opacity(0.3)
         }
     }
 }

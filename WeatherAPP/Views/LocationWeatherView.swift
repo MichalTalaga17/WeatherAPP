@@ -169,6 +169,10 @@ struct LocationWeatherView: View {
                             modelContext.delete(city)
                             favourite.toggle()
                         }
+                        if let userDefaults = UserDefaults(suiteName: "group.me.michaltalaga.WeatherAPP"){
+                            var id = cities.first?.id
+                            userDefaults.set(cities.first?.name, forKey: "City")
+                        }
                     } label: {
                         Text("Usuń z ulubionych")
                             .font(.caption)
@@ -194,6 +198,7 @@ struct LocationWeatherView: View {
                             .cornerRadius(30)
                     }
                 }
+                
             }
             .padding(.bottom)
         }
