@@ -32,7 +32,7 @@ struct LocationWeatherView: View {
                             .font(.system(size: 60))
                         Text(currentWeatherData.weather.first?.description ?? "")
                             .font(.headline)
-                        Text("Od \(Int(currentWeatherData.main.temp_min))° do \(Int(currentWeatherData.main.temp_max))°")
+                        Text("From \(Int(currentWeatherData.main.temp_min))° to \(Int(currentWeatherData.main.temp_max))°")
                             .font(.callout)
                     }
                     .padding(15)
@@ -85,14 +85,14 @@ struct LocationWeatherView: View {
                                 VStack{
                                     Text("\(currentWeatherData.main.humidity)%")
                                         .font(.title2 .bold())
-                                    Text("Wilgotność")
+                                    Text("Humidity")
                                 }
                                 .frame(width: containerWidth * 0.5-20)
                                 Spacer()
                                 VStack{
                                     Text("\(currentWeatherData.main.pressure) hPa")
                                         .font(.title2 .bold())
-                                    Text("Ciśnienie")
+                                    Text("Pressure")
                                 }
                                 .frame(width: containerWidth * 0.5-20)
                             }
@@ -100,7 +100,7 @@ struct LocationWeatherView: View {
                                 VStack{
                                     Text("\(String(format: "%.0f", currentWeatherData.wind.speed)) m/s \(windDirection(from: currentWeatherData.wind.deg))")
                                         .font(.title2 .bold())
-                                    Text("Wiatr")
+                                    Text("Wind")
                                 }
                                 .frame(width: containerWidth * 0.5-20)
                                 Spacer()
@@ -108,15 +108,15 @@ struct LocationWeatherView: View {
                                     if let snow = currentWeatherData.snow, let snow1h = snow.hour1 {
                                         Text("\(String(format: "%.0f", snow1h)) mm")
                                             .font(.title2.bold())
-                                        Text("Śnieg")
+                                        Text("Snow")
                                     } else if let rain = currentWeatherData.rain, let rain1h = rain.hour1 {
                                         Text("\(String(format: "%.0f", rain1h)) mm")
                                             .font(.title2.bold())
-                                        Text("Deszcz")
+                                        Text("Rain")
                                     } else {
                                         Text("0")
                                             .font(.title2.bold())
-                                        Text("Opady")
+                                        Text("Precipitation")
                                     }
                                 }
                                 .frame(width: containerWidth * 0.5-20)
@@ -149,7 +149,7 @@ struct LocationWeatherView: View {
                             userDefaults.set(cities.first?.name, forKey: "City")
                         }
                     } label: {
-                        Text("Usuń z ulubionych")
+                        Text("Delete from favourites")
                             .font(.caption)
                             .padding()
                             .background(Color.white.opacity(0.1))
@@ -160,13 +160,13 @@ struct LocationWeatherView: View {
                         let newCity = City(name: cityName)
                         do {
                             modelContext.insert(newCity)
-                            try modelContext.save() // Dodajemy zapisywanie kontekstu
+                            try modelContext.save() // We add saving the context
                             favourite.toggle()
                         } catch {
                             print("Error saving context: \(error)")
                         }
                     } label: {
-                        Text("Dodaj do ulubionych")
+                        Text("Add to favourites")
                             .font(.caption)
                             .padding()
                             .background(Color.white.opacity(0.1))
@@ -186,7 +186,7 @@ struct LocationWeatherView: View {
                 Button(action: {
                     self.presentationMode.wrappedValue.dismiss()
                 }) {
-                    Text("Wróć")
+                    Text("Back")
                         .font(.caption)
                         .padding(.horizontal, 15)
                         .padding(.vertical, 8)
@@ -291,4 +291,3 @@ struct ForecastScroll: View {
         .cornerRadius(8)
     }
 }
-

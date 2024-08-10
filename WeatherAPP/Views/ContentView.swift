@@ -123,7 +123,7 @@ struct ContentView: View {
 
 func fetchCurrentWeatherData(forCity city: City, completion: @escaping (Result<CurrentResponse, Error>) -> Void) {
     let encodedCity = city.name.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
-    let urlString = "https://api.openweathermap.org/data/2.5/weather?q=\(encodedCity)&lang=pl&appid=\(API.key)"
+    let urlString = "https://api.openweathermap.org/data/2.5/weather?q=\(encodedCity)&appid=\(API.key)"
     
     guard let url = URL(string: urlString) else {
         completion(.failure(NSError(domain: "Invalid URL", code: -1, userInfo: nil)))
