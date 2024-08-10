@@ -37,7 +37,7 @@ WeatherApp is a weather application built in SwiftUI, utilizing `SwiftData` for 
 
 1. **Set up the project:**
    - Clone the repository and open the project in Xcode.
-   - Add your API key to `API.swift` where `"{YourKey}"` is located.
+   - Add your API key to `API.swift` where `key` is located.
    - Ensure `App Groups` is properly configured in the project settings.
 
 2. **Building and running:**
