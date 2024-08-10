@@ -3,6 +3,7 @@ import SwiftData
 
 @main
 struct WeatherAPPApp: App {
+    
     var sharedModelContainer: ModelContainer = {
     let schema = Schema([
         City.self,
@@ -15,6 +16,7 @@ struct WeatherAPPApp: App {
         fatalError("Could not create ModelContainer: \(error)")
     }
 }()
+    
     
 
     var body: some Scene {

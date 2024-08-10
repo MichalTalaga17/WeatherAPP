@@ -1,11 +1,12 @@
 import Foundation
 
 class API {
+    static let key = "e58dfbc15daacbeabeed6abc3e5d95ca"
     static let shared = API()
     
     func fetchForecastData(forCity city: String, completion: @escaping (Result<ForecastData, Error>) -> Void) {
         let encodedCity = city.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
-        let urlString = "https://api.openweathermap.org/data/2.5/forecast?q=\(encodedCity)&lang=pl&appid=e58dfbc15daacbeabeed6abc3e5d95ca"
+        let urlString = "https://api.openweathermap.org/data/2.5/forecast?q=\(encodedCity)&lang=pl&appid=\(API.key)"
         guard let url = URL(string: urlString) else {
             completion(.failure(NSError(domain: "Invalid URL", code: -1, userInfo: nil)))
             return
@@ -34,7 +35,7 @@ class API {
     
     func fetchCurrentWeatherData(forCity city: String, completion: @escaping (Result<CurrentResponse, Error>) -> Void) {
         let encodedCity = city.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
-        let urlString = "https://api.openweathermap.org/data/2.5/weather?q=\(encodedCity)&lang=pl&appid=e58dfbc15daacbeabeed6abc3e5d95ca&units=metric"
+        let urlString = "https://api.openweathermap.org/data/2.5/weather?q=\(encodedCity)&lang=pl&appid=\(API.key)&units=metric"
         
         guard let url = URL(string: urlString) else {
             completion(.failure(NSError(domain: "Invalid URL", code: -1, userInfo: nil)))
