@@ -227,12 +227,12 @@ struct LocationWeatherView: View {
                     self.forecastData = data
                     self.timeZone = TimeZone(secondsFromGMT: data.city.timezone)
                 case .failure(let error):
-                    showAlert(title: "Błąd", message: "Nie udało się pobrać danych o pogodzie:")
+                    showAlert(title: "Error", message: "Cannot fetch data")
                     print("\(error.localizedDescription)")
                 }
             }
         } catch {
-            showAlert(title: "Błąd", message: "Nie udało się pobrać danych o pogodzie:")
+            showAlert(title: "Error", message: "Cannot fetch data")
             print("\(error.localizedDescription)")
         }
     }
@@ -246,7 +246,7 @@ struct LocationWeatherView: View {
                 self.backgroundGradient = gradientBackground(for: newIcon)
                 self.timeZone = TimeZone(secondsFromGMT: data.timezone)
             case .failure(let error):
-                showAlert(title: "Błąd", message: "Nie udało się pobrać danych o pogodzie:")
+                showAlert(title: "Error", message: "Cannot fetch data")
                 print("\(error.localizedDescription)")
             }
             
@@ -255,7 +255,7 @@ struct LocationWeatherView: View {
 }
     
     #Preview {
-        LocationWeatherView(cityName: "Zembrzyce", favourite: true)
+        LocationWeatherView(cityName: "New York", favourite: true)
             .modelContainer(for: City.self)
     }
 

@@ -9,7 +9,7 @@ import Foundation
 import WidgetKit
 import SwiftUI
 
-// MARK: - Konfiguracja widgetu prognozy
+// MARK: - Forecast Widget Configuration
 
 struct WeatherWidgetForecast: Widget {
     let kind: String = "WeatherWidgetForecast"
@@ -18,13 +18,13 @@ struct WeatherWidgetForecast: Widget {
         StaticConfiguration(kind: kind, provider: ForecastProvider()) { entry in
             ForecastWidgetEntryView(entry: entry)
         }
-        .configurationDisplayName("Prognoza Pogody")
-        .description("Wyświetla prognozę pogody na kilka nadchodzących godzin.")
+        .configurationDisplayName("Forecast Widget")
+        .description("Displays weather forecast for the upcoming hours.")
         .supportedFamilies([.systemMedium])
     }
 }
 
-// MARK: - Konfiguracja widgetu podstawowego
+// MARK: - Basic Widget Configuration
 
 struct WeatherWidget: Widget {
     let kind: String = "WeatherWidget"
@@ -39,7 +39,7 @@ struct WeatherWidget: Widget {
     }
 }
 
-// MARK: - Konfiguracja widgetu średniego
+// MARK: - Medium Widget Configuration
 
 struct WeatherWidgetMedium: Widget {
     let kind: String = "WeatherWidgetMedium"

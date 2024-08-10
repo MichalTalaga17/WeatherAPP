@@ -39,18 +39,18 @@ struct ContentView: View {
     
     private var headerView: some View {
         VStack {
-            Text("Pogoda")
+            Text("WeatherAPP")
                 .font(.largeTitle.bold())
                 .frame(maxWidth: .infinity, alignment: .leading)
             
             HStack(spacing: 10) {
-                TextField("Podaj miasto", text: $cityName)
+                TextField("Search for city", text: $cityName)
                     .padding()
                     .background(Color.black.opacity(0.1))
                     .cornerRadius(8)
                 
                 NavigationLink(destination: LocationWeatherView(cityName: cityName2, favourite: false)) {
-                    Text("Szukaj")
+                    Text("Search")
                         .font(.callout)
                         .padding()
                         .background(Color.black.opacity(0.3))
@@ -91,11 +91,11 @@ struct ContentView: View {
                         self.backgroundGradient = gradientBackground(for: icon)
                     }
                 case .failure(let error):
-                    showAlert(title: "Błąd", message: "Nie udało się pobrać danych o pogodzie: \(error.localizedDescription)")
+                    showAlert(title: "Error", message: "Cannot fetch data")
                 }
             }
         } catch {
-            showAlert(title: "Błąd", message: "Nie udało się pobrać danych o pogodzie: \(error.localizedDescription)")
+            showAlert(title: "Error", message: "Cannot fetch data")
         }
     }
     
