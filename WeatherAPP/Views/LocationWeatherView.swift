@@ -16,6 +16,7 @@ struct LocationWeatherView: View {
     @State private var showAlert: Bool = false
     @State private var alertTitle: String = ""
     @State private var alertMessage: String = ""
+    @State private var airPollutionData: PollutionData?
     
     var body: some View {
         VStack {
@@ -35,6 +36,16 @@ struct LocationWeatherView: View {
                             .font(.headline)
                         Text("From \(Int(currentWeatherData.main.temp_min))° to \(Int(currentWeatherData.main.temp_max))°")
                             .font(.callout)
+                        if let airPollutionData = airPollutionData, let airQuality = airPollutionData.list.first {
+                            VStack(alignment: .leading, spacing: 10) {
+                                Text("Air Index: \(airQuality.main.aqi)")
+                                    .font(.callout)
+                                
+                            }
+                            .padding()
+                            .background(Color.white.opacity(0.05))
+                            .cornerRadius(8)
+                        }
                     }
                     .padding(15)
                     
@@ -211,6 +222,7 @@ struct LocationWeatherView: View {
             Task {
                 await fetchCurrentWeatherData()
                 await fetchWeatherData()
+                await fetchAirPollutionData()
             }
         }
         .alert(isPresented: $showAlert) {
@@ -229,7 +241,17 @@ struct LocationWeatherView: View {
         self.alertMessage = message
         self.showAlert = true
     }
-    
+    func fetchAirPollutionData() async {
+        API.shared.fetchAirPollutionData(forCity: cityName) { result in
+            switch result {
+            case .success(let data):
+                self.airPollutionData = data
+            case .failure(let error):
+                showAlert(title: "Error", message: "Cannot fetch air pollution data")
+                print("\(error.localizedDescription)")
+            }
+        }
+    }
     func fetchWeatherData() async {
         do {
             let _: () = try await API.shared.fetchForecastData(forCity: cityName) { result in

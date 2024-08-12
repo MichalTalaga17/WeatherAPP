@@ -37,6 +37,7 @@ class API {
     func fetchCurrentWeatherData(forCity city: String, completion: @escaping (Result<CurrentResponse, Error>) -> Void) {
         let encodedCity = city.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
         let urlString = "https://api.openweathermap.org/data/2.5/weather?q=\(encodedCity)&appid=\(API.key)&units=metric"
+        print(urlString)
         guard let url = URL(string: urlString) else {
             completion(.failure(NSError(domain: "Invalid URL", code: -1, userInfo: nil)))
             return
@@ -66,25 +67,18 @@ class API {
     }
     
     func fetchAirPollutionData(forCity city: String, completion: @escaping (Result<PollutionData, Error>) -> Void) {
-        let encodedCity = city.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
-        
-        // Najpierw pobieramy dane pogodowe, aby uzyskać współrzędne miasta
-        fetchCurrentWeatherData(forCity: encodedCity) { result in
+        fetchCurrentWeatherData(forCity: city) { result in
             switch result {
             case .success(let weatherData):
-                // Pobieramy współrzędne miasta z danych pogodowych
                 let latitude = weatherData.coord.lat
                 let longitude = weatherData.coord.lon
                 
-                // Tworzymy URL dla zapytania o zanieczyszczenie powietrza
                 let urlString = "https://api.openweathermap.org/data/2.5/air_pollution?lat=\(latitude)&lon=\(longitude)&appid=\(API.key)"
-                
                 guard let url = URL(string: urlString) else {
                     completion(.failure(NSError(domain: "Invalid URL", code: -1, userInfo: nil)))
                     return
                 }
                 
-                // Wysyłamy zapytanie do API o zanieczyszczenie powietrza
                 URLSession.shared.dataTask(with: url) { data, response, error in
                     if let error = error {
                         completion(.failure(error))
