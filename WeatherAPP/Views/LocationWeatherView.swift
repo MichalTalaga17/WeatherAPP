@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import UserNotifications
 
 struct LocationWeatherView: View {
     @Environment(\.modelContext) private var modelContext
@@ -144,7 +145,7 @@ struct LocationWeatherView: View {
                             modelContext.delete(city)
                             favourite.toggle()
                         }
-                        if let userDefaults = UserDefaults(suiteName: "group.me.michaltalaga.WeatherAPP"){
+                        if let userDefaults = UserDefaults(suiteName: "group.me.michaltalaga.WeatherAPP") {
                             var id = cities.first?.id
                             userDefaults.set(cities.first?.name, forKey: "City")
                         }
@@ -174,6 +175,16 @@ struct LocationWeatherView: View {
                     }
                 }
                 
+                // Nowy przycisk do wysyłania powiadomienia
+                Button {
+                    sendWeatherNotification()
+                } label: {
+                    Text("Send Weather Notification")
+                        .font(.caption)
+                        .padding()
+                        .background(Color.white.opacity(0.1))
+                        .cornerRadius(30)
+                }
             }
             .padding(.bottom)
         }
@@ -252,42 +263,64 @@ struct LocationWeatherView: View {
             
         }
     }
-}
     
-    #Preview {
-        LocationWeatherView(cityName: "New York", favourite: true)
-            .modelContainer(for: City.self)
+    func sendWeatherNotification() {
+        guard let currentWeatherData = currentWeatherData else { return }
+        
+        let content = UNMutableNotificationContent()
+        content.title = "\(currentWeatherData.name) Weather"
+        content.body = "Current temperature: \(Int(currentWeatherData.main.temp))°. Conditions: \(currentWeatherData.weather.first?.description ?? "")"
+        content.sound = .default
+        
+        // Możesz ustawić wyzwalacz np. na natychmiastowe powiadomienie
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
+        
+        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
+        
+        UNUserNotificationCenter.current().add(request) { error in
+            if let error = error {
+                print("Error adding notification: \(error.localizedDescription)")
+            } else {
+                print("Notification scheduled")
+            }
+        }
+    }
+    struct ForecastScroll: View {
+        let data: ForecastData
+        let timezone: TimeZone
+        
+        var body: some View {
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(alignment: .top, spacing: 5) {
+                    ForEach(Array(data.list.prefix(20)), id: \.dt) { item in
+                        VStack(alignment: .center) {
+                            if let timestamp = dateToTimestamp(dateString: item.dt_txt) {
+                                Text(formatDate(timestamp: Int(timestamp), formatType: .hourOnly, timeZone: timezone))
+                                    .font(.subheadline)
+                            } else {
+                                Text(item.dt_txt)
+                                    .font(.subheadline)
+                            }
+                            weatherIcon(for: item.weather.first?.icon ?? "defaultIcon")
+                            Text(kelvinToCelsius(item.main.temp))
+                                .font(.title2.bold())
+                            Text(kelvinToCelsius(item.main.feels_like))
+                                .font(.body)
+                            Text("\(String(format: "%.0f", item.pop * 100))%")
+                                .font(.body)
+                        }
+                        .frame(width: UIScreen.main.bounds.width * 0.25)
+                    }
+                }
+                .padding(.vertical, 15.0)
+            }
+            .background(Color.white.opacity(0.05))
+            .cornerRadius(8)
+        }
     }
 
-struct ForecastScroll: View {
-    let data: ForecastData
-    let timezone: TimeZone
-    var body: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(alignment: .top, spacing: 5) {
-                ForEach(Array(data.list.prefix(20)), id: \.dt) { item in
-                    VStack(alignment: .center) {
-                        if let timestamp = dateToTimestamp(dateString: item.dt_txt) {
-                            Text(formatDate(timestamp: Int(timestamp), formatType: .hourOnly, timeZone: timezone))
-                                .font(.subheadline)
-                        } else {
-                            Text(item.dt_txt)
-                                .font(.subheadline)
-                        }
-                        weatherIcon(for: item.weather.first?.icon ?? "defaultIcon")
-                        Text(kelvinToCelsius(item.main.temp))
-                            .font(.title2.bold())
-                        Text(kelvinToCelsius(item.main.feels_like))
-                            .font(.body)
-                        Text("\(String(format: "%.0f", item.pop * 100))%")
-                            .font(.body)
-                    }
-                    .frame(width: UIScreen.main.bounds.width * 0.25)
-                }
-            }
-            .padding(.vertical, 15.0)
-        }
-        .background(Color.white.opacity(0.05))
-        .cornerRadius(8)
-    }
+}
+#Preview {
+    LocationWeatherView(cityName: "New York", favourite: true)
+        .modelContainer(for: City.self)
 }
