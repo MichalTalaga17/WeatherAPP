@@ -9,18 +9,6 @@ import Foundation
 import WidgetKit
 import SwiftUI
 
-struct LocationWidget: Widget {
-    let kind: String = "LocationWidget"
-    
-    var body: some WidgetConfiguration {
-        StaticConfiguration(kind: kind, provider: LocationProvider()) { entry in
-            LocationWidgetEntryView(entry: entry)
-        }
-        .configurationDisplayName("Location Widget")
-        .description("Shows your current location.")
-        .supportedFamilies([ .systemMedium])
-    }
-}
 
 // MARK: - Forecast Widget Configuration
 

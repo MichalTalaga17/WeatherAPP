@@ -1,9 +1,9 @@
 import Foundation
 import WidgetKit
 
+// MARK: - ForecastProvider
+
 struct ForecastProvider: TimelineProvider {
-    let locationManager = LocationManager()
-    
     func placeholder(in context: Context) -> ForecastEntry {
         ForecastEntry(
             date: Date(),
@@ -44,7 +44,11 @@ struct ForecastProvider: TimelineProvider {
     }
     
     private func fetchForecastData(completion: @escaping (Result<([ForecastItem], TimeZone, String), Error>) -> Void) {
-        let cityName = locationManager.loadCityName() ?? "Unknown"
+        guard let userDefaults = UserDefaults(suiteName: "group.me.michaltalaga.WeatherAPP"),
+              let cityName = userDefaults.string(forKey: "City") else {
+            completion(.failure(NSError(domain: "No City Name Found", code: -1, userInfo: nil)))
+            return
+        }
         
         API.shared.fetchForecastData(forCity: cityName) { result in
             switch result {
@@ -69,9 +73,9 @@ struct ForecastProvider: TimelineProvider {
     }
 }
 
+// MARK: - WeatherProvider
+
 struct WeatherProvider: TimelineProvider {
-    let locationManager = LocationManager()
-    
     func placeholder(in context: Context) -> SimpleEntry {
         SimpleEntry(
             date: Date(),
@@ -93,28 +97,9 @@ struct WeatherProvider: TimelineProvider {
     }
     
     func getSnapshot(in context: Context, completion: @escaping (SimpleEntry) -> ()) {
-        let cityName = locationManager.loadCityName() ?? "Nieznane"
-        
-        API.shared.fetchCurrentWeatherData(forCity: cityName) { result in
+        fetchWeatherData { result in
             switch result {
-            case .success(let data):
-                let entry = SimpleEntry(
-                    date: Date(),
-                    city: data.name,
-                    temperature: data.main.temp,
-                    feelsLike: data.main.feels_like,
-                    tempMin: data.main.temp_min,
-                    tempMax: data.main.temp_max,
-                    pressure: data.main.pressure,
-                    humidity: data.main.humidity,
-                    windSpeed: data.wind.speed,
-                    windDirection: data.wind.deg,
-                    cloudiness: data.clouds.all,
-                    visibility: data.visibility,
-                    sunrise: Date(timeIntervalSince1970: TimeInterval(data.sys.sunrise)),
-                    sunset: Date(timeIntervalSince1970: TimeInterval(data.sys.sunset)),
-                    icon: iconName(for: data.weather.first?.icon ?? "01d")
-                )
+            case .success(let entry):
                 completion(entry)
             case .failure:
                 let entry = SimpleEntry(
@@ -140,41 +125,15 @@ struct WeatherProvider: TimelineProvider {
     }
     
     func getTimeline(in context: Context, completion: @escaping (Timeline<SimpleEntry>) -> ()) {
-        var entries: [SimpleEntry] = []
-        
-        let now = Date()
-        let updateDate = Calendar.current.date(byAdding: .minute, value: 5, to: now)!
-        
-        let cityName = locationManager.loadCityName() ?? "Nieznane"
-        
-        API.shared.fetchCurrentWeatherData(forCity: cityName) { result in
+        fetchWeatherData { result in
             switch result {
-            case .success(let data):
-                let entry = SimpleEntry(
-                    date: now,
-                    city: data.name,
-                    temperature: data.main.temp,
-                    feelsLike: data.main.feels_like,
-                    tempMin: data.main.temp_min,
-                    tempMax: data.main.temp_max,
-                    pressure: data.main.pressure,
-                    humidity: data.main.humidity,
-                    windSpeed: data.wind.speed,
-                    windDirection: data.wind.deg,
-                    cloudiness: data.clouds.all,
-                    visibility: data.visibility,
-                    sunrise: Date(timeIntervalSince1970: TimeInterval(data.sys.sunrise)),
-                    sunset: Date(timeIntervalSince1970: TimeInterval(data.sys.sunset)),
-                    icon: iconName(for: data.weather.first?.icon ?? "01d")
-                )
-                entries.append(entry)
-                
-                let nextUpdateDate = Calendar.current.date(byAdding: .minute, value: 5, to: now)!
-                let timeline = Timeline(entries: entries, policy: .after(nextUpdateDate))
+            case .success(let entry):
+                let nextUpdateDate = Calendar.current.date(byAdding: .minute, value: 5, to: Date())!
+                let timeline = Timeline(entries: [entry], policy: .after(nextUpdateDate))
                 completion(timeline)
             case .failure:
                 let entry = SimpleEntry(
-                    date: now,
+                    date: Date(),
                     city: "Nieznane",
                     temperature: 0.0,
                     feelsLike: 0.0,
@@ -190,39 +149,48 @@ struct WeatherProvider: TimelineProvider {
                     sunset: Date(),
                     icon: "01d"
                 )
-                entries.append(entry)
-                
-                let timeline = Timeline(entries: entries, policy: .after(updateDate))
+                let nextUpdateDate = Calendar.current.date(byAdding: .minute, value: 5, to: Date())!
+                let timeline = Timeline(entries: [entry], policy: .after(nextUpdateDate))
                 completion(timeline)
+            }
+        }
+    }
+    
+    private func fetchWeatherData(completion: @escaping (Result<SimpleEntry, Error>) -> Void) {
+        guard let userDefaults = UserDefaults(suiteName: "group.me.michaltalaga.WeatherAPP"),
+              let cityName = userDefaults.string(forKey: "City") else {
+            completion(.failure(NSError(domain: "No City Name Found", code: -1, userInfo: nil)))
+            return
+        }
+        
+        API.shared.fetchCurrentWeatherData(forCity: cityName) { result in
+            switch result {
+            case .success(let data):
+                let entry = SimpleEntry(
+                    date: Date(),
+                    city: data.name,
+                    temperature: data.main.temp,
+                    feelsLike: data.main.feels_like,
+                    tempMin: data.main.temp_min,
+                    tempMax: data.main.temp_max,
+                    pressure: data.main.pressure,
+                    humidity: data.main.humidity,
+                    windSpeed: data.wind.speed,
+                    windDirection: data.wind.deg,
+                    cloudiness: data.clouds.all,
+                    visibility: data.visibility,
+                    sunrise: Date(timeIntervalSince1970: TimeInterval(data.sys.sunrise)),
+                    sunset: Date(timeIntervalSince1970: TimeInterval(data.sys.sunset)),
+                    icon: iconName(for: data.weather.first?.icon ?? "01d")
+                )
+                completion(.success(entry))
+            case .failure(let error):
+                completion(.failure(error))
             }
         }
     }
     
     private func iconName(for icon: String) -> String {
         return iconMap[icon] ?? "questionmark"
-    }
-}
-struct LocationProvider: TimelineProvider {
-    let locationManager = LocationManager()
-    
-    func placeholder(in context: Context) -> LocationEntry {
-        LocationEntry(date: Date(), cityName: "Loading...")
-    }
-    
-    func getSnapshot(in context: Context, completion: @escaping (LocationEntry) -> Void) {
-        let cityName = locationManager.loadCityName() ?? "Unknown"
-        let entry = LocationEntry(date: Date(), cityName: cityName)
-        completion(entry)
-    }
-    
-    func getTimeline(in context: Context, completion: @escaping (Timeline<LocationEntry>) -> Void) {
-        let cityName = locationManager.loadCityName() ?? "Unknown"
-        let entry = LocationEntry(date: Date(), cityName: cityName)
-        let timeline = Timeline(entries: [entry], policy: .after(Date().addingTimeInterval(60*60)))
-        completion(timeline)
-    }
-    struct LocationEntry: TimelineEntry {
-        let date: Date
-        let cityName: String
     }
 }
