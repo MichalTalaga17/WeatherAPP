@@ -40,7 +40,7 @@ struct LocationWeatherView: View {
                                 .font(.callout)
                             if let airPollutionData = airPollutionData, let airQuality = airPollutionData.list.first {
                                 VStack(alignment: .leading, spacing: 10) {
-                                    Text("Air Index: \(airQuality.main.aqi)")
+                                    Text("Air Index: \(aqiDescription(for: airQuality.main.aqi))")
                                         .font(.callout)
                                 }
                             }
@@ -148,41 +148,7 @@ struct LocationWeatherView: View {
                 }
                 Spacer()
                 HStack {
-                    if favourite {
-                        Button {
-                            if let city = cities.first(where: { $0.name == cityName }) {
-                                modelContext.delete(city)
-                                favourite.toggle()
-                            }
-                            if let userDefaults = UserDefaults(suiteName: "group.me.michaltalaga.WeatherAPP") {
-                                var id = cities.first?.id
-                                userDefaults.set(cities.first?.name, forKey: "City")
-                            }
-                        } label: {
-                            Text("Delete from favourites")
-                                .font(.caption)
-                                .padding()
-                                .background(Color.white.opacity(0.1))
-                                .cornerRadius(30)
-                        }
-                    } else {
-                        Button {
-                            let newCity = City(name: cityName)
-                            do {
-                                modelContext.insert(newCity)
-                                try modelContext.save()
-                                favourite.toggle()
-                            } catch {
-                                print("Error saving context: \(error)")
-                            }
-                        } label: {
-                            Text("Add to favourites")
-                                .font(.caption)
-                                .padding()
-                                .background(Color.white.opacity(0.1))
-                                .cornerRadius(30)
-                        }
-                    }
+                    
                 }
                 .padding(.bottom)
             }
@@ -204,6 +170,47 @@ struct LocationWeatherView: View {
                         .cornerRadius(20)
                 }
                 .foregroundColor(.white)
+            }
+            ToolbarItem(placement: .topBarTrailing){
+                if favourite {
+                    Button {
+                        if let city = cities.first(where: { $0.name == cityName }) {
+                            modelContext.delete(city)
+                            favourite.toggle()
+                        }
+                        if let userDefaults = UserDefaults(suiteName: "group.me.michaltalaga.WeatherAPP") {
+                            var id = cities.first?.id
+                            userDefaults.set(cities.first?.name, forKey: "City")
+                        }
+                    } label: {
+                        Image(systemName: "star.fill")
+                            .font(.caption)
+                            .padding(.horizontal, 15)
+                            .padding(.vertical, 8)
+                            .background(Color.white.opacity(0.1))
+                            .cornerRadius(30)
+                            .foregroundColor(.white)
+                    }
+                } else {
+                    Button {
+                        let newCity = City(name: cityName)
+                        do {
+                            modelContext.insert(newCity)
+                            try modelContext.save()
+                            favourite.toggle()
+                        } catch {
+                            print("Error saving context: \(error)")
+                        }
+                    } label: {
+                        Image(systemName: "star")
+                            .font(.caption)
+                            .padding(.horizontal, 15)
+                            .padding(.vertical, 8)
+                            .background(Color.white.opacity(0.1))
+                            .cornerRadius(30)
+                            .foregroundColor(.white)
+                    }
+                }
             }
         }
         .onAppear {
