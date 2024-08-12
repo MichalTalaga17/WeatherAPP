@@ -8,6 +8,30 @@
 import Foundation
 import SwiftUI
 
+
+struct LocationWidgetEntryView: View {
+    var entry: LocationProvider.Entry
+    
+    var body: some View {
+        VStack {
+            Text("Your Location")
+                .font(.headline)
+                .padding(.bottom, 8)
+            Text(entry.cityName)
+                .font(.title)
+                .bold()
+        }
+        .padding()
+        .containerBackground(for: .widget) {
+            LinearGradient(gradient: Gradient(colors: [Color.blue.opacity(0.8), Color.black]), startPoint: .top, endPoint: .bottom)
+                .edgesIgnoringSafeArea(.all)
+            Color.black.opacity(0.3)
+        }
+        .cornerRadius(10)
+        .foregroundColor(.white)
+    }
+}
+
 // MARK: - Widok dla widgetu prognozy
 
 struct ForecastWidgetEntryView: View {

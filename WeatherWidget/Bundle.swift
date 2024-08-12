@@ -15,5 +15,6 @@ struct WeatherWidgets: WidgetBundle {
         WeatherWidget()          // Mały widżet
         WeatherWidgetMedium()    // Średni widżet
         WeatherWidgetForecast()  // Widżet prognozy
+        LocationWidget()         // Widżet lokalizacji
     }
 }

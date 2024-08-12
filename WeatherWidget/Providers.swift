@@ -202,3 +202,27 @@ struct WeatherProvider: TimelineProvider {
         return iconMap[icon] ?? "questionmark"
     }
 }
+struct LocationProvider: TimelineProvider {
+    let locationManager = LocationManager()
+    
+    func placeholder(in context: Context) -> LocationEntry {
+        LocationEntry(date: Date(), cityName: "Loading...")
+    }
+    
+    func getSnapshot(in context: Context, completion: @escaping (LocationEntry) -> Void) {
+        let cityName = locationManager.loadCityName() ?? "Unknown"
+        let entry = LocationEntry(date: Date(), cityName: cityName)
+        completion(entry)
+    }
+    
+    func getTimeline(in context: Context, completion: @escaping (Timeline<LocationEntry>) -> Void) {
+        let cityName = locationManager.loadCityName() ?? "Unknown"
+        let entry = LocationEntry(date: Date(), cityName: cityName)
+        let timeline = Timeline(entries: [entry], policy: .after(Date().addingTimeInterval(60*60)))
+        completion(timeline)
+    }
+    struct LocationEntry: TimelineEntry {
+        let date: Date
+        let cityName: String
+    }
+}
