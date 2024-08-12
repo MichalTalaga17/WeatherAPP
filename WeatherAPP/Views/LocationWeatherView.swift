@@ -9,7 +9,6 @@ struct LocationWeatherView: View {
     let cityName: String
     @State var favourite: Bool
     @State private var currentWeatherData: CurrentResponse?
-    
     @State private var forecastData: ForecastData?
     @State private var backgroundGradient = LinearGradient(gradient: Gradient(colors: [Color.black]), startPoint: .top, endPoint: .bottom)
     @State private var timeZone: TimeZone?
@@ -17,187 +16,176 @@ struct LocationWeatherView: View {
     @State private var alertTitle: String = ""
     @State private var alertMessage: String = ""
     @State private var airPollutionData: PollutionData?
+    @State private var isLoading: Bool = true // Stan ładowania
     
     var body: some View {
         VStack {
-            if let currentWeatherData = currentWeatherData, let timeZone = timeZone {
-                Spacer()
-                VStack(alignment: .leading, spacing: 10) {
-                    VStack(alignment: .center, spacing: 5) {
-                        HStack {
-                            Spacer()
-                            Text("\(currentWeatherData.name), \(currentWeatherData.sys.country)")
-                                .font(.title3)
-                            Spacer()
-                        }
-                        Text("\(Int(currentWeatherData.main.temp))°")
-                            .font(.system(size: 60))
-                        Text(currentWeatherData.weather.first?.description ?? "")
-                            .font(.headline)
-                        Text("From \(Int(currentWeatherData.main.temp_min))° to \(Int(currentWeatherData.main.temp_max))°")
-                            .font(.callout)
-                        if let airPollutionData = airPollutionData, let airQuality = airPollutionData.list.first {
-                            VStack(alignment: .leading, spacing: 10) {
-                                Text("Air Index: \(airQuality.main.aqi)")
-                                    .font(.callout)
-                                
+            if isLoading {
+                Text("Loading...")
+            } else {
+                if let currentWeatherData = currentWeatherData, let timeZone = timeZone {
+                    VStack(alignment: .leading, spacing: 10) {
+                        VStack(alignment: .center, spacing: 5) {
+                            HStack {
+                                Spacer()
+                                Text("\(currentWeatherData.name), \(currentWeatherData.sys.country)")
+                                    .font(.title3)
+                                Spacer()
                             }
-                            .padding()
-                            .background(Color.white.opacity(0.05))
-                            .cornerRadius(8)
-                        }
-                    }
-                    .padding(15)
-                    
-                    let containerWidth: CGFloat = UIScreen.main.bounds.width - 32
-                    
-                    HStack(spacing: 10) {
-                        HStack(spacing: 30) {
-                            VStack(alignment: .leading, spacing: 5) {
-                                Image(systemName: "sunrise.fill")
-                                    .symbolRenderingMode(.palette)
-                                    .foregroundStyle(.white, .yellow)
-                                    .font(.title)
-                                Text("\(formatDate(timestamp: currentWeatherData.sys.sunrise, formatType: .timeOnly, timeZone: timeZone))")
-                            }
-                            VStack(alignment: .leading, spacing: 5) {
-                                Image(systemName: "sunset.fill")
-                                    .symbolRenderingMode(.palette)
-                                    .foregroundStyle(.white, .yellow)
-                                    .font(.title)
-                                Text("\(formatDate(timestamp: currentWeatherData.sys.sunset, formatType: .timeOnly, timeZone: timeZone))")
+                            Text("\(Int(currentWeatherData.main.temp))°")
+                                .font(.system(size: 60))
+                            Text(currentWeatherData.weather.first?.description ?? "")
+                                .font(.headline)
+                            Text("From \(Int(currentWeatherData.main.temp_min))° to \(Int(currentWeatherData.main.temp_max))°")
+                                .font(.callout)
+                            if let airPollutionData = airPollutionData, let airQuality = airPollutionData.list.first {
+                                VStack(alignment: .leading, spacing: 10) {
+                                    Text("Air Index: \(airQuality.main.aqi)")
+                                        .font(.callout)
+                                }
                             }
                         }
                         .padding(15)
-                        .frame(width: containerWidth * 0.5 - 5, height: 100)
-                        .background(Color.white.opacity(0.05))
-                        .cornerRadius(8)
-                        HStack(spacing: 20){
-                            if let firstWeather = currentWeatherData.weather.first {
-                                let icon = firstWeather.icon
-                                weatherIcon(for: icon)
-                                    .font(.largeTitle)
-                            }
-                            
-                            VStack {
-                                Text("\(currentWeatherData.clouds.all)%")
-                                    .font(.title .bold())
-                                Text("\(convertMetersToKilometers(meters: Double(currentWeatherData.visibility))) km")
-                            }
-                        }
-                        .padding()
-                        .frame(width: containerWidth * 0.5 - 5, height: 100)
-                        .background(Color.white.opacity(0.05))
-                        .cornerRadius(8)
-                    }
-                    
-                    HStack {
-                        VStack(spacing: 15) {
-                            HStack{
-                                VStack{
-                                    Text("\(currentWeatherData.main.humidity)%")
-                                        .font(.title2 .bold())
-                                    Text("Humidity")
+                        
+                        let containerWidth: CGFloat = UIScreen.main.bounds.width - 32
+                        
+                        HStack(spacing: 10) {
+                            HStack(spacing: 30) {
+                                VStack(alignment: .leading, spacing: 5) {
+                                    Image(systemName: "sunrise.fill")
+                                        .symbolRenderingMode(.palette)
+                                        .foregroundStyle(.white, .yellow)
+                                        .font(.title)
+                                    Text("\(formatDate(timestamp: currentWeatherData.sys.sunrise, formatType: .timeOnly, timeZone: timeZone))")
                                 }
-                                .frame(width: containerWidth * 0.5-20)
-                                Spacer()
-                                VStack{
-                                    Text("\(currentWeatherData.main.pressure) hPa")
-                                        .font(.title2 .bold())
-                                    Text("Pressure")
+                                VStack(alignment: .leading, spacing: 5) {
+                                    Image(systemName: "sunset.fill")
+                                        .symbolRenderingMode(.palette)
+                                        .foregroundStyle(.white, .yellow)
+                                        .font(.title)
+                                    Text("\(formatDate(timestamp: currentWeatherData.sys.sunset, formatType: .timeOnly, timeZone: timeZone))")
                                 }
-                                .frame(width: containerWidth * 0.5-20)
                             }
-                            HStack{
-                                VStack{
-                                    Text("\(String(format: "%.0f", currentWeatherData.wind.speed)) m/s \(windDirection(from: currentWeatherData.wind.deg))")
-                                        .font(.title2 .bold())
-                                    Text("Wind")
+                            .padding(15)
+                            .frame(width: containerWidth * 0.5 - 5, height: 100)
+                            .background(Color.white.opacity(0.05))
+                            .cornerRadius(8)
+                            HStack(spacing: 20){
+                                if let firstWeather = currentWeatherData.weather.first {
+                                    let icon = firstWeather.icon
+                                    weatherIcon(for: icon)
+                                        .font(.largeTitle)
                                 }
-                                .frame(width: containerWidth * 0.5-20)
-                                Spacer()
-                                VStack{
-                                    if let snow = currentWeatherData.snow, let snow1h = snow.hour1 {
-                                        Text("\(String(format: "%.0f", snow1h)) mm")
-                                            .font(.title2.bold())
-                                        Text("Snow")
-                                    } else if let rain = currentWeatherData.rain, let rain1h = rain.hour1 {
-                                        Text("\(String(format: "%.0f", rain1h)) mm")
-                                            .font(.title2.bold())
-                                        Text("Rain")
-                                    } else {
-                                        Text("0")
-                                            .font(.title2.bold())
-                                        Text("Precipitation")
-                                    }
+                                
+                                VStack {
+                                    Text("\(currentWeatherData.clouds.all)%")
+                                        .font(.title .bold())
+                                    Text("\(convertMetersToKilometers(meters: Double(currentWeatherData.visibility))) km")
                                 }
-                                .frame(width: containerWidth * 0.5-20)
                             }
-                        }
-                        .padding(.vertical)
-                    }
-                    .background(Color.white.opacity(0.05))
-                    .cornerRadius(8)
-                    
-                    if let forecastData = forecastData {
-                        ForecastScroll(data: forecastData, timezone: timeZone)
-                    }
-                    
-                    Spacer()
-                }
-            } else {
-                Spacer()
-            }
-            Spacer()
-            HStack {
-                if favourite {
-                    Button {
-                        if let city = cities.first(where: { $0.name == cityName }) {
-                            modelContext.delete(city)
-                            favourite.toggle()
-                        }
-                        if let userDefaults = UserDefaults(suiteName: "group.me.michaltalaga.WeatherAPP") {
-                            var id = cities.first?.id
-                            userDefaults.set(cities.first?.name, forKey: "City")
-                        }
-                    } label: {
-                        Text("Delete from favourites")
-                            .font(.caption)
                             .padding()
-                            .background(Color.white.opacity(0.1))
-                            .cornerRadius(30)
+                            .frame(width: containerWidth * 0.5 - 5, height: 100)
+                            .background(Color.white.opacity(0.05))
+                            .cornerRadius(8)
+                        }
+                        
+                        HStack {
+                            VStack(spacing: 15) {
+                                HStack{
+                                    VStack{
+                                        Text("\(currentWeatherData.main.humidity)%")
+                                            .font(.title2 .bold())
+                                        Text("Humidity")
+                                    }
+                                    .frame(width: containerWidth * 0.5-20)
+                                    Spacer()
+                                    VStack{
+                                        Text("\(currentWeatherData.main.pressure) hPa")
+                                            .font(.title2 .bold())
+                                        Text("Pressure")
+                                    }
+                                    .frame(width: containerWidth * 0.5-20)
+                                }
+                                HStack{
+                                    VStack{
+                                        Text("\(String(format: "%.0f", currentWeatherData.wind.speed)) m/s \(windDirection(from: currentWeatherData.wind.deg))")
+                                            .font(.title2 .bold())
+                                        Text("Wind")
+                                    }
+                                    .frame(width: containerWidth * 0.5-20)
+                                    Spacer()
+                                    VStack{
+                                        if let snow = currentWeatherData.snow, let snow1h = snow.hour1 {
+                                            Text("\(String(format: "%.0f", snow1h)) mm")
+                                                .font(.title2.bold())
+                                            Text("Snow")
+                                        } else if let rain = currentWeatherData.rain, let rain1h = rain.hour1 {
+                                            Text("\(String(format: "%.0f", rain1h)) mm")
+                                                .font(.title2.bold())
+                                            Text("Rain")
+                                        } else {
+                                            Text("0")
+                                                .font(.title2.bold())
+                                            Text("Precipitation")
+                                        }
+                                    }
+                                    .frame(width: containerWidth * 0.5-20)
+                                }
+                            }
+                            .padding(.vertical)
+                        }
+                        .background(Color.white.opacity(0.05))
+                        .cornerRadius(8)
+                        
+                        if let forecastData = forecastData {
+                            ForecastScroll(data: forecastData, timezone: timeZone)
+                        }
+                        
+                        Spacer()
                     }
                 } else {
-                    Button {
-                        let newCity = City(name: cityName)
-                        do {
-                            modelContext.insert(newCity)
-                            try modelContext.save() // We add saving the context
-                            favourite.toggle()
-                        } catch {
-                            print("Error saving context: \(error)")
+                    Spacer()
+                }
+                Spacer()
+                HStack {
+                    if favourite {
+                        Button {
+                            if let city = cities.first(where: { $0.name == cityName }) {
+                                modelContext.delete(city)
+                                favourite.toggle()
+                            }
+                            if let userDefaults = UserDefaults(suiteName: "group.me.michaltalaga.WeatherAPP") {
+                                var id = cities.first?.id
+                                userDefaults.set(cities.first?.name, forKey: "City")
+                            }
+                        } label: {
+                            Text("Delete from favourites")
+                                .font(.caption)
+                                .padding()
+                                .background(Color.white.opacity(0.1))
+                                .cornerRadius(30)
                         }
-                    } label: {
-                        Text("Add to favourites")
-                            .font(.caption)
-                            .padding()
-                            .background(Color.white.opacity(0.1))
-                            .cornerRadius(30)
+                    } else {
+                        Button {
+                            let newCity = City(name: cityName)
+                            do {
+                                modelContext.insert(newCity)
+                                try modelContext.save()
+                                favourite.toggle()
+                            } catch {
+                                print("Error saving context: \(error)")
+                            }
+                        } label: {
+                            Text("Add to favourites")
+                                .font(.caption)
+                                .padding()
+                                .background(Color.white.opacity(0.1))
+                                .cornerRadius(30)
+                        }
                     }
                 }
-                
-                // Nowy przycisk do wysyłania powiadomienia
-                Button {
-                    sendWeatherNotification()
-                } label: {
-                    Text("Send Weather Notification")
-                        .font(.caption)
-                        .padding()
-                        .background(Color.white.opacity(0.1))
-                        .cornerRadius(30)
-                }
+                .padding(.bottom)
             }
-            .padding(.bottom)
         }
         .padding()
         .background(backgroundGradient)
@@ -220,9 +208,7 @@ struct LocationWeatherView: View {
         }
         .onAppear {
             Task {
-                await fetchCurrentWeatherData()
-                await fetchWeatherData()
-                await fetchAirPollutionData()
+                await loadData()
             }
         }
         .alert(isPresented: $showAlert) {
@@ -241,72 +227,74 @@ struct LocationWeatherView: View {
         self.alertMessage = message
         self.showAlert = true
     }
-    func fetchAirPollutionData() async {
-        API.shared.fetchAirPollutionData(forCity: cityName) { result in
-            switch result {
-            case .success(let data):
-                self.airPollutionData = data
-            case .failure(let error):
-                showAlert(title: "Error", message: "Cannot fetch air pollution data")
-                print("\(error.localizedDescription)")
-            }
-        }
-    }
-    func fetchWeatherData() async {
+    
+    func loadData() async {
         do {
-            let _: () = try await API.shared.fetchForecastData(forCity: cityName) { result in
-                switch result {
-                case .success(let data):
-                    self.forecastData = data
-                    self.timeZone = TimeZone(secondsFromGMT: data.city.timezone)
-                case .failure(let error):
-                    showAlert(title: "Error", message: "Cannot fetch data")
-                    print("\(error.localizedDescription)")
-                }
-            }
+            isLoading = true
+            async let weatherResult = fetchCurrentWeatherData()
+            async let forecastResult = fetchWeatherData()
+            async let airPollutionResult = fetchAirPollutionData()
+            
+            try await (weatherResult, forecastResult, airPollutionResult)
+            isLoading = false
         } catch {
             showAlert(title: "Error", message: "Cannot fetch data")
             print("\(error.localizedDescription)")
         }
     }
     
-    func fetchCurrentWeatherData() async {
-        API.shared.fetchCurrentWeatherData(forCity: cityName) { result in
-            switch result {
-            case .success(let data):
-                self.currentWeatherData = data
-                let newIcon = data.weather.first?.icon ?? "unknown"
-                self.backgroundGradient = gradientBackground(for: newIcon)
-                self.timeZone = TimeZone(secondsFromGMT: data.timezone)
-            case .failure(let error):
-                showAlert(title: "Error", message: "Cannot fetch data")
-                print("\(error.localizedDescription)")
+    func fetchAirPollutionData() async throws {
+        return try await withCheckedThrowingContinuation { continuation in
+            API.shared.fetchAirPollutionData(forCity: cityName) { result in
+                switch result {
+                case .success(let data):
+                    self.airPollutionData = data
+                    continuation.resume(returning: ())
+                case .failure(let error):
+                    showAlert(title: "Error", message: "Cannot fetch air pollution data")
+                    print("\(error.localizedDescription)")
+                    continuation.resume(throwing: error)
+                }
             }
-            
         }
     }
     
-    func sendWeatherNotification() {
-        guard let currentWeatherData = currentWeatherData else { return }
-        
-        let content = UNMutableNotificationContent()
-        content.title = "\(currentWeatherData.name) Weather"
-        content.body = "Current temperature: \(Int(currentWeatherData.main.temp))°. Conditions: \(currentWeatherData.weather.first?.description ?? "")"
-        content.sound = .default
-        
-        // Możesz ustawić wyzwalacz np. na natychmiastowe powiadomienie
-        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
-        
-        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
-        
-        UNUserNotificationCenter.current().add(request) { error in
-            if let error = error {
-                print("Error adding notification: \(error.localizedDescription)")
-            } else {
-                print("Notification scheduled")
+    func fetchWeatherData() async throws {
+        return try await withCheckedThrowingContinuation { continuation in
+            API.shared.fetchForecastData(forCity: cityName) { result in
+                switch result {
+                case .success(let data):
+                    self.forecastData = data
+                    self.timeZone = TimeZone(secondsFromGMT: data.city.timezone)
+                    continuation.resume(returning: ())
+                case .failure(let error):
+                    showAlert(title: "Error", message: "Cannot fetch data")
+                    print("\(error.localizedDescription)")
+                    continuation.resume(throwing: error)
+                }
             }
         }
     }
+    
+    func fetchCurrentWeatherData() async throws {
+        return try await withCheckedThrowingContinuation { continuation in
+            API.shared.fetchCurrentWeatherData(forCity: cityName) { result in
+                switch result {
+                case .success(let data):
+                    self.currentWeatherData = data
+                    let newIcon = data.weather.first?.icon ?? "unknown"
+                    self.backgroundGradient = gradientBackground(for: newIcon)
+                    self.timeZone = TimeZone(secondsFromGMT: data.timezone)
+                    continuation.resume(returning: ())
+                case .failure(let error):
+                    showAlert(title: "Error", message: "Cannot fetch data")
+                    print("\(error.localizedDescription)")
+                    continuation.resume(throwing: error)
+                }
+            }
+        }
+    }
+    
     struct ForecastScroll: View {
         let data: ForecastData
         let timezone: TimeZone
@@ -340,8 +328,8 @@ struct LocationWeatherView: View {
             .cornerRadius(8)
         }
     }
-
 }
+
 #Preview {
     LocationWeatherView(cityName: "New York", favourite: true)
         .modelContainer(for: City.self)
