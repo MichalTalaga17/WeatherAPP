@@ -1,17 +1,27 @@
-//
-//  PollutionData.swift
-//  WeatherAPP
-//
-//  Created by Michał Talaga on 12/08/2024.
-//
-
 import Foundation
 
 struct PollutionData: Codable {
+    let coord: Coordinates
     let list: [PollutionEntry]
     
+    struct Coordinates: Codable {
+        let lon: Double
+        let lat: Double
+        
+        enum CodingKeys: String, CodingKey {
+            case lon = "coord"
+            case lat
+        }
+    }
+    
     struct PollutionEntry: Codable {
+        let dt: Int
+        let main: Main
         let components: Components
+        
+        struct Main: Codable {
+            let aqi: Int
+        }
         
         struct Components: Codable {
             let co: Double
