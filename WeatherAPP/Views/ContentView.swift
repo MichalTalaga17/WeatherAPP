@@ -14,6 +14,7 @@ struct ContentView: View {
         startPoint: .bottom,
         endPoint: .top
     )
+    @StateObject private var locationManager = LocationManager()
     
     var body: some View {
         NavigationView {
@@ -33,6 +34,7 @@ struct ContentView: View {
                     var id = cities.first?.id
                     userDefaults.set(cities.first?.name, forKey: "City")
                 }
+                locationManager.requestLocation()
             }
         }
     }
@@ -43,6 +45,7 @@ struct ContentView: View {
                 .font(.largeTitle.bold())
                 .frame(maxWidth: .infinity, alignment: .leading)
             
+            
             HStack(spacing: 10) {
                 TextField("Search for city", text: $cityName)
                     .padding()
@@ -50,8 +53,7 @@ struct ContentView: View {
                     .cornerRadius(8)
                 
                 NavigationLink(destination: LocationWeatherView(cityName: cityName2, favourite: false)) {
-                    Text("Search")
-                        .font(.callout)
+                    Image(systemName: "magnifyingglass")                        .font(.callout)
                         .padding()
                         .background(Color.black.opacity(0.3))
                         .foregroundColor(.white)
@@ -61,6 +63,17 @@ struct ContentView: View {
                     cityName2 = cityName
                     cityName = ""
                 })
+                if let liveCityName = locationManager.cityName {
+                    NavigationLink(destination: LocationWeatherView(cityName: liveCityName, favourite: false)) {
+                        Image(systemName: "location.fill")
+                            .font(.callout)
+                            .padding()
+                            .background(Color.black.opacity(0.3))
+                            .foregroundColor(.white)
+                            .cornerRadius(8)
+                    }
+                }
+                
             }
         }
         .padding(.bottom, 40)

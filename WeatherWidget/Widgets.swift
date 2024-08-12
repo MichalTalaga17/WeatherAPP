@@ -9,6 +9,7 @@ import Foundation
 import WidgetKit
 import SwiftUI
 
+
 // MARK: - Forecast Widget Configuration
 
 struct WeatherWidgetForecast: Widget {

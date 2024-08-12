@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 
+
 // MARK: - Widok dla widgetu prognozy
 
 struct ForecastWidgetEntryView: View {
