@@ -16,7 +16,7 @@ struct LocationWeatherView: View {
     @State private var alertTitle: String = ""
     @State private var alertMessage: String = ""
     @State private var airPollutionData: PollutionData?
-    @State private var isLoading: Bool = true // Stan ładowania
+    @State private var isLoading: Bool = true
     
     var body: some View {
         VStack {
@@ -64,7 +64,7 @@ struct LocationWeatherView: View {
                             .frame(width: containerWidth * 0.5 - 5, height: 100)
                             .background(Color.white.opacity(0.05))
                             .cornerRadius(8)
-                            HStack(spacing: 20){
+                            HStack(spacing: 10){
                                 if let firstWeather = currentWeatherData.weather.first {
                                     let icon = firstWeather.icon
                                     weatherIcon(for: icon)
@@ -134,47 +134,85 @@ struct LocationWeatherView: View {
                         if let forecastData = forecastData {
                             ForecastScroll(data: forecastData, timezone: timeZone)
                         }
+                        
+                        HStack(spacing: 10) {
+                            let containerWidth: CGFloat = UIScreen.main.bounds.width - 32
+                            if let airPollutionData = airPollutionData, let airQuality = airPollutionData.list.first {
+                                    
+                                    HStack {
+                                        ScrollView(.horizontal, showsIndicators: false){
+                                            HStack(spacing: 30){
+                                                VStack{
+                                                    Text("\(aqiDescription(for: airQuality.main.aqi))")
+                                                        .font(.title2 .bold())
+                                                    Text("Air Index")
+                                                        .font(.callout)
+                                                }
+                                                .padding(.leading, 25)
+                                                VStack {
+                                                    Text("\(Int(airQuality.components.pm2_5))")
+                                                        .font(.title2 .bold())
+                                                    Text("PM 2.5")
+                                                        .font(.callout)
+                                                }
+                                                VStack {
+                                                    Text("\(Int(airQuality.components.pm10))")
+                                                        .font(.title2 .bold())
+                                                    Text("PM 10")
+                                                        .font(.callout)
+                                                }
+                                                VStack {
+                                                    Text("\(Int(airQuality.components.co))")
+                                                        .font(.title2 .bold())
+                                                    Text("CO")
+                                                        .font(.callout)
+                                                }
+                                                VStack {
+                                                    Text("\(Int(airQuality.components.no))")
+                                                        .font(.title2 .bold())
+                                                    Text("NO")
+                                                        .font(.callout)
+                                                }
+                                                VStack {
+                                                    Text("\(Int(airQuality.components.pm2_5))")
+                                                        .font(.title2 .bold())
+                                                    Text("NO2")
+                                                        .font(.callout)
+                                                }
+                                                VStack {
+                                                    Text("\(Int(airQuality.components.o3))")
+                                                        .font(.title2 .bold())
+                                                    Text("O3")
+                                                        .font(.callout)
+                                                }
+                                                VStack {
+                                                    Text("\(Int(airQuality.components.so2))")
+                                                        .font(.title2 .bold())
+                                                    Text("SO2")
+                                                        .font(.callout)
+                                                }
+                                                VStack {
+                                                    Text("\(Int(airQuality.components.nh3))")
+                                                        .font(.title2 .bold())
+                                                    Text("NH3")
+                                                        .font(.callout)
+                                                }
+                                                
+                                                .padding(.trailing, 25)
+                                            }
+                                            .padding(0)
+                                        }
+                                    }
+                                    .frame(width: containerWidth * 1, height: 80)
+                                    .background(Color.white.opacity(0.05))
+                                    .cornerRadius(8)
+                                }
+                        }
+                        .padding(.bottom)
                     }
                 } else {
                     Spacer()
                 }
-                HStack {
-                    let containerWidth: CGFloat = UIScreen.main.bounds.width - 32
-                    if let airPollutionData = airPollutionData, let airQuality = airPollutionData.list.first {
-                        HStack() {
-                            HStack {
-                                VStack {
-                                    Text("\(Int(airQuality.components.pm2_5))")
-                                        .font(.title2 .bold())
-                                    Text("PM 2.5")
-                                        .font(.callout)
-                                }
-                                Spacer()
-                                VStack {
-                                    Text("\(Int(airQuality.components.pm10))")
-                                        .font(.title2 .bold())
-                                    Text("PM 10")
-                                        .font(.callout)
-                                }
-                            }
-                            .padding(.horizontal, 30)
-                            .frame(width: containerWidth * 0.5 - 5, height: 80)
-                            .background(Color.white.opacity(0.05))
-                            .cornerRadius(8)
-                            VStack{
-                                Text("\(aqiDescription(for: airQuality.main.aqi))")
-                                    .font(.title2 .bold())
-                                Text("Air Index")
-                                    .font(.callout)
-                            }
-                            .padding(.horizontal, 30)
-                            .frame(width: containerWidth * 0.5 - 5, height: 80)
-                            .background(Color.white.opacity(0.05))
-                            .cornerRadius(8)
-                        }
-                    }
-                }
-                .padding(.bottom)
                 Spacer()
             }
         }
@@ -362,6 +400,6 @@ struct LocationWeatherView: View {
 }
 
 #Preview {
-    LocationWeatherView(cityName: "New York", favourite: true)
+    LocationWeatherView(cityName: "Zembrzyce", favourite: true)
         .modelContainer(for: City.self)
 }

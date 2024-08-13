@@ -73,6 +73,7 @@ class API {
                 let longitude = weatherData.coord.lon
                 
                 let urlString = "https://api.openweathermap.org/data/2.5/air_pollution?lat=\(latitude)&lon=\(longitude)&appid=\(API.key)"
+                print(urlString)
                 guard let url = URL(string: urlString) else {
                     completion(.failure(NSError(domain: "Invalid URL", code: -1, userInfo: nil)))
                     return
