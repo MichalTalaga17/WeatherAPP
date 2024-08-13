@@ -141,32 +141,34 @@ struct LocationWeatherView: View {
                 HStack {
                     let containerWidth: CGFloat = UIScreen.main.bounds.width - 32
                     if let airPollutionData = airPollutionData, let airQuality = airPollutionData.list.first {
-                        HStack(spacing: 10) {
-                            VStack {
+                        HStack() {
+                            HStack {
                                 VStack {
-                                    Text("PM 2.5")
-                                        .font(.caption)
                                     Text("\(Int(airQuality.components.pm2_5))")
-                                        .font(.title2)
+                                        .font(.title2 .bold())
+                                    Text("PM 2.5")
+                                        .font(.callout)
                                 }
+                                Spacer()
                                 VStack {
-                                    Text("PM 10")
-                                        .font(.caption)
                                     Text("\(Int(airQuality.components.pm10))")
-                                        .font(.title2)
+                                        .font(.title2 .bold())
+                                    Text("PM 10")
+                                        .font(.callout)
                                 }
                             }
-                            .padding(15)
-                            .frame(width: containerWidth * 0.5 - 5, height: 100)
+                            .padding(.horizontal, 30)
+                            .frame(width: containerWidth * 0.5 - 5, height: 80)
                             .background(Color.white.opacity(0.05))
                             .cornerRadius(8)
-                            VStack(spacing: 20){
-                                Text("Air Index")
+                            VStack{
                                 Text("\(aqiDescription(for: airQuality.main.aqi))")
-                                    .font(.title)
+                                    .font(.title2 .bold())
+                                Text("Air Index")
+                                    .font(.callout)
                             }
-                            .padding()
-                            .frame(width: containerWidth * 0.5 - 5, height: 100)
+                            .padding(.horizontal, 30)
+                            .frame(width: containerWidth * 0.5 - 5, height: 80)
                             .background(Color.white.opacity(0.05))
                             .cornerRadius(8)
                         }
