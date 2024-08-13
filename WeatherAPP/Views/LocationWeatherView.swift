@@ -38,7 +38,6 @@ struct LocationWeatherView: View {
                                 .font(.headline)
                             Text("From \(Int(currentWeatherData.main.temp_min))° to \(Int(currentWeatherData.main.temp_max))°")
                                 .font(.callout)
-                            
                         }
                         .padding(15)
                         
@@ -128,7 +127,6 @@ struct LocationWeatherView: View {
                                 }
                             }
                             .padding(.vertical)
-                            
                         }
                         .background(Color.white.opacity(0.05))
                         .cornerRadius(8)
@@ -136,22 +134,46 @@ struct LocationWeatherView: View {
                         if let forecastData = forecastData {
                             ForecastScroll(data: forecastData, timezone: timeZone)
                         }
-                        
-                        Spacer()
                     }
                 } else {
                     Spacer()
                 }
                 HStack {
+                    let containerWidth: CGFloat = UIScreen.main.bounds.width - 32
                     if let airPollutionData = airPollutionData, let airQuality = airPollutionData.list.first {
-                        VStack(alignment: .leading, spacing: 10) {
-                            Text("Air Index: \(aqiDescription(for: airQuality.main.aqi))")
-                                .font(.callout)
+                        HStack(spacing: 10) {
+                            VStack {
+                                VStack {
+                                    Text("PM 2.5")
+                                        .font(.caption)
+                                    Text("\(Int(airQuality.components.pm2_5))")
+                                        .font(.title2)
+                                }
+                                VStack {
+                                    Text("PM 10")
+                                        .font(.caption)
+                                    Text("\(Int(airQuality.components.pm10))")
+                                        .font(.title2)
+                                }
+                            }
+                            .padding(15)
+                            .frame(width: containerWidth * 0.5 - 5, height: 100)
+                            .background(Color.white.opacity(0.05))
+                            .cornerRadius(8)
+                            VStack(spacing: 20){
+                                Text("Air Index")
+                                Text("\(aqiDescription(for: airQuality.main.aqi))")
+                                    .font(.title)
+                            }
+                            .padding()
+                            .frame(width: containerWidth * 0.5 - 5, height: 100)
+                            .background(Color.white.opacity(0.05))
+                            .cornerRadius(8)
                         }
                     }
-                    
                 }
                 .padding(.bottom)
+                Spacer()
             }
         }
         .padding([.leading, .bottom, .trailing])
@@ -180,8 +202,7 @@ struct LocationWeatherView: View {
                             favourite.toggle()
                         }
                         if let userDefaults = UserDefaults(suiteName: "group.me.michaltalaga.WeatherAPP") {
-                            var id = cities.first?.id
-                            userDefaults.set(cities.first?.name, forKey: "City")
+                            userDefaults.removeObject(forKey: "City")
                         }
                     } label: {
                         Image(systemName: "star.fill")
