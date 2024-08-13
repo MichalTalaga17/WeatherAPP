@@ -38,12 +38,7 @@ struct LocationWeatherView: View {
                                 .font(.headline)
                             Text("From \(Int(currentWeatherData.main.temp_min))° to \(Int(currentWeatherData.main.temp_max))°")
                                 .font(.callout)
-                            if let airPollutionData = airPollutionData, let airQuality = airPollutionData.list.first {
-                                VStack(alignment: .leading, spacing: 10) {
-                                    Text("Air Index: \(aqiDescription(for: airQuality.main.aqi))")
-                                        .font(.callout)
-                                }
-                            }
+                            
                         }
                         .padding(15)
                         
@@ -133,6 +128,7 @@ struct LocationWeatherView: View {
                                 }
                             }
                             .padding(.vertical)
+                            
                         }
                         .background(Color.white.opacity(0.05))
                         .cornerRadius(8)
@@ -146,14 +142,19 @@ struct LocationWeatherView: View {
                 } else {
                     Spacer()
                 }
-                Spacer()
                 HStack {
+                    if let airPollutionData = airPollutionData, let airQuality = airPollutionData.list.first {
+                        VStack(alignment: .leading, spacing: 10) {
+                            Text("Air Index: \(aqiDescription(for: airQuality.main.aqi))")
+                                .font(.callout)
+                        }
+                    }
                     
                 }
                 .padding(.bottom)
             }
         }
-        .padding()
+        .padding([.leading, .bottom, .trailing])
         .background(backgroundGradient)
         .foregroundColor(.white)
         .navigationBarBackButtonHidden(true)
@@ -186,7 +187,7 @@ struct LocationWeatherView: View {
                         Image(systemName: "star.fill")
                             .font(.caption)
                             .padding(.horizontal, 15)
-                            .padding(.vertical, 8)
+                            .padding(.vertical, 6)
                             .background(Color.white.opacity(0.1))
                             .cornerRadius(30)
                             .foregroundColor(.white)
@@ -205,7 +206,7 @@ struct LocationWeatherView: View {
                         Image(systemName: "star")
                             .font(.caption)
                             .padding(.horizontal, 15)
-                            .padding(.vertical, 8)
+                            .padding(.vertical, 6)
                             .background(Color.white.opacity(0.1))
                             .cornerRadius(30)
                             .foregroundColor(.white)
