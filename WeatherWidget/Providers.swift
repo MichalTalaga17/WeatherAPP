@@ -201,7 +201,7 @@ struct PollutionProvider: TimelineProvider {
     func placeholder(in context: Context) -> PollutionEntry2 {
         PollutionEntry2(
             date: Date(),
-            pollution: PollutionData.sampleData,
+            pollution: sampleData,
             timeZone: TimeZone.current,
             cityName: "Miasto"
         )
@@ -214,7 +214,7 @@ struct PollutionProvider: TimelineProvider {
                 let entry = PollutionEntry2(date: Date(), pollution: pollution, timeZone: timeZone, cityName: cityName)
                 completion(entry)
             case .failure:
-                let entry = PollutionEntry2(date: Date(), pollution: PollutionData.emptyData, timeZone: TimeZone.current, cityName: "Nieznane")
+                let entry = PollutionEntry2(date: Date(), pollution: emptyData, timeZone: TimeZone.current, cityName: "Nieznane")
                 completion(entry)
             }
         }
@@ -229,7 +229,7 @@ struct PollutionProvider: TimelineProvider {
                 let timeline = Timeline(entries: [entry], policy: .after(nextUpdateDate))
                 completion(timeline)
             case .failure:
-                let entry = PollutionEntry2(date: Date(), pollution: PollutionData.emptyData, timeZone: TimeZone.current, cityName: "Nieznane")
+                let entry = PollutionEntry2(date: Date(), pollution: emptyData, timeZone: TimeZone.current, cityName: "Nieznane")
                 let nextUpdateDate = Calendar.current.date(byAdding: .minute, value: 30, to: Date())!
                 let timeline = Timeline(entries: [entry], policy: .after(nextUpdateDate))
                 completion(timeline)
@@ -248,11 +248,38 @@ struct PollutionProvider: TimelineProvider {
             switch result {
             case .success(let data):
                 let pollutionData = data
-                let timeZone = TimeZone.current
+                let timeZone = TimeZone.current // Możesz dodać logikę do pobrania strefy czasowej, jeśli dane API to wspierają
                 completion(.success((pollutionData, timeZone, cityName)))
             case .failure(let error):
                 completion(.failure(error))
             }
         }
     }
+    
+    // Przykładowe dane do placeholdera
+    private var sampleData: PollutionData {
+        PollutionData(
+            list: [
+                PollutionEntry(
+                    main: MainPollution(aqi: 3),
+                    components: PollutionComponents(
+                        co: 0.5,
+                        no: 0.02,
+                        no2: 0.1,
+                        o3: 0.3,
+                        so2: 0.05,
+                        pm2_5: 15.0,
+                        pm10: 20.0,
+                        nh3: 0.03
+                    )
+                )
+            ]
+        )
+    }
+
+    // Puste dane na wypadek błędu pobierania
+    private var emptyData: PollutionData {
+        PollutionData(list: [])
+    }
 }
+

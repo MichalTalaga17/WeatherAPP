@@ -27,6 +27,7 @@ struct LocationWeatherView: View {
                         await loadData()
                     }
                 }
+                .navigationBarBackButtonHidden(true)
         } else {
             VStack {
                 if let currentWeatherData = currentWeatherData, let timeZone = timeZone {
