@@ -19,10 +19,16 @@ struct LocationWeatherView: View {
     @State private var isLoading: Bool = true
     
     var body: some View {
-        VStack {
-            if isLoading {
-                Text("Loading...")
-            } else {
+        if isLoading {
+            ProgressView("Loading...")
+                .progressViewStyle(CircularProgressViewStyle())
+                .onAppear {
+                    Task {
+                        await loadData()
+                    }
+                }
+        } else {
+            VStack {
                 if let currentWeatherData = currentWeatherData, let timeZone = timeZone {
                     VStack(alignment: .leading, spacing: 10) {
                         VStack(alignment: .center, spacing: 5) {
@@ -140,15 +146,17 @@ struct LocationWeatherView: View {
                             if let airPollutionData = airPollutionData, let airQuality = airPollutionData.list.first {
                                     
                                     HStack {
+                                        VStack{
+                                            Text("\(aqiDescription(for: airQuality.main.aqi))")
+                                                .font(.title2 .bold())
+                                            Text("Air Index")
+                                                .font(.callout)
+                                        }
+                                        .padding(.leading, 25)
+                                        .padding(.trailing, 15)
                                         ScrollView(.horizontal, showsIndicators: false){
                                             HStack(spacing: 30){
-                                                VStack{
-                                                    Text("\(aqiDescription(for: airQuality.main.aqi))")
-                                                        .font(.title2 .bold())
-                                                    Text("Air Index")
-                                                        .font(.callout)
-                                                }
-                                                .padding(.leading, 25)
+                                                
                                                 VStack {
                                                     Text("\(Int(airQuality.components.pm2_5))")
                                                         .font(.title2 .bold())
@@ -215,80 +223,76 @@ struct LocationWeatherView: View {
                 }
                 Spacer()
             }
-        }
-        .padding([.leading, .bottom, .trailing])
-        .background(backgroundGradient)
-        .foregroundColor(.white)
-        .navigationBarBackButtonHidden(true)
-        .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
-                Button(action: {
-                    self.presentationMode.wrappedValue.dismiss()
-                }) {
-                    Text("Back")
-                        .font(.caption)
-                        .padding(.horizontal, 15)
-                        .padding(.vertical, 8)
-                        .background(Color.white.opacity(0.1))
-                        .cornerRadius(20)
-                }
-                .foregroundColor(.white)
-            }
-            ToolbarItem(placement: .topBarTrailing){
-                if favourite {
-                    Button {
-                        if let city = cities.first(where: { $0.name == cityName }) {
-                            modelContext.delete(city)
-                            favourite.toggle()
-                        }
-                        if let userDefaults = UserDefaults(suiteName: "group.me.michaltalaga.WeatherAPP") {
-                            userDefaults.removeObject(forKey: "City")
-                        }
-                    } label: {
-                        Image(systemName: "star.fill")
+            .padding([.leading, .bottom, .trailing])
+            .background(backgroundGradient)
+            .foregroundColor(.white)
+            .navigationBarBackButtonHidden(true)
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button(action: {
+                        self.presentationMode.wrappedValue.dismiss()
+                    }) {
+                        Text("Back")
                             .font(.caption)
                             .padding(.horizontal, 15)
-                            .padding(.vertical, 6)
+                            .padding(.vertical, 8)
                             .background(Color.white.opacity(0.1))
-                            .cornerRadius(30)
-                            .foregroundColor(.white)
+                            .cornerRadius(20)
                     }
-                } else {
-                    Button {
-                        let newCity = City(name: cityName)
-                        do {
-                            modelContext.insert(newCity)
-                            try modelContext.save()
-                            favourite.toggle()
-                        } catch {
-                            print("Error saving context: \(error)")
+                    .foregroundColor(.white)
+                }
+                ToolbarItem(placement: .topBarTrailing){
+                    if favourite {
+                        Button {
+                            if let city = cities.first(where: { $0.name == cityName }) {
+                                modelContext.delete(city)
+                                favourite.toggle()
+                            }
+                            if let userDefaults = UserDefaults(suiteName: "group.me.michaltalaga.WeatherAPP") {
+                                userDefaults.removeObject(forKey: "City")
+                            }
+                        } label: {
+                            Image(systemName: "star.fill")
+                                .font(.caption)
+                                .padding(.horizontal, 15)
+                                .padding(.vertical, 6)
+                                .background(Color.white.opacity(0.1))
+                                .cornerRadius(30)
+                                .foregroundColor(.white)
                         }
-                    } label: {
-                        Image(systemName: "star")
-                            .font(.caption)
-                            .padding(.horizontal, 15)
-                            .padding(.vertical, 6)
-                            .background(Color.white.opacity(0.1))
-                            .cornerRadius(30)
-                            .foregroundColor(.white)
+                    } else {
+                        Button {
+                            let newCity = City(name: cityName)
+                            do {
+                                modelContext.insert(newCity)
+                                try modelContext.save()
+                                favourite.toggle()
+                            } catch {
+                                print("Error saving context: \(error)")
+                            }
+                        } label: {
+                            Image(systemName: "star")
+                                .font(.caption)
+                                .padding(.horizontal, 15)
+                                .padding(.vertical, 6)
+                                .background(Color.white.opacity(0.1))
+                                .cornerRadius(30)
+                                .foregroundColor(.white)
+                        }
                     }
                 }
             }
-        }
-        .onAppear {
-            Task {
-                await loadData()
+            .alert(isPresented: $showAlert) {
+                Alert(
+                    title: Text(alertTitle),
+                    message: Text(alertMessage),
+                    dismissButton: .default(Text("Got it!")) {
+                        self.presentationMode.wrappedValue.dismiss()
+                    }
+                )
             }
         }
-        .alert(isPresented: $showAlert) {
-            Alert(
-                title: Text(alertTitle),
-                message: Text(alertMessage),
-                dismissButton: .default(Text("Got it!")) {
-                    self.presentationMode.wrappedValue.dismiss()
-                }
-            )
-        }
+        
     }
     
     private func showAlert(title: String, message: String) {
