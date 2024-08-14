@@ -43,3 +43,10 @@ struct SimpleEntry: TimelineEntry {
     let sunset: Date
     let icon: String
 }
+
+struct PollutionEntry2: TimelineEntry {
+    let date: Date
+    let pollution: PollutionData
+    let timeZone: TimeZone
+    let cityName: String
+}

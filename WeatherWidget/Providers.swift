@@ -194,3 +194,65 @@ struct WeatherProvider: TimelineProvider {
         return iconMap[icon] ?? "questionmark"
     }
 }
+
+// MARK: - PollutionProvider
+
+struct PollutionProvider: TimelineProvider {
+    func placeholder(in context: Context) -> PollutionEntry2 {
+        PollutionEntry2(
+            date: Date(),
+            pollution: PollutionData.sampleData,
+            timeZone: TimeZone.current,
+            cityName: "Miasto"
+        )
+    }
+    
+    func getSnapshot(in context: Context, completion: @escaping (PollutionEntry2) -> ()) {
+        fetchPollutionData { result in
+            switch result {
+            case .success(let (pollution, timeZone, cityName)):
+                let entry = PollutionEntry2(date: Date(), pollution: pollution, timeZone: timeZone, cityName: cityName)
+                completion(entry)
+            case .failure:
+                let entry = PollutionEntry2(date: Date(), pollution: PollutionData.emptyData, timeZone: TimeZone.current, cityName: "Nieznane")
+                completion(entry)
+            }
+        }
+    }
+    
+    func getTimeline(in context: Context, completion: @escaping (Timeline<PollutionEntry2>) -> ()) {
+        fetchPollutionData { result in
+            switch result {
+            case .success(let (pollution, timeZone, cityName)):
+                let entry = PollutionEntry2(date: Date(), pollution: pollution, timeZone: timeZone, cityName: cityName)
+                let nextUpdateDate = Calendar.current.date(byAdding: .minute, value: 30, to: Date())!
+                let timeline = Timeline(entries: [entry], policy: .after(nextUpdateDate))
+                completion(timeline)
+            case .failure:
+                let entry = PollutionEntry2(date: Date(), pollution: PollutionData.emptyData, timeZone: TimeZone.current, cityName: "Nieznane")
+                let nextUpdateDate = Calendar.current.date(byAdding: .minute, value: 30, to: Date())!
+                let timeline = Timeline(entries: [entry], policy: .after(nextUpdateDate))
+                completion(timeline)
+            }
+        }
+    }
+    
+    private func fetchPollutionData(completion: @escaping (Result<(PollutionData, TimeZone, String), Error>) -> Void) {
+        guard let userDefaults = UserDefaults(suiteName: "group.me.michaltalaga.WeatherAPP"),
+              let cityName = userDefaults.string(forKey: "City") else {
+            completion(.failure(NSError(domain: "No City Name Found", code: -1, userInfo: nil)))
+            return
+        }
+        
+        API.shared.fetchAirPollutionData(forCity: cityName) { result in
+            switch result {
+            case .success(let data):
+                let pollutionData = data
+                let timeZone = TimeZone.current
+                completion(.success((pollutionData, timeZone, cityName)))
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
+}
