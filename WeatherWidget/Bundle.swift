@@ -16,5 +16,6 @@ struct WeatherWidgets: WidgetBundle {
         WeatherWidgetMedium()    // Średni widżet
         WeatherWidgetForecast()  // Widżet prognozy
         PollutionWidgetMedium()   // Widżet zanieczyszczenia powietrza(póki co sredni)
+        PollutionWidgetSmall()
     }
 }
