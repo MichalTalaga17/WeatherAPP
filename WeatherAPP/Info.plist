@@ -4,5 +4,7 @@
 <dict>
 	<key>NSWidgetWantsLocation</key>
 	<false/>
+	<key>Noti</key>
+	<string></string>
 </dict>
 </plist>

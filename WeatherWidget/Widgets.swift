@@ -54,3 +54,36 @@ struct WeatherWidgetMedium: Widget {
         .supportedFamilies([.systemMedium])
     }
 }
+
+// MARK: - Medium Pollution Widget Configuration
+
+
+struct PollutionWidgetMedium: Widget {
+    let kind: String = "PollutionWidgetMedium"
+    
+    var body: some WidgetConfiguration {
+        StaticConfiguration(kind: kind, provider: PollutionProvider()) { entry in
+            PollutionMediumWidgetView(entry: entry)
+        }
+        .configurationDisplayName("Medium Pollution Widget")
+        .description("Shows basic pollution information.")
+        .supportedFamilies([.systemMedium])
+    }
+}
+
+
+// MARK: - Small Pollution Widget Configuration
+
+
+struct PollutionWidgetSmall: Widget {
+    let kind: String = "PollutionWidgetSmall"
+    
+    var body: some WidgetConfiguration {
+        StaticConfiguration(kind: kind, provider: PollutionProvider()) { entry in
+            PollutionSmallWidgetView(entry: entry)
+        }
+        .configurationDisplayName("Small Pollution Widget")
+        .description("Shows basic pollution information.")
+        .supportedFamilies([.systemSmall])
+    }
+}

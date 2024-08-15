@@ -10,11 +10,13 @@
 		474873EB2C64FD19003C1D5E /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 474873A62C64DC4E003C1D5E /* WidgetKit.framework */; };
 		474873EC2C64FD19003C1D5E /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 474873A82C64DC4E003C1D5E /* SwiftUI.framework */; };
 		474873EF2C64FD19003C1D5E /* Bundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 474873EE2C64FD19003C1D5E /* Bundle.swift */; };
-		474873F12C64FD19003C1D5E /* WeatherWidgetLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 474873F02C64FD19003C1D5E /* WeatherWidgetLiveActivity.swift */; };
 		474873F72C64FD1A003C1D5E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 474873F62C64FD1A003C1D5E /* Assets.xcassets */; };
 		474873FB2C64FD1A003C1D5E /* WeatherWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 474873EA2C64FD19003C1D5E /* WeatherWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		4756D2C82C694EBF00BF16F1 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4756D2C72C694EBF00BF16F1 /* LocationManager.swift */; };
 		4756D2CB2C69563200BF16F1 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4756D2C72C694EBF00BF16F1 /* LocationManager.swift */; };
+		4756D2F12C6A9F5900BF16F1 /* PollutionData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4756D2EF2C6A3AE400BF16F1 /* PollutionData.swift */; };
+		4756D2F22C6A9F5900BF16F1 /* PollutionData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4756D2EF2C6A3AE400BF16F1 /* PollutionData.swift */; };
+		4756D2F32C6A9F5A00BF16F1 /* PollutionData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4756D2EF2C6A3AE400BF16F1 /* PollutionData.swift */; };
 		47761B462C63B4990027DE18 /* CityRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47761B452C63B4990027DE18 /* CityRowView.swift */; };
 		479252B92C6585D30032CE7F /* Icons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47BAFC2B2C60263600DCDE92 /* Icons.swift */; };
 		479252BD2C662CD00032CE7F /* CurrentModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47BAFC7A2C63778300DCDE92 /* CurrentModal.swift */; };
@@ -78,11 +80,13 @@
 		474873BE2C64DDAE003C1D5E /* WeatherWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = WeatherWidgetExtension.entitlements; sourceTree = "<group>"; };
 		474873EA2C64FD19003C1D5E /* WeatherWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = WeatherWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		474873EE2C64FD19003C1D5E /* Bundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bundle.swift; sourceTree = "<group>"; };
-		474873F02C64FD19003C1D5E /* WeatherWidgetLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherWidgetLiveActivity.swift; sourceTree = "<group>"; };
 		474873F62C64FD1A003C1D5E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		474873F82C64FD1A003C1D5E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4756D2C62C694E8B00BF16F1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		4756D2C72C694EBF00BF16F1 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
+		4756D2EF2C6A3AE400BF16F1 /* PollutionData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollutionData.swift; sourceTree = "<group>"; };
+		4756D2F92C6C026D00BF16F1 /* UserNotifications.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotifications.framework; path = System/Library/Frameworks/UserNotifications.framework; sourceTree = SDKROOT; };
+		4756D2FB2C6C026D00BF16F1 /* UserNotificationsUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotificationsUI.framework; path = System/Library/Frameworks/UserNotificationsUI.framework; sourceTree = SDKROOT; };
 		47761B452C63B4990027DE18 /* CityRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CityRowView.swift; sourceTree = "<group>"; };
 		479252C42C66C93A0032CE7F /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		479252C72C66C9B10032CE7F /* Providers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Providers.swift; sourceTree = "<group>"; };
@@ -137,6 +141,8 @@
 			children = (
 				474873A62C64DC4E003C1D5E /* WidgetKit.framework */,
 				474873A82C64DC4E003C1D5E /* SwiftUI.framework */,
+				4756D2F92C6C026D00BF16F1 /* UserNotifications.framework */,
+				4756D2FB2C6C026D00BF16F1 /* UserNotificationsUI.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -148,7 +154,6 @@
 				479252CD2C66CA0D0032CE7F /* Widgets.swift */,
 				479252CA2C66C9E40032CE7F /* Views.swift */,
 				479252C72C66C9B10032CE7F /* Providers.swift */,
-				474873F02C64FD19003C1D5E /* WeatherWidgetLiveActivity.swift */,
 				474873F62C64FD1A003C1D5E /* Assets.xcassets */,
 				474873F82C64FD1A003C1D5E /* Info.plist */,
 				479252C42C66C93A0032CE7F /* Models.swift */,
@@ -197,6 +202,7 @@
 			isa = PBXGroup;
 			children = (
 				47BAFC252C5EE1F100DCDE92 /* WeatherModal.swift */,
+				4756D2EF2C6A3AE400BF16F1 /* PollutionData.swift */,
 				47BAFC7A2C63778300DCDE92 /* CurrentModal.swift */,
 				47BAFC272C5EE21200DCDE92 /* API.swift */,
 			);
@@ -384,7 +390,7 @@
 				479252C22C665E820032CE7F /* WeatherModal.swift in Sources */,
 				474873EF2C64FD19003C1D5E /* Bundle.swift in Sources */,
 				479252CF2C66CA140032CE7F /* Widgets.swift in Sources */,
-				474873F12C64FD19003C1D5E /* WeatherWidgetLiveActivity.swift in Sources */,
+				4756D2F12C6A9F5900BF16F1 /* PollutionData.swift in Sources */,
 				479252CC2C66C9F00032CE7F /* Views.swift in Sources */,
 				479252B92C6585D30032CE7F /* Icons.swift in Sources */,
 				479252C32C665F270032CE7F /* Conventers.swift in Sources */,
@@ -399,6 +405,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4756D2F22C6A9F5900BF16F1 /* PollutionData.swift in Sources */,
 				47BAFC442C60DC4300DCDE92 /* APPTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -411,6 +418,7 @@
 				47BAFC4B2C60F11100DCDE92 /* GradientBackground.swift in Sources */,
 				47BAFC5C2C62CF5C00DCDE92 /* City.swift in Sources */,
 				47BAFC262C5EE1F100DCDE92 /* WeatherModal.swift in Sources */,
+				4756D2F32C6A9F5A00BF16F1 /* PollutionData.swift in Sources */,
 				47BAFC2A2C5FDDCF00DCDE92 /* Conventers.swift in Sources */,
 				47BAFC2C2C60263600DCDE92 /* Icons.swift in Sources */,
 				47EC68B92C5D50AC001BA302 /* ContentView.swift in Sources */,
@@ -444,6 +452,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = WeatherWidgetExtension.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 4Z2HM3SS2M;
@@ -459,6 +468,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = me.michaltalaga.WeatherAPP.WeatherWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -472,6 +482,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = WeatherWidgetExtension.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 4Z2HM3SS2M;
@@ -487,6 +498,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = me.michaltalaga.WeatherAPP.WeatherWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -657,6 +669,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = WeatherAPP/WeatherAPP.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"WeatherAPP/Preview Content\"";
@@ -667,6 +680,7 @@
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = needed;
 				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = needed;
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = needed;
+				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -680,6 +694,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = me.michaltalaga.WeatherAPP;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -694,6 +709,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = WeatherAPP/WeatherAPP.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"WeatherAPP/Preview Content\"";
@@ -704,6 +720,7 @@
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = needed;
 				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = needed;
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = needed;
+				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -717,6 +734,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = me.michaltalaga.WeatherAPP;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

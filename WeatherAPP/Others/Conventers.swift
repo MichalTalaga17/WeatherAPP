@@ -8,6 +8,24 @@
 import Foundation
 
 
+
+func aqiDescription(for aqi: Int) -> String {
+    switch aqi {
+    case 1:
+        return "Good"
+    case 2:
+        return "Fair"
+    case 3:
+        return "Moderate"
+    case 4:
+        return "Poor"
+    case 5:
+        return "Very Poor"
+    default:
+        return "Unknown"
+    }
+}
+
 func convertMetersToKilometers(meters: Double) -> Int {
     return Int(meters / 1000.0)
 }
