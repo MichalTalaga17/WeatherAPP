@@ -145,77 +145,77 @@ struct LocationWeatherView: View {
                         HStack(spacing: 10) {
                             let containerWidth: CGFloat = UIScreen.main.bounds.width - 32
                             if let airPollutionData = airPollutionData, let airQuality = airPollutionData.list.first {
-                                    
-                                    HStack {
-                                        VStack{
-                                            Text("\(aqiDescription(for: airQuality.main.aqi))")
-                                                .font(.title2 .bold())
-                                            Text("Air Index")
-                                                .font(.callout)
-                                        }
-                                        .padding(.leading, 25)
-                                        .padding(.trailing, 15)
-                                        ScrollView(.horizontal, showsIndicators: false){
-                                            HStack(spacing: 30){
-                                                
-                                                VStack {
-                                                    Text("\(Int(airQuality.components.pm2_5))")
-                                                        .font(.title2 .bold())
-                                                    Text("PM 2.5")
-                                                        .font(.callout)
-                                                }
-                                                VStack {
-                                                    Text("\(Int(airQuality.components.pm10))")
-                                                        .font(.title2 .bold())
-                                                    Text("PM 10")
-                                                        .font(.callout)
-                                                }
-                                                VStack {
-                                                    Text("\(Int(airQuality.components.co))")
-                                                        .font(.title2 .bold())
-                                                    Text("CO")
-                                                        .font(.callout)
-                                                }
-                                                VStack {
-                                                    Text("\(Int(airQuality.components.no))")
-                                                        .font(.title2 .bold())
-                                                    Text("NO")
-                                                        .font(.callout)
-                                                }
-                                                VStack {
-                                                    Text("\(Int(airQuality.components.pm2_5))")
-                                                        .font(.title2 .bold())
-                                                    Text("NO2")
-                                                        .font(.callout)
-                                                }
-                                                VStack {
-                                                    Text("\(Int(airQuality.components.o3))")
-                                                        .font(.title2 .bold())
-                                                    Text("O3")
-                                                        .font(.callout)
-                                                }
-                                                VStack {
-                                                    Text("\(Int(airQuality.components.so2))")
-                                                        .font(.title2 .bold())
-                                                    Text("SO2")
-                                                        .font(.callout)
-                                                }
-                                                VStack {
-                                                    Text("\(Int(airQuality.components.nh3))")
-                                                        .font(.title2 .bold())
-                                                    Text("NH3")
-                                                        .font(.callout)
-                                                }
-                                                
-                                                .padding(.trailing, 25)
-                                            }
-                                            .padding(0)
-                                        }
+                                
+                                HStack {
+                                    VStack{
+                                        Text("\(aqiDescription(for: airQuality.main.aqi))")
+                                            .font(.title2 .bold())
+                                        Text("Air Index")
+                                            .font(.callout)
                                     }
-                                    .frame(width: containerWidth * 1, height: 80)
-                                    .background(Color.white.opacity(0.05))
-                                    .cornerRadius(8)
+                                    .padding(.leading, 25)
+                                    .padding(.trailing, 15)
+                                    ScrollView(.horizontal, showsIndicators: false){
+                                        HStack(spacing: 30){
+                                            
+                                            VStack {
+                                                Text("\(Int(airQuality.components.pm2_5))")
+                                                    .font(.title2 .bold())
+                                                Text("PM 2.5")
+                                                    .font(.callout)
+                                            }
+                                            VStack {
+                                                Text("\(Int(airQuality.components.pm10))")
+                                                    .font(.title2 .bold())
+                                                Text("PM 10")
+                                                    .font(.callout)
+                                            }
+                                            VStack {
+                                                Text("\(Int(airQuality.components.co))")
+                                                    .font(.title2 .bold())
+                                                Text("CO")
+                                                    .font(.callout)
+                                            }
+                                            VStack {
+                                                Text("\(Int(airQuality.components.no))")
+                                                    .font(.title2 .bold())
+                                                Text("NO")
+                                                    .font(.callout)
+                                            }
+                                            VStack {
+                                                Text("\(Int(airQuality.components.pm2_5))")
+                                                    .font(.title2 .bold())
+                                                Text("NO2")
+                                                    .font(.callout)
+                                            }
+                                            VStack {
+                                                Text("\(Int(airQuality.components.o3))")
+                                                    .font(.title2 .bold())
+                                                Text("O3")
+                                                    .font(.callout)
+                                            }
+                                            VStack {
+                                                Text("\(Int(airQuality.components.so2))")
+                                                    .font(.title2 .bold())
+                                                Text("SO2")
+                                                    .font(.callout)
+                                            }
+                                            VStack {
+                                                Text("\(Int(airQuality.components.nh3))")
+                                                    .font(.title2 .bold())
+                                                Text("NH3")
+                                                    .font(.callout)
+                                            }
+                                            
+                                            .padding(.trailing, 25)
+                                        }
+                                        .padding(0)
+                                    }
                                 }
+                                .frame(width: containerWidth * 1, height: 80)
+                                .background(Color.white.opacity(0.05))
+                                .cornerRadius(8)
+                            }
                         }
                         .padding(.bottom)
                     }
@@ -322,11 +322,13 @@ struct LocationWeatherView: View {
             API.shared.fetchAirPollutionData(forCity: cityName) { result in
                 switch result {
                 case .success(let data):
+                    print("Air pollution data successfully fetched")
                     self.airPollutionData = data
                     continuation.resume(returning: ())
+                    
                 case .failure(let error):
-                    showAlert(title: "Error", message: "Cannot fetch air pollution data")
-                    print("\(error.localizedDescription)")
+                    print("Failed to fetch air pollution data")
+                    print("Error: \(error.localizedDescription)")
                     continuation.resume(throwing: error)
                 }
             }
@@ -335,39 +337,51 @@ struct LocationWeatherView: View {
     
     func fetchWeatherData() async throws {
         return try await withCheckedThrowingContinuation { continuation in
+            print("Fetching weather data for city: \(cityName)")
+            
             API.shared.fetchForecastData(forCity: cityName) { result in
                 switch result {
                 case .success(let data):
+                    print("Weather data successfully fetched")
                     self.forecastData = data
                     self.timeZone = TimeZone(secondsFromGMT: data.city.timezone)
+                    print("Time zone set to: \(self.timeZone?.identifier ?? "Unknown")")
+                    
                     continuation.resume(returning: ())
+                    
                 case .failure(let error):
-                    showAlert(title: "Error", message: "Cannot fetch data")
-                    print("\(error.localizedDescription)")
+                    print("Failed to fetch weather data")
+                    print("Error: \(error.localizedDescription)")
                     continuation.resume(throwing: error)
                 }
             }
         }
     }
     
+    
+    
     func fetchCurrentWeatherData() async throws {
         return try await withCheckedThrowingContinuation { continuation in
             API.shared.fetchCurrentWeatherData(forCity: cityName) { result in
                 switch result {
                 case .success(let data):
+                    print("Current weather data successfully fetched")
                     self.currentWeatherData = data
                     let newIcon = data.weather.first?.icon ?? "unknown"
                     self.backgroundGradient = gradientBackground(for: newIcon)
                     self.timeZone = TimeZone(secondsFromGMT: data.timezone)
+                    
                     continuation.resume(returning: ())
+                    
                 case .failure(let error):
-                    showAlert(title: "Error", message: "Cannot fetch data")
-                    print("\(error.localizedDescription)")
+                    print("Failed to fetch current weather data")
+                    print("Error: \(error.localizedDescription)")
                     continuation.resume(throwing: error)
                 }
             }
         }
     }
+    
     
     struct ForecastScroll: View {
         let data: ForecastData
@@ -386,9 +400,9 @@ struct LocationWeatherView: View {
                                     .font(.subheadline)
                             }
                             weatherIcon(for: item.weather.first?.icon ?? "defaultIcon")
-                            Text(kelvinToCelsius(item.main.temp))
+                            Text("\(Int(item.main.temp))°")
                                 .font(.title2.bold())
-                            Text(kelvinToCelsius(item.main.feels_like))
+                            Text("\(Int(item.main.feels_like))°")
                                 .font(.body)
                             Text("\(String(format: "%.0f", item.pop * 100))%")
                                 .font(.body)
@@ -405,6 +419,6 @@ struct LocationWeatherView: View {
 }
 
 #Preview {
-    LocationWeatherView(cityName: "Zembrzyce", favourite: true)
+    LocationWeatherView(cityName: "New York", favourite: true)
         .modelContainer(for: City.self)
 }

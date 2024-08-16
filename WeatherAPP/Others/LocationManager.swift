@@ -42,7 +42,6 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
             if let placemark = placemarks?.first {
                 self.cityName = placemark.locality ?? "Unknown"
                 self.saveCityName(self.cityName ?? "Unknown")
-                print("City Name: \(self.cityName ?? "Unknown")") // Debug line
             }
         }
     }

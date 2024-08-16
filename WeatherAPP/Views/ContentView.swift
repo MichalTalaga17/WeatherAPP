@@ -18,7 +18,9 @@ struct ContentView: View {
     
     var body: some View {
         NavigationView {
+            
             VStack(alignment: .leading) {
+                
                 headerView
                 cityListView
                 Spacer()
@@ -36,6 +38,7 @@ struct ContentView: View {
                 }
                 locationManager.requestLocation()
             }
+            
         }
     }
     
@@ -73,6 +76,14 @@ struct ContentView: View {
                             .cornerRadius(8)
                     }
                 }
+                NavigationLink(destination: SettingsView()) {
+                    Image(systemName: "gear")
+                        .font(.callout)
+                        .padding()
+                        .background(Color.black.opacity(0.3))
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
+                }
                 
             }
         }
@@ -91,31 +102,24 @@ struct ContentView: View {
                     await fetchWeatherData(for: city)
                 }
         }
-        .onDelete(perform: deleteItems)
         .background(Color.white.opacity(0))
     }
     
     private func fetchWeatherData(for city: City) async {
-        do {
-            try await fetchCurrentWeatherData(forCity: city) { result in
-                switch result {
-                case .success(let data):
+        API.shared.fetchCurrentWeatherData(forCity: city.name) { result in
+            switch result {
+            case .success(let data):
+                DispatchQueue.main.async {
+                    city.temperature = data.main.temp
+                    city.weatherIcon = data.weather.first?.icon
                     if city.id == cities.first?.id, let icon = data.weather.first?.icon {
                         self.backgroundGradient = gradientBackground(for: icon)
                     }
-                case .failure(let error):
+                }
+            case .failure(let error):
+                DispatchQueue.main.async {
                     showAlert(title: "Error", message: "Cannot fetch data")
                 }
-            }
-        } catch {
-            showAlert(title: "Error", message: "Cannot fetch data")
-        }
-    }
-    
-    private func deleteItems(offsets: IndexSet) {
-        withAnimation {
-            for index in offsets {
-                modelContext.delete(cities[index])
             }
         }
     }
@@ -131,42 +135,6 @@ struct ContentView: View {
         self.alertMessage = message
         self.showAlert = true
     }
-}
-
-
-func fetchCurrentWeatherData(forCity city: City, completion: @escaping (Result<CurrentResponse, Error>) -> Void) {
-    let encodedCity = city.name.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
-    let urlString = "https://api.openweathermap.org/data/2.5/weather?q=\(encodedCity)&appid=\(API.key)"
-    
-    guard let url = URL(string: urlString) else {
-        completion(.failure(NSError(domain: "Invalid URL", code: -1, userInfo: nil)))
-        return
-    }
-    
-    URLSession.shared.dataTask(with: url) { data, response, error in
-        if let error = error {
-            completion(.failure(error))
-            return
-        }
-        
-        guard let data = data else {
-            completion(.failure(NSError(domain: "No data", code: -1, userInfo: nil)))
-            return
-        }
-        
-        do {
-            let currentWeatherData = try JSONDecoder().decode(CurrentResponse.self, from: data)
-            DispatchQueue.main.async {
-                city.temperature = currentWeatherData.main.temp
-                city.weatherIcon = currentWeatherData.weather.first?.icon
-                completion(.success(currentWeatherData))
-            }
-        } catch {
-            completion(.failure(error))
-        }
-        
-    }.resume()
-    
 }
 
 #Preview {

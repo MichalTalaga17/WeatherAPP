@@ -30,10 +30,6 @@ func convertMetersToKilometers(meters: Double) -> Int {
     return Int(meters / 1000.0)
 }
 
-func kelvinToCelsius(_ kelvin: Double) -> String {
-    let celsius = kelvin - 273.15
-    return String(format: "%0.0f°", celsius)
-}
 
 enum DateFormatType {
     case fullDateTime          // "dd.MM.yyyy HH:mm"
