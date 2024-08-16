@@ -14,7 +14,7 @@ struct CityRowView: View {
                 Spacer()
                 HStack{
                     if let temperature = city.temperature {
-                        Text("\(temperature)")
+                        Text("\(Int(temperature))°")
                             .font(.title3)
                     }
                     if let icon = city.weatherIcon {

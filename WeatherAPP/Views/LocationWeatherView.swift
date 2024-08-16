@@ -346,7 +346,7 @@ struct LocationWeatherView: View {
                     self.forecastData = data
                     self.timeZone = TimeZone(secondsFromGMT: data.city.timezone)
                     print("Time zone set to: \(self.timeZone?.identifier ?? "Unknown")")
-
+                    
                     continuation.resume(returning: ())
                     
                 case .failure(let error):
@@ -357,8 +357,8 @@ struct LocationWeatherView: View {
             }
         }
     }
-
-
+    
+    
     
     func fetchCurrentWeatherData() async throws {
         return try await withCheckedThrowingContinuation { continuation in
@@ -381,7 +381,7 @@ struct LocationWeatherView: View {
             }
         }
     }
-
+    
     
     struct ForecastScroll: View {
         let data: ForecastData
@@ -400,9 +400,9 @@ struct LocationWeatherView: View {
                                     .font(.subheadline)
                             }
                             weatherIcon(for: item.weather.first?.icon ?? "defaultIcon")
-                            Text("\(item.main.temp)")
+                            Text("\(Int(item.main.temp))°")
                                 .font(.title2.bold())
-                            Text("\(item.main.feels_like)")
+                            Text("\(Int(item.main.feels_like))°")
                                 .font(.body)
                             Text("\(String(format: "%.0f", item.pop * 100))%")
                                 .font(.body)
@@ -419,6 +419,6 @@ struct LocationWeatherView: View {
 }
 
 #Preview {
-    LocationWeatherView(cityName: "Zembrzyce", favourite: true)
+    LocationWeatherView(cityName: "New York", favourite: true)
         .modelContainer(for: City.self)
 }

@@ -20,15 +20,7 @@ struct ContentView: View {
         NavigationView {
             
             VStack(alignment: .leading) {
-                NavigationLink(destination: SettingsView()) {
-                                    Text("Settings")
-                                        .font(.headline)
-                                        .padding()
-                                        .foregroundColor(.white)
-                                        .background(Color.blue)
-                                        .cornerRadius(10)
-                                }
-                                .padding()
+                
                 headerView
                 cityListView
                 Spacer()
@@ -83,6 +75,14 @@ struct ContentView: View {
                             .foregroundColor(.white)
                             .cornerRadius(8)
                     }
+                }
+                NavigationLink(destination: SettingsView()) {
+                    Image(systemName: "gear")
+                        .font(.callout)
+                        .padding()
+                        .background(Color.black.opacity(0.3))
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
                 }
                 
             }

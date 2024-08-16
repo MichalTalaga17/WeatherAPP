@@ -31,7 +31,7 @@ struct ForecastWidgetEntryView: View {
                             .font(.title)
                             .padding(.vertical, 5)
                         Spacer()
-                        Text("\(item.temperature)")
+                        Text("\(Int(item.temperature))°")
                             .font(.caption2)
                     }
                     .frame(maxWidth: .infinity)
