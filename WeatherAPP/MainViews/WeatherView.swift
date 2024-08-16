@@ -85,18 +85,34 @@ struct WeatherView: View {
                 }
                 
                 if let pollution = pollution {
-                    VStack(alignment: .leading) {
-                        Text("Air Pollution")
-                            .font(.headline)
-                            .padding(.top)
                         
-                        if let pollutionEntry = pollution.list.first {
-                            Text("AQI: \(pollutionEntry.main.aqi)")
-                            Text("CO: \(pollutionEntry.components.co) μg/m3")
-                            Text("NO2: \(pollutionEntry.components.no2) μg/m3")
-                            Text("PM2.5: \(pollutionEntry.components.pm2_5) μg/m3")
-                            Text("PM10: \(pollutionEntry.components.pm10) μg/m3")
-                        }
+                    ScrollView(.horizontal){
+                            if let pollutionEntry = pollution.list.first {
+                                    HStack{
+                                        VStack{
+                                            Text("\(Int(pollutionEntry.components.pm2_5))")
+                                            Text("PM2.5")
+                                        }
+                                        VStack{
+                                            Text("\(Int(pollutionEntry.components.pm10))")
+                                            Text("PM10")
+                                        }
+                                        VStack {
+                                            Text("\(Int(pollutionEntry.main.aqi))")
+                                            Text("AQI")
+                                        }
+                                        VStack{
+                                            Text("\(Int(pollutionEntry.components.co))")
+                                            Text("CO")
+                                        }
+                                        VStack{
+                                            Text("\(Int(pollutionEntry.components.no2))")
+                                            Text("NO2")
+                                        }
+                                        
+                                    }
+                            }
+                        
                     }
                 }
                 
