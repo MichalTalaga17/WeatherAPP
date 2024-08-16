@@ -9,12 +9,12 @@ import SwiftUI
 
 struct WeatherView: View {
     @StateObject var locationManager = LocationManager()
-
+    
     @State private var currentWeather: CurrentData?
     @State private var forecast: ForecastData?
     @State private var pollution: PollutionData?
     @State private var errorMessage: String?
-
+    
     var body: some View {
         VStack {
             if let location = locationManager.location {
@@ -31,33 +31,54 @@ struct WeatherView: View {
                             .font(.headline)
                             .padding(.top)
                         
-                        Text("Temperature: \(weather.main.temp)°C")
-                        Text("Feels Like: \(weather.main.feels_like)°C")
+                        Text("Temperature: \(Int(weather.main.temp))°C")
+                        Text("Feels Like: \(Int(weather.main.feels_like))°C")
+                        Text("Min Temp: \(Int(weather.main.temp_min))°C")
+                        Text("Max Temp: \(Int(weather.main.temp_max))°C")
                         Text("Humidity: \(weather.main.humidity)%")
+                        Text("Pressure: \(weather.main.pressure) hPa")
+                        Text("Cloudiness: \(weather.clouds.all)%")
+                        Text("Visibility: \(weather.visibility / 1000) km")
                         Text("Wind Speed: \(weather.wind.speed) m/s")
+                        
                         if let rain = weather.rain?.hour1 {
                             Text("Rain: \(rain) mm (1h)")
                         }
                         if let snow = weather.snow?.hour1 {
                             Text("Snow: \(snow) mm (1h)")
                         }
+                        
+                        Text("Sunrise: \(weather.sys.sunrise)")
+                        Text("Sunset: \(weather.sys.sunset)")
+                        
+                        if let weatherDescription = weather.weather.first?.description {
+                            Text("Description: \(weatherDescription.capitalized)")
+                        }
+                        if let icon = weather.weather.first?.icon {
+                            IconConvert(for: icon)
+                        }
                     }
-                    .padding(.top)
                 }
-
+                
                 if let forecast = forecast {
                     VStack(alignment: .leading) {
                         Text("Forecast")
                             .font(.headline)
                             .padding(.top)
                         
-                        ForEach(forecast.list.prefix(3), id: \.dt) { entry in
-                            Text("Date: \(entry.dt_txt)")
-                            Text("Temperature: \(entry.main.temp)°C")
-                            Text("Weather: \(entry.weather.first?.description.capitalized ?? "")")
+                        ScrollView(.horizontal){
+                            HStack{
+                                ForEach(forecast.list.prefix(10), id: \.dt) { entry in
+                                    VStack{
+                                        Text("\(entry.dt_txt)")
+                                        Text("\(entry.main.temp)°C")
+                                        Text("\(entry.weather.first?.description.capitalized ?? "")")
+                                    }
+                                }
+                            }
                         }
                     }
-                    .padding(.top)
+                    .padding()
                 }
                 
                 if let pollution = pollution {
@@ -74,7 +95,6 @@ struct WeatherView: View {
                             Text("PM10: \(pollutionEntry.components.pm10) μg/m3")
                         }
                     }
-                    .padding(.top)
                 }
                 
             } else {

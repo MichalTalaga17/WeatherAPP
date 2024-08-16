@@ -9,7 +9,7 @@ import SwiftUI
 
 struct SettingsView: View {
     @AppStorage("units") private var units: Units = .metric
-    @AppStorage("accentColorBasedOnWeather") private var accentColorBasedOnWeather: Bool = false
+    @AppStorage("iconsColorsBasedOnWeather") private var iconsColorsBasedOnWeather: Bool = false
     @AppStorage("minimalistMode") private var minimalistMode: Bool = false
     @AppStorage("animatedBackgrounds") private var animatedBackgrounds: Bool = false
     @AppStorage("gradientBackground") private var gradientBackground: Bool = false
@@ -18,12 +18,11 @@ struct SettingsView: View {
     @AppStorage("dataSavingMode") private var dataSavingMode: Bool = false
     @AppStorage("language") private var language: Language = .english
     @AppStorage("dayNightMode") private var dayNightMode: DayNightMode = .auto
-    @AppStorage("windSpeedUnits") private var windSpeedUnits: WindSpeedUnits = .kilometersPerHour
     @AppStorage("weatherUpdateFrequency") private var weatherUpdateFrequency: UpdateFrequency = .hourly
     @AppStorage("defaultCity") private var defaultCity: String = "New York" // Change this to String
-
+    
     private let cities: [City] = [.newYork, .london, .tokyo, .paris, .sydney]
-
+    
     var body: some View {
         NavigationView {
             Form {
@@ -34,22 +33,15 @@ struct SettingsView: View {
                         }
                     }
                 }
-
+                
                 Section(header: Text("Units")) {
                     Picker("Temperature Units", selection: $units) {
-                        Text("Celsius").tag(Units.metric)
-                        Text("Fahrenheit").tag(Units.imperial)
-                    }
-                    .pickerStyle(SegmentedPickerStyle())
-
-                    Picker("Wind Speed", selection: $windSpeedUnits) {
-                        Text("km/h").tag(WindSpeedUnits.kilometersPerHour)
-                        Text("mph").tag(WindSpeedUnits.milesPerHour)
-                        Text("m/s").tag(WindSpeedUnits.metersPerSecond)
+                        Text("Metric").tag(Units.metric)
+                        Text("Imperial").tag(Units.imperial)
                     }
                     .pickerStyle(SegmentedPickerStyle())
                 }
-
+                
                 Section(header: Text("Appearance")) {
                     
                     Picker("Day/Night Mode", selection: $dayNightMode) {
@@ -58,13 +50,10 @@ struct SettingsView: View {
                         Text("Night").tag(DayNightMode.night)
                     }
                     .pickerStyle(SegmentedPickerStyle())
-
-                    if !animatedBackgrounds && !gradientBackground {
-                        Toggle("Accent Color Based on Weather", isOn: $accentColorBasedOnWeather)
-                    }
+                    Toggle("Icons Colors Based on Weather", isOn: $iconsColorsBasedOnWeather)
                     
                     Toggle("Minimalist Mode", isOn: $minimalistMode)
-
+                    
                     if animatedBackgrounds {
                         Text("Animated backgrounds are currently enabled.")
                             .font(.footnote)
@@ -76,12 +65,12 @@ struct SettingsView: View {
                         Text("Gradient").tag(true)
                     }
                 }
-
+                
                 Section(header: Text("Notifications")) {
                     Toggle("Storm Notifications", isOn: $stormNotifications)
                     Toggle("Air Quality Information", isOn: $airQuality)
                 }
-
+                
                 Section(header: Text("Preferences")) {
                     Picker("Update Frequency", selection: $weatherUpdateFrequency) {
                         Text("15 Minutes").tag(UpdateFrequency.minutes15)
@@ -89,9 +78,9 @@ struct SettingsView: View {
                         Text("Hourly").tag(UpdateFrequency.hourly)
                         Text("Daily").tag(UpdateFrequency.daily)
                     }
-                
+                    
                 }
-
+                
                 Section(header: Text("General")) {
                     Picker("Language", selection: $language) {
                         ForEach(Language.allCases, id: \.self) { lang in
@@ -101,13 +90,13 @@ struct SettingsView: View {
                     
                     Toggle("Data Saving Mode", isOn: $dataSavingMode)
                 }
-
+                
                 Section(header: Text("About")) {
                     NavigationLink("About the App") {
-                         AboutView()
+                        AboutView()
                     }
                     NavigationLink("Privacy Policy") {
-                         PrivacyPolicyView()
+                        PrivacyPolicyView()
                     }
                 }
             }
