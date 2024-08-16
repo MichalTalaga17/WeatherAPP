@@ -30,6 +30,22 @@ func windDirection(from degrees: Int) -> String {
     }
 }
 
+func extractHour(from dateString: String) -> String {
+    // Definiujemy format daty zgodny z danymi wejściowymi
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+    
+    // Konwertujemy string na obiekt Date
+    if let date = dateFormatter.date(from: dateString) {
+        // Ustawiamy format, aby wyciągnąć tylko godzinę
+        dateFormatter.dateFormat = "H"
+        let hourString = dateFormatter.string(from: date)
+        return hourString
+    } else {
+        return "Invalid date"
+    }
+}
+
 func formatUnixTime(_ unixTime: TimeInterval, withMinutes: Bool = true) -> String {
     let date = Date(timeIntervalSince1970: unixTime)
     let dateFormatter = DateFormatter()

@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct WeatherView: View {
+    @AppStorage("iconsColorsBasedOnWeather") private var iconsColorsBasedOnWeather: Bool = true
     @StateObject var locationManager = LocationManager()
     
     @State private var currentWeather: CurrentData?
@@ -55,7 +56,7 @@ struct WeatherView: View {
                             Text("Description: \(weatherDescription.capitalized)")
                         }
                         if let icon = weather.weather.first?.icon {
-                            IconConvert(for: icon)
+                            IconConvert(for: icon, useWeatherColors: iconsColorsBasedOnWeather)
                         }
                     }
                 }
@@ -66,13 +67,15 @@ struct WeatherView: View {
                             .font(.headline)
                             .padding(.top)
                         
-                        ScrollView(.horizontal){
+                        ScrollView(.horizontal, showsIndicators: false){
                             HStack{
                                 ForEach(forecast.list.prefix(10), id: \.dt) { entry in
                                     VStack{
-                                        Text("\(entry.dt_txt)")
-                                        Text("\(entry.main.temp)°C")
-                                        Text("\(entry.weather.first?.description.capitalized ?? "")")
+                                        Text("\(extractHour(from: entry.dt_txt))")
+                                        IconConvert(for: entry.weather.first?.icon ?? "", useWeatherColors: iconsColorsBasedOnWeather)
+                                        Text("\(Int(entry.main.temp))°")
+                                        Text("\(Int(entry.main.feels_like))°")
+                                        
                                     }
                                 }
                             }

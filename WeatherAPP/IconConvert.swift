@@ -50,42 +50,46 @@ let iconColorsMap: [String: [Color]] = [
     "50n": [.white, .gray],
 ]
 
-func IconConvert(for iconName: String, primaryColor: Color? = nil, secondaryColor: Color? = nil, tertiaryColor: Color? = nil) -> some View {
+func IconConvert(for iconName: String, useWeatherColors: Bool, primaryColor: Color? = nil, secondaryColor: Color? = nil, tertiaryColor: Color? = nil) -> some View {
     let sfSymbolName = iconMap[iconName] ?? "questionmark.circle.fill"
     
     var colors: [Color] = []
     
-    if let primaryColor = primaryColor {
-        colors.append(primaryColor)
-    }
-    if let secondaryColor = secondaryColor {
-        colors.append(secondaryColor)
-    }
-    if let tertiaryColor = tertiaryColor {
-        colors.append(tertiaryColor)
-    }
-    
-    if colors.isEmpty {
-        colors = iconColorsMap[iconName] ?? [.primary]
+    if useWeatherColors {
+        if let primaryColor = primaryColor {
+            colors.append(primaryColor)
+        }
+        if let secondaryColor = secondaryColor {
+            colors.append(secondaryColor)
+        }
+        if let tertiaryColor = tertiaryColor {
+            colors.append(tertiaryColor)
+        }
+        
+        if colors.isEmpty {
+            colors = iconColorsMap[iconName] ?? [.primary]
+        }
     }
     
     let icon = Image(systemName: sfSymbolName)
         .resizable()
         .aspectRatio(contentMode: .fit)
         .frame(width: 40, height: 40)
-        .symbolRenderingMode(.palette)
     
-    let styledIcon: AnyView
-    switch colors.count {
-    case 1:
-        styledIcon = AnyView(icon.foregroundStyle(colors[0]))
-    case 2:
-        styledIcon = AnyView(icon.foregroundStyle(colors[0], colors[1]))
-    case 3:
-        styledIcon = AnyView(icon.foregroundStyle(colors[0], colors[1], colors[2]))
-    default:
-        styledIcon = AnyView(icon.foregroundStyle(.primary))
+    if useWeatherColors && !colors.isEmpty {
+        let styledIcon: AnyView
+        switch colors.count {
+        case 1:
+            styledIcon = AnyView(icon.symbolRenderingMode(.palette).foregroundStyle(colors[0]))
+        case 2:
+            styledIcon = AnyView(icon.symbolRenderingMode(.palette).foregroundStyle(colors[0], colors[1]))
+        case 3:
+            styledIcon = AnyView(icon.symbolRenderingMode(.palette).foregroundStyle(colors[0], colors[1], colors[2]))
+        default:
+            styledIcon = AnyView(icon.symbolRenderingMode(.palette).foregroundStyle(.primary))
+        }
+        return styledIcon
+    } else {
+        return AnyView(icon.foregroundStyle(.primary))
     }
-    
-    return styledIcon
 }
