@@ -40,6 +40,8 @@
 		47F57A0B2C6F5677000731FD /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47F57A0A2C6F5677000731FD /* SettingsView.swift */; };
 		47F57A0C2C6F6905000731FD /* API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47BAFC272C5EE21200DCDE92 /* API.swift */; };
 		47F57A0D2C6F690D000731FD /* API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47BAFC272C5EE21200DCDE92 /* API.swift */; };
+		47F57A0F2C6F8211000731FD /* PrivacyPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47F57A0E2C6F8211000731FD /* PrivacyPolicy.swift */; };
+		47F57A112C6F8244000731FD /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47F57A102C6F8244000731FD /* AboutView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -105,6 +107,8 @@
 		47EC68BC2C5D50AD001BA302 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		47EC68BF2C5D50AD001BA302 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		47F57A0A2C6F5677000731FD /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		47F57A0E2C6F8211000731FD /* PrivacyPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyPolicy.swift; sourceTree = "<group>"; };
+		47F57A102C6F8244000731FD /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -163,6 +167,8 @@
 				47EC68B82C5D50AC001BA302 /* ContentView.swift */,
 				47761B452C63B4990027DE18 /* CityRowView.swift */,
 				47BAFC4C2C6103E200DCDE92 /* LocationWeatherView.swift */,
+				47F57A0E2C6F8211000731FD /* PrivacyPolicy.swift */,
+				47F57A102C6F8244000731FD /* AboutView.swift */,
 				47F57A0A2C6F5677000731FD /* SettingsView.swift */,
 			);
 			path = Views;
@@ -401,6 +407,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				47F57A112C6F8244000731FD /* AboutView.swift in Sources */,
 				47BAFC4D2C6103E200DCDE92 /* LocationWeatherView.swift in Sources */,
 				47BAFC4B2C60F11100DCDE92 /* GradientBackground.swift in Sources */,
 				47BAFC5C2C62CF5C00DCDE92 /* City.swift in Sources */,
@@ -411,6 +418,7 @@
 				47BAFC2C2C60263600DCDE92 /* Icons.swift in Sources */,
 				47F57A0B2C6F5677000731FD /* SettingsView.swift in Sources */,
 				47EC68B92C5D50AC001BA302 /* ContentView.swift in Sources */,
+				47F57A0F2C6F8211000731FD /* PrivacyPolicy.swift in Sources */,
 				4756D2C82C694EBF00BF16F1 /* LocationManager.swift in Sources */,
 				47761B462C63B4990027DE18 /* CityRowView.swift in Sources */,
 				47EC68B72C5D50AC001BA302 /* WeatherAPPApp.swift in Sources */,

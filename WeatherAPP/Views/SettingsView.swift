@@ -18,10 +18,10 @@ struct SettingsView: View {
                 
                 Section(header: Text("About")) {
                     NavigationLink("About the App") {
-                        //AboutView()
+                        AboutView()
                     }
                     NavigationLink("Privacy Policy") {
-                        //PrivacyPolicyView()
+                        PrivacyPolicyView()
                     }
                 }
             }
