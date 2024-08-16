@@ -2,7 +2,7 @@ import SwiftUI
 
 struct SettingsView: View {
     @AppStorage("selectedCity") private var selectedCity: String = "San Francisco"
-    @AppStorage("temperatureUnit") private var temperatureUnit: TemperatureUnit = .celsius
+    @AppStorage("units") private var units: Units = .metric
     @AppStorage("notificationsEnabled") private var notificationsEnabled: Bool = true
     @AppStorage("darkModeEnabled") private var darkModeEnabled: Bool = false
     @AppStorage("fontSize") private var fontSize: FontSize = .medium
@@ -21,9 +21,9 @@ struct SettingsView: View {
                 }
                 
                 Section(header: Text("Units")) {
-                    Picker("Temperature Unit", selection: $temperatureUnit) {
-                        Text("Celsius").tag(TemperatureUnit.celsius)
-                        Text("Fahrenheit").tag(TemperatureUnit.fahrenheit)
+                    Picker("units", selection: $units) {
+                        Text("Metric").tag(Units.metric)
+                        Text("Imperial").tag(Units.imperial)
                     }
                     .pickerStyle(SegmentedPickerStyle())
                 }
@@ -55,9 +55,10 @@ struct SettingsView: View {
     }
 }
 
-enum TemperatureUnit: String, Identifiable, CaseIterable {
-    case celsius = "Celsius"
-    case fahrenheit = "Fahrenheit"
+
+enum Units: String, Identifiable, CaseIterable {
+    case metric = "metric"
+    case imperial = "imperial"
     
     var id: String { self.rawValue }
 }

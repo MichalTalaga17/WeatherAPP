@@ -16,6 +16,20 @@ struct WeatherAPPApp: App {
         fatalError("Could not create ModelContainer: \(error)")
     }
 }()
+    enum Units: String, Identifiable, CaseIterable {
+        case metric = "metric"
+        case imperial = "imperial"
+        
+        var id: String { self.rawValue }
+    }
+
+    enum FontSize: String, Identifiable, CaseIterable {
+        case small = "small"
+        case medium = "medium"
+        case large = "large"
+        
+        var id: String { self.rawValue }
+    }
     
     
 

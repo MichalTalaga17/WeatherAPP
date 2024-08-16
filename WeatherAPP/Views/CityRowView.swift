@@ -14,7 +14,7 @@ struct CityRowView: View {
                 Spacer()
                 HStack{
                     if let temperature = city.temperature {
-                        Text(kelvinToCelsius(temperature))
+                        Text("\(temperature)")
                             .font(.title3)
                     }
                     if let icon = city.weatherIcon {
@@ -29,6 +29,18 @@ struct CityRowView: View {
     }
     
     func fetchWeatherData(for city: City) async {
-        await fetchCurrentWeatherData(forCity: city) { _ in }
+        API.shared.fetchCurrentWeatherData(forCity: city.name) { result in
+            switch result {
+            case .success(let data):
+                DispatchQueue.main.async {
+                    city.temperature = data.main.temp
+                    city.weatherIcon = data.weather.first?.icon
+                }
+            case .failure(let error):
+                DispatchQueue.main.async {
+                }
+            }
+        }
     }
+
 }

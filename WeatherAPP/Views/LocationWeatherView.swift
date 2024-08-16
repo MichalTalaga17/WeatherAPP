@@ -386,9 +386,9 @@ struct LocationWeatherView: View {
                                     .font(.subheadline)
                             }
                             weatherIcon(for: item.weather.first?.icon ?? "defaultIcon")
-                            Text(kelvinToCelsius(item.main.temp))
+                            Text("\(item.main.temp)")
                                 .font(.title2.bold())
-                            Text(kelvinToCelsius(item.main.feels_like))
+                            Text("\(item.main.feels_like)")
                                 .font(.body)
                             Text("\(String(format: "%.0f", item.pop * 100))%")
                                 .font(.body)
