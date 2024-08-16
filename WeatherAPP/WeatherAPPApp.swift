@@ -20,8 +20,8 @@ struct WeatherAPPApp: App {
                     }
                 WeatherView()
                     .tabItem {
-                        Image(systemName: "location")
-                        Text("Weather here")
+                        Image(systemName: "cloud.fill")
+                        Text("Weather")
                     }
                 SearchView()
                     .tabItem {
