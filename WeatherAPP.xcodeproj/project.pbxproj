@@ -12,6 +12,11 @@
 		47B3FF662C6FAB4D00F179EA /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47B3FF652C6FAB4D00F179EA /* AboutView.swift */; };
 		47B3FF682C6FAB5D00F179EA /* PrivacyPolicyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47B3FF672C6FAB5D00F179EA /* PrivacyPolicyView.swift */; };
 		47B3FF6C2C6FB61700F179EA /* CityListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47B3FF6B2C6FB61700F179EA /* CityListView.swift */; };
+		47B3FF6E2C6FE43700F179EA /* LoctionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47B3FF6D2C6FE43700F179EA /* LoctionManager.swift */; };
+		47B3FF712C6FE55600F179EA /* API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47B3FF702C6FE55600F179EA /* API.swift */; };
+		47B3FF732C6FE57200F179EA /* CurrentData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47B3FF722C6FE57200F179EA /* CurrentData.swift */; };
+		47B3FF752C6FE59E00F179EA /* PollutionData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47B3FF742C6FE59E00F179EA /* PollutionData.swift */; };
+		47B3FF772C6FE5B800F179EA /* ForecastData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47B3FF762C6FE5B800F179EA /* ForecastData.swift */; };
 		47EC68B72C5D50AC001BA302 /* WeatherAPPApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47EC68B62C5D50AC001BA302 /* WeatherAPPApp.swift */; };
 		47EC68B92C5D50AC001BA302 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47EC68B82C5D50AC001BA302 /* SearchView.swift */; };
 		47EC68BD2C5D50AD001BA302 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 47EC68BC2C5D50AD001BA302 /* Assets.xcassets */; };
@@ -25,6 +30,11 @@
 		47B3FF672C6FAB5D00F179EA /* PrivacyPolicyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyPolicyView.swift; sourceTree = "<group>"; };
 		47B3FF692C6FB3A600F179EA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		47B3FF6B2C6FB61700F179EA /* CityListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CityListView.swift; sourceTree = "<group>"; };
+		47B3FF6D2C6FE43700F179EA /* LoctionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoctionManager.swift; sourceTree = "<group>"; };
+		47B3FF702C6FE55600F179EA /* API.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = API.swift; sourceTree = "<group>"; };
+		47B3FF722C6FE57200F179EA /* CurrentData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentData.swift; sourceTree = "<group>"; };
+		47B3FF742C6FE59E00F179EA /* PollutionData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollutionData.swift; sourceTree = "<group>"; };
+		47B3FF762C6FE5B800F179EA /* ForecastData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForecastData.swift; sourceTree = "<group>"; };
 		47EC68B32C5D50AC001BA302 /* WeatherAPP.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WeatherAPP.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		47EC68B62C5D50AC001BA302 /* WeatherAPPApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherAPPApp.swift; sourceTree = "<group>"; };
 		47EC68B82C5D50AC001BA302 /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
@@ -60,6 +70,17 @@
 			path = HelpingViews;
 			sourceTree = "<group>";
 		};
+		47B3FF6F2C6FE53400F179EA /* API */ = {
+			isa = PBXGroup;
+			children = (
+				47B3FF702C6FE55600F179EA /* API.swift */,
+				47B3FF742C6FE59E00F179EA /* PollutionData.swift */,
+				47B3FF762C6FE5B800F179EA /* ForecastData.swift */,
+				47B3FF722C6FE57200F179EA /* CurrentData.swift */,
+			);
+			path = API;
+			sourceTree = "<group>";
+		};
 		47EC68AA2C5D50AC001BA302 = {
 			isa = PBXGroup;
 			children = (
@@ -81,9 +102,11 @@
 			children = (
 				47B3FF692C6FB3A600F179EA /* Info.plist */,
 				47EC68B62C5D50AC001BA302 /* WeatherAPPApp.swift */,
+				47B3FF6D2C6FE43700F179EA /* LoctionManager.swift */,
 				47B3FF6A2C6FB5FB00F179EA /* HelpingViews */,
 				47B3FF642C6FAB2A00F179EA /* SecondaryViews */,
 				47F57A122C6F94CE000731FD /* MainViews */,
+				47B3FF6F2C6FE53400F179EA /* API */,
 				47EC68BC2C5D50AD001BA302 /* Assets.xcassets */,
 				47EC68BE2C5D50AD001BA302 /* Preview Content */,
 			);
@@ -180,11 +203,16 @@
 			files = (
 				47EC68B92C5D50AC001BA302 /* SearchView.swift in Sources */,
 				47B3FF612C6F960200F179EA /* SettingsView.swift in Sources */,
+				47B3FF6E2C6FE43700F179EA /* LoctionManager.swift in Sources */,
 				47EC68B72C5D50AC001BA302 /* WeatherAPPApp.swift in Sources */,
 				47B3FF6C2C6FB61700F179EA /* CityListView.swift in Sources */,
 				47B3FF682C6FAB5D00F179EA /* PrivacyPolicyView.swift in Sources */,
 				47B3FF632C6F972600F179EA /* WeatherView.swift in Sources */,
+				47B3FF752C6FE59E00F179EA /* PollutionData.swift in Sources */,
+				47B3FF712C6FE55600F179EA /* API.swift in Sources */,
 				47B3FF662C6FAB4D00F179EA /* AboutView.swift in Sources */,
+				47B3FF772C6FE5B800F179EA /* ForecastData.swift in Sources */,
+				47B3FF732C6FE57200F179EA /* CurrentData.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -324,6 +352,9 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = WeatherAPP/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.weather";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "The app requires location access to provide accurate weather forecasts for your current location.";
+				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "The app requires location access to provide accurate weather forecasts for your current location.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "The app requires location access to provide accurate weather forecasts for your current location.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -362,6 +393,9 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = WeatherAPP/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.weather";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "The app requires location access to provide accurate weather forecasts for your current location.";
+				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "The app requires location access to provide accurate weather forecasts for your current location.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "The app requires location access to provide accurate weather forecasts for your current location.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
