@@ -51,7 +51,6 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
             
             if let placemark = placemarks?.first {
                 let city = placemark.locality ?? "Unknown"
-                print("Fetched city: \(city)")
                 self?.cityName = city
             } else {
                 print("No placemark found, setting city as Unknown")

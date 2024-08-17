@@ -30,6 +30,13 @@ func windDirection(from degrees: Int) -> String {
     }
 }
 
+func formatUnixTimeToHourAndMinute(_ unixTime: Int, timezone: Int) -> String {
+    let date = Date(timeIntervalSince1970: TimeInterval(unixTime + timezone))
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = "HH:mm"
+    return dateFormatter.string(from: date)
+}
+
 func extractHour(from dateString: String) -> String {
     // Definiujemy format daty zgodny z danymi wejściowymi
     let dateFormatter = DateFormatter()

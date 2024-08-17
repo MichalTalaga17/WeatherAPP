@@ -40,7 +40,7 @@ struct WeatherView: View {
                         Text("Pressure: \(weather.main.pressure) hPa")
                         Text("Cloudiness: \(weather.clouds.all)%")
                         Text("Visibility: \(weather.visibility / 1000) km")
-                        Text("Wind Speed: \(weather.wind.speed) m/s")
+                        Text("Wind Speed: \(Int(weather.wind.speed)) m/s")
                         
                         if let rain = weather.rain?.hour1 {
                             Text("Rain: \(rain) mm (1h)")
@@ -49,8 +49,8 @@ struct WeatherView: View {
                             Text("Snow: \(snow) mm (1h)")
                         }
                         
-                        Text("Sunrise: \(weather.sys.sunrise)")
-                        Text("Sunset: \(weather.sys.sunset)")
+                        Text("Sunrise: \(formatUnixTimeToHourAndMinute(weather.sys.sunrise, timezone: weather.timezone))")
+                        Text("Sunset: \(formatUnixTimeToHourAndMinute(weather.sys.sunset, timezone: weather.timezone))")
                         
                         if let weatherDescription = weather.weather.first?.description {
                             Text("Description: \(weatherDescription.capitalized)")
@@ -114,6 +114,7 @@ struct WeatherView: View {
                             }
                         
                     }
+                    .padding()
                 }
                 
             } else {
@@ -140,7 +141,6 @@ struct WeatherView: View {
     
     private func fetchWeatherData() {
         let city = locationManager.cityName
-        print("City used for API call: \(city)")
         
         if city != "Unknown" {
             API.shared.fetchCurrentWeatherData(forCity: city) { result in
