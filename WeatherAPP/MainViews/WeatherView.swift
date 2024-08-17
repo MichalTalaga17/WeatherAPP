@@ -116,40 +116,66 @@ struct WeatherDetailsView: View {
     let weather: CurrentData
     
     var body: some View {
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 10) {
+            // Header
             Text("Current Weather")
                 .font(.headline)
                 .padding(.top)
             
-            Text("Temperature: \(Int(weather.main.temp))°C")
-            Text("Feels Like: \(Int(weather.main.feels_like))°C")
-            Text("Min Temp: \(Int(weather.main.temp_min))°C")
-            Text("Max Temp: \(Int(weather.main.temp_max))°C")
-            Text("Humidity: \(weather.main.humidity)%")
-            Text("Pressure: \(weather.main.pressure) hPa")
-            Text("Cloudiness: \(weather.clouds.all)%")
-            Text("Visibility: \(weather.visibility / 1000) km")
-            Text("Wind Speed: \(Int(weather.wind.speed)) m/s")
+            // Weather Information
+            Group {
+                WeatherDetailRow(title: "Temperature", value: "\(Int(weather.main.temp))°C")
+                WeatherDetailRow(title: "Feels Like", value: "\(Int(weather.main.feels_like))°C")
+                WeatherDetailRow(title: "Min Temp", value: "\(Int(weather.main.temp_min))°C")
+                WeatherDetailRow(title: "Max Temp", value: "\(Int(weather.main.temp_max))°C")
+                WeatherDetailRow(title: "Humidity", value: "\(weather.main.humidity)%")
+                WeatherDetailRow(title: "Pressure", value: "\(weather.main.pressure) hPa")
+                WeatherDetailRow(title: "Cloudiness", value: "\(weather.clouds.all)%")
+                WeatherDetailRow(title: "Visibility", value: "\(weather.visibility / 1000) km")
+                WeatherDetailRow(title: "Wind Speed", value: "\(Int(weather.wind.speed)) m/s")
+                
+                if let rain = weather.rain?.hour1 {
+                    WeatherDetailRow(title: "Rain", value: "\(rain) mm (1h)")
+                }
+                if let snow = weather.snow?.hour1 {
+                    WeatherDetailRow(title: "Snow", value: "\(snow) mm (1h)")
+                }
+                
+                WeatherDetailRow(title: "Sunrise", value: formatUnixTimeToHourAndMinute(weather.sys.sunrise, timezone: weather.timezone))
+                WeatherDetailRow(title: "Sunset", value: formatUnixTimeToHourAndMinute(weather.sys.sunset, timezone: weather.timezone))
+                if let weatherDescription = weather.weather.first?.description {
+                        WeatherDetailRow(title: "Description", value: weatherDescription.capitalized)
+                                    
+                                }
+                if let icon = weather.weather.first?.icon {
+                    IconConvert(for: icon, useWeatherColors: true)
+                }
+            }
+            .padding(.horizontal)
+        
             
-            if let rain = weather.rain?.hour1 {
-                Text("Rain: \(rain) mm (1h)")
-            }
-            if let snow = weather.snow?.hour1 {
-                Text("Snow: \(snow) mm (1h)")
-            }
             
-            Text("Sunrise: \(formatUnixTimeToHourAndMinute(weather.sys.sunrise, timezone: weather.timezone))")
-            Text("Sunset: \(formatUnixTimeToHourAndMinute(weather.sys.sunset, timezone: weather.timezone))")
             
-            if let weatherDescription = weather.weather.first?.description {
-                Text("Description: \(weatherDescription.capitalized)")
-            }
-            if let icon = weather.weather.first?.icon {
-                IconConvert(for: icon, useWeatherColors: true)
-            }
         }
     }
 }
+
+struct WeatherDetailRow: View {
+    let title: String
+    let value: String
+    
+    var body: some View {
+        HStack {
+            Text(title)
+                .fontWeight(.medium)
+            Spacer()
+            Text(value)
+                .fontWeight(.bold)
+        }
+        .padding(.vertical, 4)
+    }
+}
+
 
 struct ForecastView: View {
     let forecast: ForecastData
