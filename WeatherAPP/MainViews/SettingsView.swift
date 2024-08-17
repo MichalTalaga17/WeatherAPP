@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct SettingsView: View {
+    @Environment(\.colorScheme) var colorScheme
+    
     @AppStorage("units") private var units: Units = .metric
     @AppStorage("iconsColorsBasedOnWeather") private var iconsColorsBasedOnWeather: Bool = false
     @AppStorage("minimalistMode") private var minimalistMode: Bool = false
@@ -17,7 +19,6 @@ struct SettingsView: View {
     @AppStorage("airQuality") private var airQuality: Bool = true
     @AppStorage("dataSavingMode") private var dataSavingMode: Bool = false
     @AppStorage("language") private var language: Language = .english
-    @AppStorage("dayNightMode") private var dayNightMode: DayNightMode = .auto
     @AppStorage("weatherUpdateFrequency") private var weatherUpdateFrequency: UpdateFrequency = .hourly
     @AppStorage("defaultCity") private var defaultCity: String = "New York" // Change this to String
     
@@ -43,13 +44,6 @@ struct SettingsView: View {
                 }
                 
                 Section(header: Text("Appearance")) {
-                    
-                    Picker("Day/Night Mode", selection: $dayNightMode) {
-                        Text("Auto").tag(DayNightMode.auto)
-                        Text("Day").tag(DayNightMode.day)
-                        Text("Night").tag(DayNightMode.night)
-                    }
-                    .pickerStyle(SegmentedPickerStyle())
                     Toggle("Icons Colors Based on Weather", isOn: $iconsColorsBasedOnWeather)
                     
                     Toggle("Minimalist Mode", isOn: $minimalistMode)
@@ -72,7 +66,7 @@ struct SettingsView: View {
                 }
                 
                 Section(header: Text("Preferences")) {
-                    Picker("Update Frequency", selection: $weatherUpdateFrequency) {
+                    Picker("Widgets update Frequency", selection: $weatherUpdateFrequency) {
                         Text("15 Minutes").tag(UpdateFrequency.minutes15)
                         Text("30 Minutes").tag(UpdateFrequency.minutes30)
                         Text("Hourly").tag(UpdateFrequency.hourly)

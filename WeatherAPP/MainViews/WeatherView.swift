@@ -11,6 +11,7 @@ struct WeatherView: View {
     //MARK: - Properties
     @AppStorage("airQuality") private var airQuality: Bool = true
     @AppStorage("minimalistMode") private var minimalistMode: Bool = false
+    @AppStorage("iconsColorsBasedOnWeather") private var iconsColorsBasedOnWeather: Bool = true
 
     @StateObject var locationManager = LocationManager()
 
@@ -25,20 +26,18 @@ struct WeatherView: View {
     var body: some View {
         VStack {
             if let cityName = cityName {
-                Text("City: \(cityName)")
-                    .font(.title)
-                    .padding(.bottom)
+                CityHeaderView(cityName: cityName)
 
                 if let weather = currentWeather {
                     if minimalistMode {
-                        MinimalistWeatherDetailsView(weather: weather)
+                        MinimalistWeatherDetailsView(weather: weather, iconsColorsBasedOnWeather: iconsColorsBasedOnWeather)
                     } else {
-                        WeatherDetailsView(weather: weather)
+                        WeatherDetailsView(weather: weather, iconsColorsBasedOnWeather: iconsColorsBasedOnWeather)
                     }
                 }
 
                 if let forecast = forecast, !minimalistMode {
-                    ForecastView(forecast: forecast)
+                    ForecastView(forecast: forecast, iconsColorsBasedOnWeather: iconsColorsBasedOnWeather)
                 }
 
                 if airQuality, !minimalistMode {
@@ -48,20 +47,18 @@ struct WeatherView: View {
                 }
 
             } else if let location = locationManager.location {
-                Text("City: \(locationManager.cityName)")
-                    .font(.title)
-                    .padding(.bottom)
+                CityHeaderView(cityName: locationManager.cityName)
 
                 if let weather = currentWeather {
                     if minimalistMode {
-                        MinimalistWeatherDetailsView(weather: weather)
+                        MinimalistWeatherDetailsView(weather: weather, iconsColorsBasedOnWeather: iconsColorsBasedOnWeather)
                     } else {
-                        WeatherDetailsView(weather: weather)
+                        WeatherDetailsView(weather: weather, iconsColorsBasedOnWeather: iconsColorsBasedOnWeather)
                     }
                 }
 
                 if let forecast = forecast, !minimalistMode {
-                    ForecastView(forecast: forecast)
+                    ForecastView(forecast: forecast, iconsColorsBasedOnWeather: iconsColorsBasedOnWeather)
                 }
 
                 if airQuality, !minimalistMode {
@@ -129,17 +126,31 @@ struct WeatherView: View {
     }
 }
 
+//MARK: - City Header View
+struct CityHeaderView: View {
+    let cityName: String
+
+    var body: some View {
+        Text("\(cityName)")
+            .font(.largeTitle .bold())
+            .padding(.bottom)
+    }
+}
+
 //MARK: - Minimalist Weather View
 struct MinimalistWeatherDetailsView: View {
-    @AppStorage("iconsColorsBasedOnWeather") private var iconsColorsBasedOnWeather: Bool = true
     let weather: CurrentData
+    let iconsColorsBasedOnWeather: Bool
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("Temperature: \(Int(weather.main.temp))°C")
-            Text("Feels Like: \(Int(weather.main.feels_like))°C")
-            Text("Humidity: \(weather.main.humidity)%")
-            Text("Wind Speed: \(Int(weather.wind.speed)) m/s")
+            Spacer()
+            Text("\(Int(weather.main.temp))°")
+            if let icon = weather.weather.first?.icon {
+                IconConvert(for: icon, useWeatherColors: iconsColorsBasedOnWeather)
+                    .font(.largeTitle)
+            }
+            Spacer()
         }
         .padding(.horizontal)
     }
@@ -147,8 +158,8 @@ struct MinimalistWeatherDetailsView: View {
 
 //MARK: - Detailed Weather View
 struct WeatherDetailsView: View {
-    @AppStorage("iconsColorsBasedOnWeather") private var iconsColorsBasedOnWeather: Bool = true
     let weather: CurrentData
+    let iconsColorsBasedOnWeather: Bool
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -170,17 +181,20 @@ struct WeatherDetailsView: View {
                 if let rain = weather.rain?.hour1 {
                     WeatherDetailRow(title: "Rain", value: "\(rain) mm (1h)")
                 }
+
                 if let snow = weather.snow?.hour1 {
                     WeatherDetailRow(title: "Snow", value: "\(snow) mm (1h)")
                 }
 
                 WeatherDetailRow(title: "Sunrise", value: formatUnixTimeToHourAndMinute(weather.sys.sunrise, timezone: weather.timezone))
                 WeatherDetailRow(title: "Sunset", value: formatUnixTimeToHourAndMinute(weather.sys.sunset, timezone: weather.timezone))
+
                 if let weatherDescription = weather.weather.first?.description {
                     WeatherDetailRow(title: "Description", value: weatherDescription.capitalized)
                 }
+
                 if let icon = weather.weather.first?.icon {
-                    IconConvert(for: icon, iconsColorsBasedOnWeather)
+                    IconConvert(for: icon, useWeatherColors: iconsColorsBasedOnWeather)
                 }
             }
             .padding(.horizontal)
@@ -207,8 +221,8 @@ struct WeatherDetailRow: View {
 
 //MARK: - Forecast View
 struct ForecastView: View {
-    @AppStorage("iconsColorsBasedOnWeather") private var iconsColorsBasedOnWeather: Bool = true
     let forecast: ForecastData
+    let iconsColorsBasedOnWeather: Bool
 
     var body: some View {
         VStack(alignment: .leading) {
