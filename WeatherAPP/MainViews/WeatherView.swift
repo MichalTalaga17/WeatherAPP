@@ -8,56 +8,72 @@
 import SwiftUI
 
 struct WeatherView: View {
-    @AppStorage("iconsColorsBasedOnWeather") private var iconsColorsBasedOnWeather: Bool = true
+    //MARK: - Properties
+    @AppStorage("airQuality") private var airQuality: Bool = true
+    @AppStorage("minimalistMode") private var minimalistMode: Bool = false
+
     @StateObject var locationManager = LocationManager()
-    
+
     @State private var currentWeather: CurrentData?
     @State private var forecast: ForecastData?
     @State private var pollution: PollutionData?
     @State private var errorMessage: String?
-    
-    var cityName: String? 
-    
+
+    var cityName: String?
+
+    //MARK: - Body
     var body: some View {
         VStack {
             if let cityName = cityName {
                 Text("City: \(cityName)")
                     .font(.title)
                     .padding(.bottom)
-                
+
                 if let weather = currentWeather {
-                    WeatherDetailsView(weather: weather)
+                    if minimalistMode {
+                        MinimalistWeatherDetailsView(weather: weather)
+                    } else {
+                        WeatherDetailsView(weather: weather)
+                    }
                 }
-                
-                if let forecast = forecast {
+
+                if let forecast = forecast, !minimalistMode {
                     ForecastView(forecast: forecast)
                 }
-                
-                if let pollution = pollution {
-                    AirPollutionView(pollution: pollution)
+
+                if airQuality, !minimalistMode {
+                    if let pollution = pollution {
+                        AirPollutionView(pollution: pollution)
+                    }
                 }
-                
+
             } else if let location = locationManager.location {
                 Text("City: \(locationManager.cityName)")
                     .font(.title)
                     .padding(.bottom)
-                
+
                 if let weather = currentWeather {
-                    WeatherDetailsView(weather: weather)
+                    if minimalistMode {
+                        MinimalistWeatherDetailsView(weather: weather)
+                    } else {
+                        WeatherDetailsView(weather: weather)
+                    }
                 }
-                
-                if let forecast = forecast {
+
+                if let forecast = forecast, !minimalistMode {
                     ForecastView(forecast: forecast)
                 }
-                
-                if let pollution = pollution {
-                    AirPollutionView(pollution: pollution)
+
+                if airQuality, !minimalistMode {
+                    if let pollution = pollution {
+                        AirPollutionView(pollution: pollution)
+                    }
                 }
-                
+
             } else {
                 Text("Fetching location...")
             }
-            
+
             if let errorMessage = errorMessage {
                 Text("Error: \(errorMessage)")
                     .foregroundColor(.red)
@@ -77,7 +93,8 @@ struct WeatherView: View {
             }
         }
     }
-    
+
+    //MARK: - Data Fetching
     private func fetchWeatherData(for city: String) {
         if city != "Unknown" {
             API.shared.fetchCurrentWeatherData(forCity: city) { result in
@@ -88,7 +105,7 @@ struct WeatherView: View {
                     errorMessage = error.localizedDescription
                 }
             }
-            
+
             API.shared.fetchForecastData(forCity: city) { result in
                 switch result {
                 case .success(let forecastData):
@@ -97,7 +114,7 @@ struct WeatherView: View {
                     errorMessage = error.localizedDescription
                 }
             }
-            
+
             API.shared.fetchAirPollutionData(forCity: city) { result in
                 switch result {
                 case .success(let pollutionData):
@@ -112,17 +129,33 @@ struct WeatherView: View {
     }
 }
 
-struct WeatherDetailsView: View {
+//MARK: - Minimalist Weather View
+struct MinimalistWeatherDetailsView: View {
+    @AppStorage("iconsColorsBasedOnWeather") private var iconsColorsBasedOnWeather: Bool = true
     let weather: CurrentData
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            // Header
+            Text("Temperature: \(Int(weather.main.temp))°C")
+            Text("Feels Like: \(Int(weather.main.feels_like))°C")
+            Text("Humidity: \(weather.main.humidity)%")
+            Text("Wind Speed: \(Int(weather.wind.speed)) m/s")
+        }
+        .padding(.horizontal)
+    }
+}
+
+//MARK: - Detailed Weather View
+struct WeatherDetailsView: View {
+    @AppStorage("iconsColorsBasedOnWeather") private var iconsColorsBasedOnWeather: Bool = true
+    let weather: CurrentData
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
             Text("Current Weather")
                 .font(.headline)
                 .padding(.top)
-            
-            // Weather Information
+
             Group {
                 WeatherDetailRow(title: "Temperature", value: "\(Int(weather.main.temp))°C")
                 WeatherDetailRow(title: "Feels Like", value: "\(Int(weather.main.feels_like))°C")
@@ -133,37 +166,33 @@ struct WeatherDetailsView: View {
                 WeatherDetailRow(title: "Cloudiness", value: "\(weather.clouds.all)%")
                 WeatherDetailRow(title: "Visibility", value: "\(weather.visibility / 1000) km")
                 WeatherDetailRow(title: "Wind Speed", value: "\(Int(weather.wind.speed)) m/s")
-                
+
                 if let rain = weather.rain?.hour1 {
                     WeatherDetailRow(title: "Rain", value: "\(rain) mm (1h)")
                 }
                 if let snow = weather.snow?.hour1 {
                     WeatherDetailRow(title: "Snow", value: "\(snow) mm (1h)")
                 }
-                
+
                 WeatherDetailRow(title: "Sunrise", value: formatUnixTimeToHourAndMinute(weather.sys.sunrise, timezone: weather.timezone))
                 WeatherDetailRow(title: "Sunset", value: formatUnixTimeToHourAndMinute(weather.sys.sunset, timezone: weather.timezone))
                 if let weatherDescription = weather.weather.first?.description {
-                        WeatherDetailRow(title: "Description", value: weatherDescription.capitalized)
-                                    
-                                }
+                    WeatherDetailRow(title: "Description", value: weatherDescription.capitalized)
+                }
                 if let icon = weather.weather.first?.icon {
-                    IconConvert(for: icon, useWeatherColors: true)
+                    IconConvert(for: icon, iconsColorsBasedOnWeather)
                 }
             }
             .padding(.horizontal)
-        
-            
-            
-            
         }
     }
 }
 
+//MARK: - Weather Detail Row
 struct WeatherDetailRow: View {
     let title: String
     let value: String
-    
+
     var body: some View {
         HStack {
             Text(title)
@@ -176,22 +205,23 @@ struct WeatherDetailRow: View {
     }
 }
 
-
+//MARK: - Forecast View
 struct ForecastView: View {
+    @AppStorage("iconsColorsBasedOnWeather") private var iconsColorsBasedOnWeather: Bool = true
     let forecast: ForecastData
-    
+
     var body: some View {
         VStack(alignment: .leading) {
             Text("Forecast")
                 .font(.headline)
                 .padding(.top)
-            
+
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack {
                     ForEach(forecast.list.prefix(10), id: \.dt) { entry in
                         VStack {
                             Text("\(extractHour(from: entry.dt_txt))")
-                            IconConvert(for: entry.weather.first?.icon ?? "", useWeatherColors: true)
+                            IconConvert(for: entry.weather.first?.icon ?? "", useWeatherColors: iconsColorsBasedOnWeather)
                             Text("\(Int(entry.main.temp))°")
                             Text("\(Int(entry.main.feels_like))°")
                         }
@@ -203,9 +233,10 @@ struct ForecastView: View {
     }
 }
 
+//MARK: - Air Pollution View
 struct AirPollutionView: View {
     let pollution: PollutionData
-    
+
     var body: some View {
         ScrollView(.horizontal) {
             if let pollutionEntry = pollution.list.first {
@@ -237,6 +268,6 @@ struct AirPollutionView: View {
     }
 }
 
-#Preview{
+#Preview {
     WeatherView(cityName: "Zembrzyce")
 }
