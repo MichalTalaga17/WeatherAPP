@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		478FE0672C729EE0003A5654 /* GradientBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478FE0662C729EE0003A5654 /* GradientBackground.swift */; };
 		47B3FF612C6F960200F179EA /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47B3FF602C6F960200F179EA /* SettingsView.swift */; };
 		47B3FF632C6F972600F179EA /* WeatherView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47B3FF622C6F972600F179EA /* WeatherView.swift */; };
 		47B3FF662C6FAB4D00F179EA /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47B3FF652C6FAB4D00F179EA /* AboutView.swift */; };
@@ -26,6 +27,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		478FE0662C729EE0003A5654 /* GradientBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientBackground.swift; sourceTree = "<group>"; };
 		47B3FF602C6F960200F179EA /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		47B3FF622C6F972600F179EA /* WeatherView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherView.swift; sourceTree = "<group>"; };
 		47B3FF652C6FAB4D00F179EA /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
@@ -108,6 +110,7 @@
 				47EC68B62C5D50AC001BA302 /* WeatherAPPApp.swift */,
 				47B3FF782C6FEEAA00F179EA /* IconConvert.swift */,
 				47B3FF7A2C6FEF4F00F179EA /* Converters.swift */,
+				478FE0662C729EE0003A5654 /* GradientBackground.swift */,
 				47B3FF6D2C6FE43700F179EA /* LoctionManager.swift */,
 				47B3FF6A2C6FB5FB00F179EA /* HelpingViews */,
 				47B3FF642C6FAB2A00F179EA /* SecondaryViews */,
@@ -212,6 +215,7 @@
 				47EC68B92C5D50AC001BA302 /* SearchView.swift in Sources */,
 				47B3FF612C6F960200F179EA /* SettingsView.swift in Sources */,
 				47B3FF6E2C6FE43700F179EA /* LoctionManager.swift in Sources */,
+				478FE0672C729EE0003A5654 /* GradientBackground.swift in Sources */,
 				47EC68B72C5D50AC001BA302 /* WeatherAPPApp.swift in Sources */,
 				47B3FF6C2C6FB61700F179EA /* CityListView.swift in Sources */,
 				47B3FF682C6FAB5D00F179EA /* PrivacyPolicyView.swift in Sources */,
