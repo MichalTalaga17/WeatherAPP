@@ -26,36 +26,76 @@ struct WeatherView: View {
         ScrollView {
             VStack(alignment: .center) {
                 if let weather = currentWeather {
-                    VStack(alignment: .center, spacing: 10) {
-                        if let cityName = cityName, !cityName.isEmpty {
-                            Text("\(weather.name), \(weather.sys.country)")
-                                .font(.title3)
-                        } else {
-                            Text(locationManager.cityName)
-                                .font(.title3)
+                    VStack(alignment: .center) {
+                        VStack{
+                            if let cityName = cityName, !cityName.isEmpty {
+                                Text("\(weather.name), \(weather.sys.country)")
+                                    .font(.title3)
+                            } else {
+                                Text(locationManager.cityName)
+                                    .font(.title3)
+                            }
+                            
+                            Text("\(Int(weather.main.temp))°")
+                                .font(.system(size: 80))
+                            if let weatherDescription = weather.weather.first?.description {
+                                Text(weatherDescription.capitalized)
+                            }
+                            Text("From \(Int(weather.main.temp_min))° to \(Int(weather.main.temp_max))°")
+                                .font(.callout)
                         }
-                        
-                        Text("\(Int(weather.main.temp))°")
-                            .font(.system(size: 80))
-                        if let weatherDescription = weather.weather.first?.description {
-                            Text(weatherDescription.capitalized)
-                        }
-                        Text("From \(Int(weather.main.temp_min))° to \(Int(weather.main.temp_max))°")
-                            .font(.callout)
+                        .padding(.bottom)
                         
                         LazyVGrid(columns: Array(repeating: .init(.flexible(), spacing: 10), count: 2), spacing: 10) {
-                            // Sunrise and Sunset
-                            WeatherDetailRow(title: "Sunrise", value: formatUnixTimeToHourAndMinute(weather.sys.sunrise, timezone: weather.timezone))
-                            WeatherDetailRow(title: "Sunset", value: formatUnixTimeToHourAndMinute(weather.sys.sunset, timezone: weather.timezone))
+                            VStack{
+                                Spacer()
+                                HStack {
+                                    Spacer()
+                                    HStack(spacing: 15){
+                                        VStack{
+                                            IconConvert(for: "sunrise.fill", useWeatherColors: iconsColorsBasedOnWeather)
+                                            Text(formatUnixTimeToHourAndMinute(weather.sys.sunrise, timezone: weather.timezone))
+                                        }
+                                        VStack{
+                                            IconConvert(for: "sunset.fill", useWeatherColors: iconsColorsBasedOnWeather)
+                                            Text(formatUnixTimeToHourAndMinute(weather.sys.sunset, timezone: weather.timezone))
+                                        }
+                                    }
+                                    Spacer()
+                                }
+                                Spacer()
+                                
+                            }
+                            .padding(.horizontal)
+                            .padding(.vertical, 5)
+                            .background(Color.white.opacity(0.2))
+                            .cornerRadius(8)
                             
-                            // Cloudiness and Visibility
-                            WeatherDetailRow(title: "Clouds", value: "\(weather.clouds.all)%")
-                            WeatherDetailRow(title: "Visibility", value: "\(weather.visibility / 1000) km")
+                            VStack{
+                                Spacer()
+                                HStack {
+                                    Spacer()
+                                    HStack(alignment: .center) {
+                                        if let icon = weather.weather.first?.icon {
+                                            IconConvert(for: icon, useWeatherColors: iconsColorsBasedOnWeather)
+                                        }
+                                        VStack{
+                                            Text("\(weather.clouds.all)%")
+                                                .font(.title)
+                                                .fontWeight(.bold)
+                                            
+                                            Text("\(weather.visibility / 1000) km")
+                                        }
+                                    }
+                                    Spacer()
+                                }
+                                Spacer()
+                            }
+                            .padding(.horizontal)
+                            .padding(.vertical, 5)
+                            .background(Color.white.opacity(0.2))
+                            .cornerRadius(8)
                         }
-                        .padding(.horizontal)
-                        .padding(.vertical, 5)
-                        .background(Color.white.opacity(0.2))
-                        .cornerRadius(8)
                         
                         // Weather details
                         VStack {
@@ -177,7 +217,7 @@ struct WeatherView: View {
 
 struct PollutionDataView: View {
     let pollutionEntry: PollutionEntry // assuming this is the type of data in pollution.list.first
-
+    
     var body: some View {
         HStack{
             PollutionDataDetail(value: "\(aqiDescription(for: pollutionEntry.main.aqi))", label: "AQI")
@@ -203,7 +243,7 @@ struct PollutionDataView: View {
 struct PollutionDataDetail: View {
     let value: String
     let label: String
-
+    
     var body: some View {
         VStack {
             Text(value)
@@ -212,6 +252,7 @@ struct PollutionDataDetail: View {
             Text(label)
                 .font(.caption)
         }
+        .frame(width: UIScreen.main.bounds.width * 0.15)
     }
 }
 
