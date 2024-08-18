@@ -6,33 +6,54 @@
 //
 
 import SwiftUI
+import CoreLocation
 
 struct WeatherView: View {
     // MARK: - Properties
     @AppStorage("airQuality") private var airQuality: Bool = true
     @AppStorage("iconsColorsBasedOnWeather") private var iconsColorsBasedOnWeather: Bool = true
+    @AppStorage("backgroundStyle") private var backgroundStyle: BackgroundStyle = .none
     
-    @StateObject var locationManager = LocationManager()
+    @StateObject private var locationManager = LocationManager()
     
     @State private var currentWeather: CurrentData?
     @State private var forecast: ForecastData?
     @State private var pollution: PollutionData?
     @State private var errorMessage: String?
     
-    var cityName: String?
+    @State private var cityName: String?
     
     // MARK: - Body
     var body: some View {
         NavigationView {
             ZStack {
-                if currentWeather == nil && forecast == nil && pollution == nil {
+                // Background view
+                backgroundView(for: currentWeather?.weather.first?.icon ?? "01d")
+                    .edgesIgnoringSafeArea(.all)
+                
+                if let errorMessage = errorMessage {
                     VStack {
-                        ProgressView()
+                        Text("Error: \(errorMessage)")
+                            .foregroundColor(.red)
+                            .padding()
+                        Button(action: {
+                            loadWeatherData()
+                        }) {
+                            Text("Retry")
+                                .padding()
+                                .background(Color.blue)
+                                .foregroundColor(.white)
+                                .cornerRadius(10)
+                        }
+                    }
+                } else if currentWeather == nil || forecast == nil || (airQuality && pollution == nil) {
+                    VStack {
+                        ProgressView("Loading Weather Data...")
                             .onAppear {
                                 loadWeatherData()
                             }
                     }
-                    .border(Color.white)
+                    .padding()
                 } else {
                     ScrollView {
                         VStack(alignment: .center) {
@@ -47,16 +68,9 @@ struct WeatherView: View {
                             if airQuality, let pollution = pollution {
                                 PollutionDataView(pollutionEntry: pollution.list.first!)
                             }
-                            
-                            if let errorMessage = errorMessage {
-                                Text("Error: \(errorMessage)")
-                                    .foregroundColor(.red)
-                                    .padding(.top)
-                            }
                         }
                         .padding()
                     }
-                    .background(gradientBackground(for: currentWeather?.weather.first?.icon ?? "01d"))
                 }
             }
         }
@@ -65,11 +79,24 @@ struct WeatherView: View {
     // MARK: - Data Fetching
     private func loadWeatherData() {
         let city = cityName ?? locationManager.cityName
-        guard city != "Unknown" else {
-            errorMessage = "Unable to determine city name."
-            return
+        
+        if city == "Unknown" {
+            // Request the location from the LocationManager if city is not provided
+            locationManager.requestLocation { result in
+                switch result {
+                case .success(let location):
+                    // Convert the location to a city name and fetch weather data
+                    self.fetchCityName(from: location) { cityName in
+                        self.cityName = cityName
+                        self.fetchWeatherData(for: cityName)
+                    }
+                case .failure(let error):
+                    self.errorMessage = "Failed to get location: \(error.localizedDescription)"
+                }
+            }
+        } else {
+            fetchWeatherData(for: city)
         }
-        fetchWeatherData(for: city)
     }
     
     private func fetchWeatherData(for city: String) {
@@ -102,6 +129,25 @@ struct WeatherView: View {
     }
     
     // MARK: - Helper Functions
+    private func fetchCityName(from location: CLLocation, completion: @escaping (String) -> Void) {
+        let geocoder = CLGeocoder()
+        geocoder.reverseGeocodeLocation(location) { placemarks, error in
+            if let error = error {
+                print("Reverse geocoding failed: \(error.localizedDescription)")
+                completion("Unknown")
+                return
+            }
+            
+            if let placemark = placemarks?.first {
+                let city = placemark.locality ?? "Unknown"
+                completion(city)
+            } else {
+                print("No placemark found, setting city as Unknown")
+                completion("Unknown")
+            }
+        }
+    }
+    
     private func weatherDetails(for weather: CurrentData) -> some View {
         VStack(alignment: .center) {
             VStack {
@@ -225,6 +271,25 @@ struct WeatherView: View {
             return "0"
         }
     }
+    
+    // MARK: - Background Handling
+    private func backgroundView(for icon: String) -> some View {
+        Group {
+            if backgroundStyle == .gradient {
+                gradientBackground(for: icon)
+            } else {
+                Color.clear
+            }
+        }
+    }
+    
+    private func gradientBackground(for icon: String) -> some View {
+        // Example gradient background based on weather icon
+        let gradient = LinearGradient(gradient: Gradient(colors: [Color.blue, Color.purple]),
+                                      startPoint: .topLeading,
+                                      endPoint: .bottomTrailing)
+        return gradient.edgesIgnoringSafeArea(.all)
+    }
 }
 
 struct PollutionDataView: View {
@@ -286,5 +351,5 @@ struct WeatherDetailRow: View {
 }
 
 #Preview {
-    WeatherView(cityName: "Pekin")
+    WeatherView()
 }
