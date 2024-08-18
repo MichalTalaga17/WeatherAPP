@@ -12,7 +12,6 @@ struct SettingsView: View {
     
     @AppStorage("units") private var units: Units = .metric
     @AppStorage("iconsColorsBasedOnWeather") private var iconsColorsBasedOnWeather: Bool = false
-    @AppStorage("minimalistMode") private var minimalistMode: Bool = false
     @AppStorage("animatedBackgrounds") private var animatedBackgrounds: Bool = false
     @AppStorage("gradientBackground") private var gradientBackground: Bool = false
     @AppStorage("stormNotifications") private var stormNotifications: Bool = true
@@ -45,8 +44,6 @@ struct SettingsView: View {
                 
                 Section(header: Text("Appearance")) {
                     Toggle("Icons Colors Based on Weather", isOn: $iconsColorsBasedOnWeather)
-                    
-                    Toggle("Minimalist Mode", isOn: $minimalistMode)
                     
                     if animatedBackgrounds {
                         Text("Animated backgrounds are currently enabled.")
