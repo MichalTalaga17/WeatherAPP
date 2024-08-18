@@ -23,150 +23,157 @@ struct WeatherView: View {
     
     // MARK: - Body
     var body: some View {
-        ScrollView {
-            VStack(alignment: .center) {
-                if let weather = currentWeather {
-                    VStack(alignment: .center) {
-                        VStack{
-                            if let cityName = cityName, !cityName.isEmpty {
-                                Text("\(weather.name), \(weather.sys.country)")
-                                    .font(.title3)
+        if currentWeather == nil && forecast == nil && pollution == nil {
+            VStack{
+                
+                ProgressView()
+                    .onAppear {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0) {
+                            if let cityName = cityName {
+                                fetchWeatherData(for: cityName)
+                            } else if locationManager.cityName != "Unknown" {
+                                fetchWeatherData(for: locationManager.cityName)
                             } else {
-                                Text(locationManager.cityName)
-                                    .font(.title3)
+                                errorMessage = "Unable to determine city name."
                             }
-                            
-                            Text("\(Int(weather.main.temp))°")
-                                .font(.system(size: 80))
-                            if let weatherDescription = weather.weather.first?.description {
-                                Text(weatherDescription.capitalized)
-                            }
-                            Text("From \(Int(weather.main.temp_min))° to \(Int(weather.main.temp_max))°")
-                                .font(.callout)
                         }
-                        .padding(.bottom)
-                        
-                        LazyVGrid(columns: Array(repeating: .init(.flexible(), spacing: 10), count: 2), spacing: 10) {
+                    }
+            }
+            .border(Color.white)
+        }else{
+            ScrollView {
+                VStack(alignment: .center) {
+                    if let weather = currentWeather {
+                        VStack(alignment: .center) {
                             VStack{
-                                Spacer()
-                                HStack {
-                                    Spacer()
-                                    HStack(spacing: 15){
-                                        VStack{
-                                            IconConvert(for: "sunrise.fill", useWeatherColors: iconsColorsBasedOnWeather)
-                                            Text(formatUnixTimeToHourAndMinute(weather.sys.sunrise, timezone: weather.timezone))
-                                        }
-                                        VStack{
-                                            IconConvert(for: "sunset.fill", useWeatherColors: iconsColorsBasedOnWeather)
-                                            Text(formatUnixTimeToHourAndMinute(weather.sys.sunset, timezone: weather.timezone))
-                                        }
-                                    }
-                                    Spacer()
+                                if let cityName = cityName, !cityName.isEmpty {
+                                    Text("\(weather.name), \(weather.sys.country)")
+                                        .font(.title3)
+                                } else {
+                                    Text(locationManager.cityName)
+                                        .font(.title3)
                                 }
-                                Spacer()
                                 
+                                Text("\(Int(weather.main.temp))°")
+                                    .font(.system(size: 80))
+                                if let weatherDescription = weather.weather.first?.description {
+                                    Text(weatherDescription.capitalized)
+                                }
+                                Text("From \(Int(weather.main.temp_min))° to \(Int(weather.main.temp_max))°")
+                                    .font(.callout)
                             }
-                            .padding(.horizontal)
-                            .padding(.vertical, 5)
-                            .background(Color.white.opacity(0.2))
-                            .cornerRadius(8)
+                            .padding(.bottom)
                             
-                            VStack{
-                                Spacer()
-                                HStack {
+                            LazyVGrid(columns: Array(repeating: .init(.flexible(), spacing: 10), count: 2), spacing: 10) {
+                                VStack{
                                     Spacer()
-                                    HStack(alignment: .center) {
-                                        if let icon = weather.weather.first?.icon {
-                                            IconConvert(for: icon, useWeatherColors: iconsColorsBasedOnWeather)
+                                    HStack {
+                                        Spacer()
+                                        HStack(spacing: 15){
+                                            VStack{
+                                                IconConvert(for: "sunrise.fill", useWeatherColors: iconsColorsBasedOnWeather)
+                                                Text(formatUnixTimeToHourAndMinute(weather.sys.sunrise, timezone: weather.timezone))
+                                            }
+                                            VStack{
+                                                IconConvert(for: "sunset.fill", useWeatherColors: iconsColorsBasedOnWeather)
+                                                Text(formatUnixTimeToHourAndMinute(weather.sys.sunset, timezone: weather.timezone))
+                                            }
                                         }
-                                        VStack{
-                                            Text("\(weather.clouds.all)%")
-                                                .font(.title)
-                                                .fontWeight(.bold)
-                                            
-                                            Text("\(weather.visibility / 1000) km")
+                                        Spacer()
+                                    }
+                                    Spacer()
+                                    
+                                }
+                                .padding(.horizontal)
+                                .padding(.vertical, 5)
+                                .background(Color.white.opacity(0.2))
+                                .cornerRadius(8)
+                                
+                                VStack{
+                                    Spacer()
+                                    HStack {
+                                        Spacer()
+                                        HStack(alignment: .center) {
+                                            if let icon = weather.weather.first?.icon {
+                                                IconConvert(for: icon, useWeatherColors: iconsColorsBasedOnWeather)
+                                            }
+                                            VStack{
+                                                Text("\(weather.clouds.all)%")
+                                                    .font(.title2 .bold())
+                                                Text("\(weather.visibility / 1000) km")
+                                            }
                                         }
+                                        Spacer()
                                     }
                                     Spacer()
                                 }
-                                Spacer()
+                                .padding(.horizontal)
+                                .padding(.vertical, 5)
+                                .background(Color.white.opacity(0.2))
+                                .cornerRadius(8)
                             }
-                            .padding(.horizontal)
-                            .padding(.vertical, 5)
+                            
+                            // Weather details
+                            VStack {
+                                LazyVGrid(columns: Array(repeating: .init(.flexible(), spacing: 0), count: 2), spacing: 0) {
+                                    WeatherDetailRow(title: "Humidity", value: "\(weather.main.humidity)%")
+                                    WeatherDetailRow(title: "Pressure", value: "\(weather.main.pressure) hPa")
+                                }
+                                LazyVGrid(columns: Array(repeating: .init(.flexible(), spacing: 0), count: 2), spacing: 0) {
+                                    WeatherDetailRow(title: "Wind Speed", value: "\(Int(weather.wind.speed)) m/s")
+                                    WeatherDetailRow(title: "Precipitation", value: getPrecipitationInfo(weather))
+                                }
+                            }
+                            .padding()
                             .background(Color.white.opacity(0.2))
                             .cornerRadius(8)
                         }
-                        
-                        // Weather details
-                        VStack {
-                            LazyVGrid(columns: Array(repeating: .init(.flexible(), spacing: 0), count: 2), spacing: 0) {
-                                WeatherDetailRow(title: "Humidity", value: "\(weather.main.humidity)%")
-                                WeatherDetailRow(title: "Pressure", value: "\(weather.main.pressure) hPa")
-                            }
-                            LazyVGrid(columns: Array(repeating: .init(.flexible(), spacing: 0), count: 2), spacing: 0) {
-                                WeatherDetailRow(title: "Wind Speed", value: "\(Int(weather.wind.speed)) m/s")
-                                WeatherDetailRow(title: "Precipitation", value: getPrecipitationInfo(weather))
+                    }
+                    
+                    // Forecast
+                    if let forecast = forecast {
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack {
+                                ForEach(forecast.list.prefix(10), id: \.dt) { entry in
+                                    VStack {
+                                        Text("\(extractHour(from: entry.dt_txt))")
+                                        IconConvert(for: entry.weather.first?.icon ?? "", useWeatherColors: iconsColorsBasedOnWeather)
+                                        Text("\(Int(entry.main.temp))°")
+                                            .font(.title2 .bold())
+                                        Text("\(Int(entry.main.feels_like))°")
+                                            .font(.callout)
+                                    }
+                                    .frame(width: UIScreen.main.bounds.width * 0.15)
+                                }
                             }
                         }
                         .padding()
                         .background(Color.white.opacity(0.2))
                         .cornerRadius(8)
                     }
-                }
-                
-                // Forecast
-                if let forecast = forecast {
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack {
-                            ForEach(forecast.list.prefix(10), id: \.dt) { entry in
-                                VStack {
-                                    Text("\(extractHour(from: entry.dt_txt))")
-                                    IconConvert(for: entry.weather.first?.icon ?? "", useWeatherColors: iconsColorsBasedOnWeather)
-                                    Text("\(Int(entry.main.temp))°")
-                                        .font(.title2 .bold())
-                                    Text("\(Int(entry.main.feels_like))°")
-                                        .font(.callout)
-                                }
-                                .frame(width: UIScreen.main.bounds.width * 0.15)
-                            }
+                    
+                    // Air Pollution
+                    if airQuality, let pollution = pollution {
+                        if let pollutionEntry = pollution.list.first {
+                            PollutionDataView(pollutionEntry: pollutionEntry)
                         }
                     }
-                    .padding()
-                    .background(Color.white.opacity(0.2))
-                    .cornerRadius(8)
-                }
-                
-                // Air Pollution
-                if airQuality, let pollution = pollution {
-                    if let pollutionEntry = pollution.list.first {
-                        PollutionDataView(pollutionEntry: pollutionEntry)
+                    
+                    
+                    
+                    
+                    if let errorMessage = errorMessage {
+                        Text("Error: \(errorMessage)")
+                            .foregroundColor(.red)
+                            .padding(.top)
                     }
                 }
-                
-                // Fetching or Error Message
-                if currentWeather == nil && forecast == nil && pollution == nil {
-                    Text("Fetching data...")
-                }
-                
-                if let errorMessage = errorMessage {
-                    Text("Error: \(errorMessage)")
-                        .foregroundColor(.red)
-                        .padding(.top)
-                }
+                .padding()
             }
-            .padding()
+            
         }
-        .onAppear {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                if let cityName = cityName {
-                    fetchWeatherData(for: cityName)
-                } else if locationManager.cityName != "Unknown" {
-                    fetchWeatherData(for: locationManager.cityName)
-                } else {
-                    errorMessage = "Unable to determine city name."
-                }
-            }
-        }
+        
+        
     }
     
     // MARK: - Data Fetching
@@ -216,7 +223,7 @@ struct WeatherView: View {
 }
 
 struct PollutionDataView: View {
-    let pollutionEntry: PollutionEntry // assuming this is the type of data in pollution.list.first
+    let pollutionEntry: PollutionEntry
     
     var body: some View {
         HStack{
@@ -247,8 +254,7 @@ struct PollutionDataDetail: View {
     var body: some View {
         VStack {
             Text(value)
-                .font(.title)
-                .fontWeight(.bold)
+                .font(.title2 .bold())
             Text(label)
                 .font(.caption)
         }
@@ -265,8 +271,7 @@ struct WeatherDetailRow: View {
             Spacer()
             VStack(alignment: .center) {
                 Text(value)
-                    .font(.title)
-                    .fontWeight(.bold)
+                    .font(.title2 .bold())
                 Text(title)
                     .font(.caption)
             }
