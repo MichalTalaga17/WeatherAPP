@@ -51,7 +51,7 @@ let iconColorsMap: [String: [Color]] = [
 ]
 
 func IconConvert(for iconName: String, useWeatherColors: Bool, primaryColor: Color? = nil, secondaryColor: Color? = nil, tertiaryColor: Color? = nil) -> some View {
-    let sfSymbolName = iconMap[iconName] ?? "questionmark.circle.fill"
+    let sfSymbolName = iconMap[iconName] ?? iconName
     
     var colors: [Color] = []
     

@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+import SwiftUI
+
 struct SettingsView: View {
     @Environment(\.colorScheme) var colorScheme
     
@@ -19,80 +21,77 @@ struct SettingsView: View {
     @AppStorage("dataSavingMode") private var dataSavingMode: Bool = false
     @AppStorage("language") private var language: Language = .english
     @AppStorage("weatherUpdateFrequency") private var weatherUpdateFrequency: UpdateFrequency = .hourly
-    @AppStorage("defaultCity") private var defaultCity: String = "New York" // Change this to String
+    @AppStorage("defaultCity") private var defaultCity: String = "New York"
     
     private let cities: [City] = [.newYork, .london, .tokyo, .paris, .sydney]
     
     var body: some View {
-        NavigationView {
-            Form {
-                Section(header: Text("Default City")) {
-                    Picker("Select City", selection: $defaultCity) {
-                        ForEach(cities) { city in
-                            Text(city.name).tag(city.name) // Use city.name here
-                        }
-                    }
-                }
-                
-                Section(header: Text("Units")) {
-                    Picker("Temperature Units", selection: $units) {
-                        Text("Metric").tag(Units.metric)
-                        Text("Imperial").tag(Units.imperial)
-                    }
-                    .pickerStyle(SegmentedPickerStyle())
-                }
-                
-                Section(header: Text("Appearance")) {
-                    Toggle("Icons Colors Based on Weather", isOn: $iconsColorsBasedOnWeather)
-                    
-                    if animatedBackgrounds {
-                        Text("Animated backgrounds are currently enabled.")
-                            .font(.footnote)
-                            .foregroundColor(.gray)
-                    }
-                    Picker("Background Style", selection: $gradientBackground) {
-                        Text("None").tag(false)
-                        Text("Animated").tag(true)
-                        Text("Gradient").tag(true)
-                    }
-                }
-                
-                Section(header: Text("Notifications")) {
-                    Toggle("Storm Notifications", isOn: $stormNotifications)
-                    Toggle("Air Quality Information", isOn: $airQuality)
-                }
-                
-                Section(header: Text("Preferences")) {
-                    Picker("Widgets update Frequency", selection: $weatherUpdateFrequency) {
-                        Text("15 Minutes").tag(UpdateFrequency.minutes15)
-                        Text("30 Minutes").tag(UpdateFrequency.minutes30)
-                        Text("Hourly").tag(UpdateFrequency.hourly)
-                        Text("Daily").tag(UpdateFrequency.daily)
-                    }
-                    
-                }
-                
-                Section(header: Text("General")) {
-                    Picker("Language", selection: $language) {
-                        ForEach(Language.allCases, id: \.self) { lang in
-                            Text(lang.rawValue).tag(lang)
-                        }
-                    }
-                    
-                    Toggle("Data Saving Mode", isOn: $dataSavingMode)
-                }
-                
-                Section(header: Text("About")) {
-                    NavigationLink("About the App") {
-                        AboutView()
-                    }
-                    NavigationLink("Privacy Policy") {
-                        PrivacyPolicyView()
+        Form {
+            Section(header: Text("Default City")) {
+                Picker("Select City", selection: $defaultCity) {
+                    ForEach(cities) { city in
+                        Text(city.name).tag(city.name)
                     }
                 }
             }
-            .navigationTitle("Settings")
+            
+            Section(header: Text("Units")) {
+                Picker("Temperature Units", selection: $units) {
+                    Text("Metric").tag(Units.metric)
+                    Text("Imperial").tag(Units.imperial)
+                }
+                .pickerStyle(SegmentedPickerStyle())
+            }
+            
+            Section(header: Text("Appearance")) {
+                Toggle("Icons Colors Based on Weather", isOn: $iconsColorsBasedOnWeather)
+                
+                if animatedBackgrounds {
+                    Text("Animated backgrounds are currently enabled.")
+                        .font(.footnote)
+                        .foregroundColor(.gray)
+                }
+                Picker("Background Style", selection: $gradientBackground) {
+                    Text("None").tag(false)
+                    Text("Animated").tag(true)
+                    Text("Gradient").tag(true)
+                }
+            }
+            
+            Section(header: Text("Notifications")) {
+                Toggle("Storm Notifications", isOn: $stormNotifications)
+                Toggle("Air Quality Information", isOn: $airQuality)
+            }
+            
+            Section(header: Text("Preferences")) {
+                Picker("Widgets update Frequency", selection: $weatherUpdateFrequency) {
+                    Text("15 Minutes").tag(UpdateFrequency.minutes15)
+                    Text("30 Minutes").tag(UpdateFrequency.minutes30)
+                    Text("Hourly").tag(UpdateFrequency.hourly)
+                    Text("Daily").tag(UpdateFrequency.daily)
+                }
+            }
+            
+            Section(header: Text("General")) {
+                Picker("Language", selection: $language) {
+                    ForEach(Language.allCases, id: \.self) { lang in
+                        Text(lang.rawValue).tag(lang)
+                    }
+                }
+                
+                Toggle("Data Saving Mode", isOn: $dataSavingMode)
+            }
+            
+            Section(header: Text("About")) {
+                NavigationLink("About the App") {
+                    AboutView()
+                }
+                NavigationLink("Privacy Policy") {
+                    PrivacyPolicyView()
+                }
+            }
         }
+        .navigationTitle("Settings") // Jeśli chcesz tytuł, który wyświetla się na górze formularza
     }
 }
 

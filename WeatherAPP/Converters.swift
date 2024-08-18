@@ -48,7 +48,7 @@ func aqiDescription(for aqi: Int) -> String {
 }
 
 func formatUnixTimeToHourAndMinute(_ unixTime: Int, timezone: Int) -> String {
-    let date = Date(timeIntervalSince1970: TimeInterval(unixTime + timezone))
+    let date = Date(timeIntervalSince1970: TimeInterval(unixTime))
     let dateFormatter = DateFormatter()
     dateFormatter.dateFormat = "HH:mm"
     return dateFormatter.string(from: date)
