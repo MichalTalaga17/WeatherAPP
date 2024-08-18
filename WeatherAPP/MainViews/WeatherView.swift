@@ -4,16 +4,16 @@ struct WeatherView: View {
     // MARK: - Properties
     @AppStorage("airQuality") private var airQuality: Bool = true
     @AppStorage("iconsColorsBasedOnWeather") private var iconsColorsBasedOnWeather: Bool = true
-
+    
     @StateObject var locationManager = LocationManager()
-
+    
     @State private var currentWeather: CurrentData?
     @State private var forecast: ForecastData?
     @State private var pollution: PollutionData?
     @State private var errorMessage: String?
-
+    
     var cityName: String?
-
+    
     // MARK: - Body
     var body: some View {
         ScrollView {
@@ -34,7 +34,7 @@ struct WeatherView: View {
                             Text(weatherDescription.capitalized)
                         }
                         Text("From \(Int(weather.main.temp_min))° to \(Int(weather.main.temp_max))°")
-                                                        .font(.callout)
+                            .font(.callout)
                         
                         LazyVGrid(columns: Array(repeating: .init(.flexible(), spacing: 10), count: 2), spacing: 10) {
                             VStack{
@@ -54,7 +54,7 @@ struct WeatherView: View {
                                     Spacer()
                                 }
                                 Spacer()
-
+                                
                             }
                             .padding(.horizontal)
                             .padding(.vertical, 5)
@@ -83,37 +83,38 @@ struct WeatherView: View {
                             }
                             .padding(.horizontal)
                             .padding(.vertical, 5)
-                            .background(Color.white.opacity(0.))
+                            .background(Color.white.opacity(0.2))
                             .cornerRadius(8)
-                            
-                            
-                            WeatherDetailRow(title: "Humidity", value: "\(weather.main.humidity)%")
-                            WeatherDetailRow(title: "Pressure", value: "\(weather.main.pressure) hPa")
-                            WeatherDetailRow(title: "Cloudiness", value: "\(weather.clouds.all)%")
-                            WeatherDetailRow(title: "Visibility", value: "\(weather.visibility / 1000) km")
-                            WeatherDetailRow(title: "Wind Speed", value: "\(Int(weather.wind.speed)) m/s")
-                            if let rain = weather.rain?.hour1 {
-                                WeatherDetailRow(title: "Rain", value: "\(rain) mm (1h)")
+                        }
+                        VStack{
+                            LazyVGrid(columns: Array(repeating: .init(.flexible(), spacing: 0), count: 2), spacing: 0) {
+                                WeatherDetailRow(title: "Humidity", value: "\(weather.main.humidity)%")
+                                WeatherDetailRow(title: "Pressure", value: "\(weather.main.pressure) hPa")
+                                
                             }
-                            if let snow = weather.snow?.hour1 {
-                                WeatherDetailRow(title: "Snow", value: "\(snow) mm (1h)")
+                            LazyVGrid(columns: Array(repeating: .init(.flexible(), spacing: 0), count: 2), spacing: 0) {
+                                WeatherDetailRow(title: "Wind Speed", value: "\(Int(weather.wind.speed)) m/s")
+                                if let rain = weather.rain?.hour1 {
+                                    WeatherDetailRow(title: "Rain", value: "\(rain) mm (1h)")
+                                }else if let snow = weather.snow?.hour1 {
+                                    WeatherDetailRow(title: "Snow", value: "\(snow) mm (1h)")
+                                }else{
+                                    WeatherDetailRow(title: "Precipitation", value: "0")
+                                }
                             }
-                            WeatherDetailRow(title: "Sunrise", value: formatUnixTimeToHourAndMinute(weather.sys.sunrise, timezone: weather.timezone))
-                            WeatherDetailRow(title: "Sunset", value: formatUnixTimeToHourAndMinute(weather.sys.sunset, timezone: weather.timezone))
-                            
-                            
                         }
                         .padding()
+                        .background(Color.white.opacity(0.2))
+                        .cornerRadius(8)
+                        
+                        
+                        
+                        
+                        
                     }
                 }
-
-                // Forecast
                 if let forecast = forecast {
-                    VStack(alignment: .leading) {
-                        Text("Forecast")
-                            .font(.headline)
-                            .padding(.top)
-
+                        
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack {
                                 ForEach(forecast.list.prefix(10), id: \.dt) { entry in
@@ -121,15 +122,19 @@ struct WeatherView: View {
                                         Text("\(extractHour(from: entry.dt_txt))")
                                         IconConvert(for: entry.weather.first?.icon ?? "", useWeatherColors: iconsColorsBasedOnWeather)
                                         Text("\(Int(entry.main.temp))°")
+                                            .font(.title2 .bold())
                                         Text("\(Int(entry.main.feels_like))°")
+                                            .font(.callout)
                                     }
+                                    .frame(width: UIScreen.main.bounds.width * 0.15)
                                 }
                             }
                         }
-                    }
-                    .padding()
+                        .padding()
+                        .background(Color.white.opacity(0.2))
+                        .cornerRadius(8)
                 }
-
+                
                 // Air Pollution
                 if airQuality, let pollution = pollution {
                     ScrollView(.horizontal) {
@@ -160,12 +165,12 @@ struct WeatherView: View {
                     }
                     .padding()
                 }
-
+                
                 // Fetching or Error Message
                 if currentWeather == nil && forecast == nil && pollution == nil {
                     Text("Fetching data...")
                 }
-
+                
                 if let errorMessage = errorMessage {
                     Text("Error: \(errorMessage)")
                         .foregroundColor(.red)
@@ -186,7 +191,7 @@ struct WeatherView: View {
             }
         }
     }
-
+    
     // MARK: - Data Fetching
     private func fetchWeatherData(for city: String) {
         if city != "Unknown" {
@@ -198,7 +203,7 @@ struct WeatherView: View {
                     errorMessage = error.localizedDescription
                 }
             }
-
+            
             API.shared.fetchForecastData(forCity: city) { result in
                 switch result {
                 case .success(let forecastData):
@@ -207,7 +212,7 @@ struct WeatherView: View {
                     errorMessage = error.localizedDescription
                 }
             }
-
+            
             API.shared.fetchAirPollutionData(forCity: city) { result in
                 switch result {
                 case .success(let pollutionData):
@@ -238,9 +243,6 @@ struct WeatherDetailRow: View {
             }
             Spacer()
         }
-        .padding()
-        .background(Color.white.opacity(0.5))
-        .cornerRadius(8)
     }
 }
 
