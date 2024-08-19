@@ -85,22 +85,6 @@ struct WeatherView: View {
                 }
             }
             .navigationBarBackButtonHidden(true)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button(action: {
-                        // Action for back button
-                    }) {
-                        Text("Back")
-                    }
-                }
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: {
-                        toggleFavourite()
-                    }) {
-                        Text(isFavourite ? "Remove from Favourites" : "Add to Favourites")
-                    }
-                }
-            }
         }
         .onAppear {
             if cityName != nil || locationManager.location != nil {
@@ -230,6 +214,16 @@ struct WeatherView: View {
                 
                 Text("From \(Int(weather.main.temp_min))° to \(Int(weather.main.temp_max))°")
                     .font(.callout)
+                Button(action: {
+                    toggleFavourite()
+                }) {
+                    Text(isFavourite ? "Remove from Favourites" : "Add to Favourites")
+                        .font(.footnote)
+                }
+                .padding(10)
+                .background(Color.white.opacity(0.2))
+                .cornerRadius(15)
+                .foregroundColor(.white)
             }
             .padding(.bottom)
             
