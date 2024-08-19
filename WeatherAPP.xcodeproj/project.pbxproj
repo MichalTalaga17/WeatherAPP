@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		478FE0672C729EE0003A5654 /* GradientBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478FE0662C729EE0003A5654 /* GradientBackground.swift */; };
+		478FE06D2C734B45003A5654 /* WeatherView2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478FE06C2C734B45003A5654 /* WeatherView2.swift */; };
 		47B3FF612C6F960200F179EA /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47B3FF602C6F960200F179EA /* SettingsView.swift */; };
 		47B3FF632C6F972600F179EA /* WeatherView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47B3FF622C6F972600F179EA /* WeatherView.swift */; };
 		47B3FF662C6FAB4D00F179EA /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47B3FF652C6FAB4D00F179EA /* AboutView.swift */; };
@@ -28,6 +29,7 @@
 
 /* Begin PBXFileReference section */
 		478FE0662C729EE0003A5654 /* GradientBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientBackground.swift; sourceTree = "<group>"; };
+		478FE06C2C734B45003A5654 /* WeatherView2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherView2.swift; sourceTree = "<group>"; };
 		47B3FF602C6F960200F179EA /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		47B3FF622C6F972600F179EA /* WeatherView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherView.swift; sourceTree = "<group>"; };
 		47B3FF652C6FAB4D00F179EA /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
@@ -136,6 +138,7 @@
 				47EC68B82C5D50AC001BA302 /* SearchView.swift */,
 				47B3FF602C6F960200F179EA /* SettingsView.swift */,
 				47B3FF622C6F972600F179EA /* WeatherView.swift */,
+				478FE06C2C734B45003A5654 /* WeatherView2.swift */,
 			);
 			path = MainViews;
 			sourceTree = "<group>";
@@ -220,6 +223,7 @@
 				47B3FF6C2C6FB61700F179EA /* CityListView.swift in Sources */,
 				47B3FF682C6FAB5D00F179EA /* PrivacyPolicyView.swift in Sources */,
 				47B3FF632C6F972600F179EA /* WeatherView.swift in Sources */,
+				478FE06D2C734B45003A5654 /* WeatherView2.swift in Sources */,
 				47B3FF752C6FE59E00F179EA /* PollutionData.swift in Sources */,
 				47B3FF712C6FE55600F179EA /* API.swift in Sources */,
 				47B3FF662C6FAB4D00F179EA /* AboutView.swift in Sources */,

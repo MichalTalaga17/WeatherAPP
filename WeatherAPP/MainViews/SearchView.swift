@@ -32,22 +32,7 @@ struct SearchView: View {
                 }.padding()
                 
                 ScrollView(){
-                    VStack(alignment: .leading, spacing: 10) {
-                        ForEach(cities, id: \.self) { city in
-                            NavigationLink(destination: WeatherView(cityName: city)) {
-                                HStack{
-                                    Text(city)
-                                    Spacer()
-                                }
-                                .font(.headline)
-                                .padding()
-                                .background(Color.blue.opacity(0.1))
-                                .cornerRadius(8)
-                                
-                            }
-                            .padding(.horizontal)
-                        }
-                    }
+                    
                 }
                 Spacer()
             }
