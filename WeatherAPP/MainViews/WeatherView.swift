@@ -213,7 +213,6 @@ struct WeatherView: View {
                 .padding(10)
                 .background(Color.white.opacity(0.2))
                 .cornerRadius(15)
-                .foregroundColor(.white)
             }
             .padding(.bottom)
             
@@ -231,7 +230,7 @@ struct WeatherView: View {
             Spacer()
             HStack {
                 Spacer()
-                HStack(spacing: 15) {
+                HStack(spacing: 30) {
                     VStack {
                         IconConvert(for: "sunrise.fill", useWeatherColors: iconsColorsBasedOnWeather)
                         Text(formatUnixTimeToHourAndMinute(weather.sys.sunrise, timezone: weather.timezone))

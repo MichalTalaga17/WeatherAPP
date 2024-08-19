@@ -221,10 +221,15 @@ struct MainView: View {
                 Button(action: {
                     toggleFavourite()
                 }) {
-                    Text(isFavourite ? "Remove from Favourites" : "Add to Favourites")
-                        .font(.footnote)
+                        
+                    if isFavourite{
+                        Image(systemName: "star.fill")
+                    }else{
+                        Image(systemName: "star")
+                    }
                 }
                 .padding(10)
+                .padding(.horizontal)
                 .background(Color.white.opacity(0.2))
                 .cornerRadius(15)
             }
@@ -244,7 +249,7 @@ struct MainView: View {
             Spacer()
             HStack {
                 Spacer()
-                HStack(spacing: 15) {
+                HStack(spacing: 30) {
                     VStack {
                         IconConvert(for: "sunrise.fill", useWeatherColors: iconsColorsBasedOnWeather)
                         Text(formatUnixTimeToHourAndMinute(weather.sys.sunrise, timezone: weather.timezone))

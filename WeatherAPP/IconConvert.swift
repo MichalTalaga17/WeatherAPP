@@ -48,6 +48,8 @@ let iconColorsMap: [String: [Color]] = [
     "13n": [.clouds, .gray],
     "50d": [.clouds, .gray],
     "50n": [.clouds, .gray],
+    "sunset.fill": [.clouds, .yellow],
+    "sunrise.fill": [.clouds, .yellow],
 ]
 
 func IconConvert(for iconName: String, useWeatherColors: Bool, primaryColor: Color? = nil, secondaryColor: Color? = nil, tertiaryColor: Color? = nil) -> some View {

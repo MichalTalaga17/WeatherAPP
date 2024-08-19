@@ -33,19 +33,18 @@ struct SearchView: View {
                     HStack {
                         TextField("Search for city", text: $cityName)
                             .padding()
-                            .background(Color.black.opacity(0.1))
+                            .background(Color.white.opacity(0.1))
                             .cornerRadius(8)
                         
                         NavigationLink(destination: WeatherView(cityName: cityName)) {
                             Text("Go")
                                 .padding()
-                                .background(cityName.isEmpty ? Color.gray : Color.blue)
+                                .background(cityName.isEmpty ? Color.white.opacity(0.4) : Color.white.opacity(0.8))
                                 .foregroundColor(.white)
                                 .cornerRadius(8)
                         }
                         .disabled(cityName.isEmpty)
                     }
-                    .padding()
                     
                     VStack(alignment: .leading, spacing: 10) {
                         ForEach(cities, id: \.self) { city in
@@ -57,7 +56,7 @@ struct SearchView: View {
                                     HStack {
                                         if let temperature = city.temperature {
                                             Text("\(Int(temperature))°")
-                                                .font(.title3)
+                                                .font(.title3 .bold())
                                         }
                                         if let icon = city.weatherIcon {
                                             IconConvert(for: icon, useWeatherColors: iconsColorsBasedOnWeather)
@@ -66,9 +65,8 @@ struct SearchView: View {
                                 }
                             }
                             .padding(10)
-                            .background(Color.black.opacity(0.2))
+                            .background(Color.white.opacity(0.2))
                             .cornerRadius(15)
-                            .padding()
                             .task {
                                 await fetchWeatherData(for: city)
                             }
