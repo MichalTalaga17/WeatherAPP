@@ -5,6 +5,7 @@
 //  Created by Michał Talaga on 19/08/2024.
 //
 
+
 import SwiftUI
 import CoreLocation
 import SwiftData
@@ -15,6 +16,7 @@ struct MainView: View {
     @AppStorage("iconsColorsBasedOnWeather") private var iconsColorsBasedOnWeather: Bool = true
     @AppStorage("backgroundStyle") private var backgroundStyle: BackgroundStyle = .gradient
     @AppStorage("mainIcon") private var mainIcon: String = ""
+    @AppStorage("defaultCity") private var defaultCity: String = ""
     
     @Environment(\.modelContext) private var modelContext
     @StateObject private var locationManager = LocationManager()
@@ -48,7 +50,7 @@ struct MainView: View {
                             .foregroundColor(.red)
                             .padding()
                         Button(action: {
-                            loadWeatherData()
+                            loadWeatherData() // Retry fetching data
                         }) {
                             Text("Retry")
                                 .padding()
@@ -57,49 +59,99 @@ struct MainView: View {
                                 .cornerRadius(10)
                         }
                     }
-                } else if cityName != nil {
-                    VStack(alignment: .center) {
-                        if let weather = currentWeather {
-                            weatherDetails(for: weather)
-                        }
-                        
-                        if let forecast = forecast {
-                            forecastView(for: forecast)
-                        }
-                        
-                        if airQuality, let pollution = pollution {
-                            PollutionDataView(pollutionEntry: pollution.list.first!)
-                        }
+                } else if defaultCity == "Your location" {
+                    if let location = locationManager.location {
+                        Text("Fetching data for location...")
+                            .onAppear {
+                                fetchCityName(from: location) { cityName in
+                                    self.cityName = cityName
+                                    self.loadWeatherData() // Fetch data for the resolved city name
+                                }
+                            }
+                    } else {
+                        Text("Fetching location...")
                     }
-                    .padding()
-                } else if let location = locationManager.location {
-                    Text("Fetching data for location...")
-                        .onAppear {
-                            fetchCityName(from: location) { cityName in
-                                self.cityName = cityName
-                                self.loadWeatherData()
+                } else {
+                    if !defaultCity.isEmpty {
+                        VStack(alignment: .center) {
+                            if let weather = currentWeather {
+                                weatherDetails(for: weather)
+                            }
+                            
+                            if let forecast = forecast {
+                                forecastView(for: forecast)
+                            }
+                            
+                            if airQuality, let pollution = pollution {
+                                PollutionDataView(pollutionEntry: pollution.list.first!)
                             }
                         }
-                } else {
-                    Text("Fetching location...")
+                        .padding()
+                    } else {
+                        Text("City name is not set.")
+                    }
                 }
             }
-    
-        }
-        .navigationBarBackButtonHidden(true)
-        .onAppear {
-            if cityName != nil || locationManager.location != nil {
-                loadWeatherData()
-                checkIfFavourite()
+            .navigationBarBackButtonHidden(true)
+            .onAppear {
+                if defaultCity == "Your location" && locationManager.location != nil {
+                    loadWeatherData() // Fetch data based on the location
+                    checkIfFavourite()
+                } else if !defaultCity.isEmpty {
+                    loadWeatherData(for: defaultCity) // Fetch data for the city in defaultCity
+                    checkIfFavourite()
+                }
             }
         }
     }
-    
+
+    private func weatherDetails(for weather: CurrentData) -> some View {
+        VStack(alignment: .center) {
+            VStack {
+                // Display city name based on the value of `defaultCity`
+                Text(defaultCity == "Your location" ? (cityName ?? locationManager.cityName) : defaultCity)
+                    .font(.title3)
+                
+                Text("\(Int(weather.main.temp))°")
+                    .font(.system(size: 80))
+                
+                if let weatherDescription = weather.weather.first?.description {
+                    Text(weatherDescription.capitalized)
+                }
+                
+                Text("From \(Int(weather.main.temp_min))° to \(Int(weather.main.temp_max))°")
+                    .font(.callout)
+                
+                Button(action: {
+                    toggleFavourite()
+                }) {
+                    if isFavourite {
+                        Image(systemName: "star.fill")
+                    } else {
+                        Image(systemName: "star")
+                    }
+                }
+                .padding(10)
+                .padding(.horizontal)
+                .background(Color.white.opacity(0.2))
+                .cornerRadius(20)
+            }
+            .padding(.bottom)
+            
+            LazyVGrid(columns: Array(repeating: .init(.flexible(), spacing: 10), count: 2), spacing: 10) {
+                weatherInfoView(weather)
+                weatherAdditionalInfoView(weather)
+            }
+            
+            weatherDetailsGrid(weather)
+        }
+    }
+
     // MARK: - Data Fetching
-    private func loadWeatherData() {
-        let city = cityName ?? locationManager.cityName
+    private func loadWeatherData(for city: String? = nil) {
+        let resolvedCity = city ?? cityName ?? locationManager.cityName
         
-        if city == "Unknown" {
+        if resolvedCity == "Unknown" {
             locationManager.requestLocation { result in
                 switch result {
                 case .success(let location):
@@ -112,7 +164,7 @@ struct MainView: View {
                 }
             }
         } else {
-            fetchWeatherData(for: city)
+            fetchWeatherData(for: resolvedCity)
         }
     }
     
@@ -203,46 +255,7 @@ struct MainView: View {
         }
     }
     
-    private func weatherDetails(for weather: CurrentData) -> some View {
-        VStack(alignment: .center) {
-            VStack {
-                Text(cityName?.isEmpty == false ? "\(weather.name), \(weather.sys.country)" : locationManager.cityName)
-                    .font(.title3)
-                
-                Text("\(Int(weather.main.temp))°")
-                    .font(.system(size: 80))
-                
-                if let weatherDescription = weather.weather.first?.description {
-                    Text(weatherDescription.capitalized)
-                }
-                
-                Text("From \(Int(weather.main.temp_min))° to \(Int(weather.main.temp_max))°")
-                    .font(.callout)
-                Button(action: {
-                    toggleFavourite()
-                }) {
-                        
-                    if isFavourite{
-                        Image(systemName: "star.fill")
-                    }else{
-                        Image(systemName: "star")
-                    }
-                }
-                .padding(10)
-                .padding(.horizontal)
-                .background(Color.white.opacity(0.2))
-                .cornerRadius(15)
-            }
-            .padding(.bottom)
-            
-            LazyVGrid(columns: Array(repeating: .init(.flexible(), spacing: 10), count: 2), spacing: 10) {
-                weatherInfoView(weather)
-                weatherAdditionalInfoView(weather)
-            }
-            
-            weatherDetailsGrid(weather)
-        }
-    }
+    
     
     private func weatherInfoView(_ weather: CurrentData) -> some View {
         VStack {

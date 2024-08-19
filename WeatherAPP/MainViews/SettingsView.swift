@@ -17,7 +17,7 @@ struct SettingsView: View {
     @AppStorage("dataSavingMode") private var dataSavingMode: Bool = false
     @AppStorage("language") private var language: Language = .english
     @AppStorage("weatherUpdateFrequency") private var weatherUpdateFrequency: UpdateFrequency = .hourly
-    @AppStorage("defaultCity") private var defaultCity: String = "New York"
+    @AppStorage("defaultCity") private var defaultCity: String = "Your location"
     
     @AppStorage("mainIcon") private var mainIcon: String = ""
     
@@ -41,6 +41,7 @@ struct SettingsView: View {
                             ForEach(cities) { city in
                                 Text(city.name).tag(city.name)
                             }
+                            Text("Your location").tag("Your location")
                         }
                     }
                     
