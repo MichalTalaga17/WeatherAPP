@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		478FE0672C729EE0003A5654 /* GradientBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478FE0662C729EE0003A5654 /* GradientBackground.swift */; };
 		478FE06F2C738AB8003A5654 /* City.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478FE06E2C738AB8003A5654 /* City.swift */; };
+		478FE0712C73D62F003A5654 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478FE0702C73D62F003A5654 /* MainView.swift */; };
 		47B3FF612C6F960200F179EA /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47B3FF602C6F960200F179EA /* SettingsView.swift */; };
 		47B3FF632C6F972600F179EA /* WeatherView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47B3FF622C6F972600F179EA /* WeatherView.swift */; };
 		47B3FF662C6FAB4D00F179EA /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47B3FF652C6FAB4D00F179EA /* AboutView.swift */; };
@@ -30,6 +31,7 @@
 /* Begin PBXFileReference section */
 		478FE0662C729EE0003A5654 /* GradientBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientBackground.swift; sourceTree = "<group>"; };
 		478FE06E2C738AB8003A5654 /* City.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = City.swift; sourceTree = "<group>"; };
+		478FE0702C73D62F003A5654 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		47B3FF602C6F960200F179EA /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		47B3FF622C6F972600F179EA /* WeatherView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherView.swift; sourceTree = "<group>"; };
 		47B3FF652C6FAB4D00F179EA /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
@@ -139,6 +141,7 @@
 				47EC68B82C5D50AC001BA302 /* SearchView.swift */,
 				47B3FF602C6F960200F179EA /* SettingsView.swift */,
 				47B3FF622C6F972600F179EA /* WeatherView.swift */,
+				478FE0702C73D62F003A5654 /* MainView.swift */,
 			);
 			path = MainViews;
 			sourceTree = "<group>";
@@ -224,6 +227,7 @@
 				47B3FF682C6FAB5D00F179EA /* PrivacyPolicyView.swift in Sources */,
 				47B3FF632C6F972600F179EA /* WeatherView.swift in Sources */,
 				47B3FF752C6FE59E00F179EA /* PollutionData.swift in Sources */,
+				478FE0712C73D62F003A5654 /* MainView.swift in Sources */,
 				47B3FF712C6FE55600F179EA /* API.swift in Sources */,
 				47B3FF662C6FAB4D00F179EA /* AboutView.swift in Sources */,
 				47B3FF772C6FE5B800F179EA /* ForecastData.swift in Sources */,
@@ -367,6 +371,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = WeatherAPP/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = WeatherAPP;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.weather";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "The app requires location access to provide accurate weather forecasts for your current location.";
 				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "The app requires location access to provide accurate weather forecasts for your current location.";
@@ -391,7 +396,7 @@
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -408,6 +413,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = WeatherAPP/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = WeatherAPP;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.weather";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "The app requires location access to provide accurate weather forecasts for your current location.";
 				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "The app requires location access to provide accurate weather forecasts for your current location.";
@@ -432,7 +438,7 @@
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};

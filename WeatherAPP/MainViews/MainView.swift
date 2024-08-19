@@ -1,16 +1,15 @@
 //
-//  Weather.swift
+//  MainView.swift
 //  WeatherAPP
 //
-//  Created by Michał Talaga on 16/08/2024.
+//  Created by Michał Talaga on 19/08/2024.
 //
-
 
 import SwiftUI
 import CoreLocation
 import SwiftData
 
-struct WeatherView: View {
+struct MainView: View {
     // MARK: - Properties
     @AppStorage("airQuality") private var airQuality: Bool = true
     @AppStorage("iconsColorsBasedOnWeather") private var iconsColorsBasedOnWeather: Bool = true
@@ -344,8 +343,65 @@ struct WeatherView: View {
         }
     }
 }
+struct PollutionDataView: View {
+    let pollutionEntry: PollutionEntry
+    
+    var body: some View {
+        HStack {
+            PollutionDataDetail(value: "\(aqiDescription(for: pollutionEntry.main.aqi))", label: "AQI")
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack {
+                    PollutionDataDetail(value: "\(Int(pollutionEntry.components.pm2_5))", label: "PM2.5")
+                    PollutionDataDetail(value: "\(Int(pollutionEntry.components.pm10))", label: "PM10")
+                    PollutionDataDetail(value: "\(Int(pollutionEntry.components.co))", label: "CO")
+                    PollutionDataDetail(value: "\(Int(pollutionEntry.components.no))", label: "NO")
+                    PollutionDataDetail(value: "\(Int(pollutionEntry.components.no2))", label: "NO2")
+                    PollutionDataDetail(value: "\(Int(pollutionEntry.components.o3))", label: "O3")
+                    PollutionDataDetail(value: "\(Int(pollutionEntry.components.so2))", label: "SO2")
+                    PollutionDataDetail(value: "\(Int(pollutionEntry.components.nh3))", label: "NH3")
+                }
+            }
+        }
+        .padding()
+        .background(Color.white.opacity(0.2))
+        .cornerRadius(8)
+    }
+}
+
+struct PollutionDataDetail: View {
+    let value: String
+    let label: String
+    
+    var body: some View {
+        VStack {
+            Text(value)
+                .font(.title2 .bold())
+            Text(label)
+                .font(.caption)
+        }
+        .frame(width: UIScreen.main.bounds.width * 0.15)
+    }
+}
+
+struct WeatherDetailRow: View {
+    let title: String
+    let value: String
+    
+    var body: some View {
+        HStack {
+            Spacer()
+            VStack(alignment: .center) {
+                Text(value)
+                    .font(.title2 .bold())
+                Text(title)
+                    .font(.caption)
+            }
+            Spacer()
+        }
+    }
+}
 
 #Preview {
-    WeatherView(cityName: "New York")
+    MainView(cityName: "New York")
 }
 
