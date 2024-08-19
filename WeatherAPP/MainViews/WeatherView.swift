@@ -4,8 +4,11 @@
 //
 //  Created by Michał Talaga on 16/08/2024.
 //
+
+
 import SwiftUI
 import CoreLocation
+import SwiftData
 
 struct WeatherView: View {
     // MARK: - Properties
@@ -13,20 +16,22 @@ struct WeatherView: View {
     @AppStorage("iconsColorsBasedOnWeather") private var iconsColorsBasedOnWeather: Bool = true
     @AppStorage("backgroundStyle") private var backgroundStyle: BackgroundStyle = .gradient
     
+    @Environment(\.modelContext) private var modelContext
     @StateObject private var locationManager = LocationManager()
+    
+    @Query private var cities: [FavouriteCity]
     
     @State private var currentWeather: CurrentData?
     @State private var forecast: ForecastData?
     @State private var pollution: PollutionData?
     @State private var errorMessage: String?
     
-    
     @State private var cityName: String?
+    @State private var isFavourite: Bool = false
     
     init(cityName: String? = nil) {
-            _cityName = State(initialValue: cityName)
-        }
-        
+        _cityName = State(initialValue: cityName)
+    }
     
     // MARK: - Body
     var body: some View {
@@ -53,20 +58,20 @@ struct WeatherView: View {
                         }
                     }
                 } else if cityName != nil {
-                        VStack(alignment: .center) {
-                            if let weather = currentWeather {
-                                weatherDetails(for: weather)
-                            }
-                            
-                            if let forecast = forecast {
-                                forecastView(for: forecast)
-                            }
-                            
-                            if airQuality, let pollution = pollution {
-                                PollutionDataView(pollutionEntry: pollution.list.first!)
-                            }
+                    VStack(alignment: .center) {
+                        if let weather = currentWeather {
+                            weatherDetails(for: weather)
                         }
-                        .padding()
+                        
+                        if let forecast = forecast {
+                            forecastView(for: forecast)
+                        }
+                        
+                        if airQuality, let pollution = pollution {
+                            PollutionDataView(pollutionEntry: pollution.list.first!)
+                        }
+                    }
+                    .padding()
                 } else if let location = locationManager.location {
                     Text("Fetching data for location...")
                         .onAppear {
@@ -79,10 +84,28 @@ struct WeatherView: View {
                     Text("Fetching location...")
                 }
             }
+            .navigationBarBackButtonHidden(true)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button(action: {
+                        // Action for back button
+                    }) {
+                        Text("Back")
+                    }
+                }
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: {
+                        toggleFavourite()
+                    }) {
+                        Text(isFavourite ? "Remove from Favourites" : "Add to Favourites")
+                    }
+                }
+            }
         }
         .onAppear {
             if cityName != nil || locationManager.location != nil {
                 loadWeatherData()
+                checkIfFavourite()
             }
         }
     }
@@ -136,6 +159,41 @@ struct WeatherView: View {
             }
         }
     }
+    
+    // MARK: - Favourites Management
+    private func toggleFavourite() {
+        if isFavourite {
+            removeFromFavourites()
+        } else {
+            addToFavourites()
+        }
+        isFavourite.toggle()
+    }
+    
+    private func addToFavourites() {
+        guard let cityName = cityName, !cityName.isEmpty else { return }
+        
+        let newFavourite = FavouriteCity(name: cityName)
+        newFavourite.temperature = currentWeather?.main.temp
+        newFavourite.weatherIcon = currentWeather?.weather.first?.icon
+        
+        modelContext.insert(newFavourite)
+    }
+    
+    private func removeFromFavourites() {
+        guard let cityName = cityName else { return }
+        
+        if let cityToRemove = cities.first(where: { $0.name == cityName }) {
+            modelContext.delete(cityToRemove)
+        }
+    }
+    
+    private func checkIfFavourite() {
+        if let cityName = cityName {
+            isFavourite = cities.contains(where: { $0.name == cityName })
+        }
+    }
+    
     
     // MARK: - Helper Functions
     private func fetchCityName(from location: CLLocation, completion: @escaping (String) -> Void) {

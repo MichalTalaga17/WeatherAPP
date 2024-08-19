@@ -6,9 +6,10 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct SearchView: View {
-    private let cities: [String] = ["New York", "London", "Tokyo", "Paris", "Sydney"]
+    @Query private var cities: [FavouriteCity]
     @State private var cityName: String = ""
     
     var body: some View {
@@ -31,8 +32,21 @@ struct SearchView: View {
                     .disabled(cityName.isEmpty)
                 }.padding()
                 
-                ScrollView(){
-                    
+                VStack(alignment: .leading, spacing: 10) {
+                    ForEach(cities, id: \.self) { city in
+                        NavigationLink(destination: WeatherView(cityName: city.name)) {
+                            HStack{
+                                Text(city.name)
+                                Spacer()
+                            }
+                            .font(.headline)
+                            .padding()
+                            .background(Color.blue.opacity(0.1))
+                            .cornerRadius(8)
+                            
+                        }
+                        .padding(.horizontal)
+                    }
                 }
                 Spacer()
             }
