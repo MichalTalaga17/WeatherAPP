@@ -14,6 +14,7 @@ struct MainView: View {
     @AppStorage("airQuality") private var airQuality: Bool = true
     @AppStorage("iconsColorsBasedOnWeather") private var iconsColorsBasedOnWeather: Bool = true
     @AppStorage("backgroundStyle") private var backgroundStyle: BackgroundStyle = .gradient
+    @AppStorage("mainIcon") private var mainIcon: String = ""
     
     @Environment(\.modelContext) private var modelContext
     @StateObject private var locationManager = LocationManager()
@@ -83,8 +84,9 @@ struct MainView: View {
                     Text("Fetching location...")
                 }
             }
-            .navigationBarBackButtonHidden(true)
+    
         }
+        .navigationBarBackButtonHidden(true)
         .onAppear {
             if cityName != nil || locationManager.location != nil {
                 loadWeatherData()
@@ -119,6 +121,10 @@ struct MainView: View {
             switch result {
             case .success(let weatherData):
                 currentWeather = weatherData
+                // Update mainIcon after fetching weather data
+                if let icon = weatherData.weather.first?.icon {
+                    mainIcon = icon
+                }
             case .failure(let error):
                 errorMessage = error.localizedDescription
             }
@@ -177,7 +183,6 @@ struct MainView: View {
         }
     }
     
-    
     // MARK: - Helper Functions
     private func fetchCityName(from location: CLLocation, completion: @escaping (String) -> Void) {
         let geocoder = CLGeocoder()
@@ -222,7 +227,6 @@ struct MainView: View {
                 .padding(10)
                 .background(Color.white.opacity(0.2))
                 .cornerRadius(15)
-                .foregroundColor(.white)
             }
             .padding(.bottom)
             
@@ -341,8 +345,12 @@ struct MainView: View {
                 Color.clear
             }
         }
+        .onAppear {
+            mainIcon = icon
+        }
     }
 }
+
 struct PollutionDataView: View {
     let pollutionEntry: PollutionEntry
     
@@ -404,4 +412,3 @@ struct WeatherDetailRow: View {
 #Preview {
     MainView(cityName: "New York")
 }
-

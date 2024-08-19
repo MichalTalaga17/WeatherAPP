@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct SettingsView: View {
     @AppStorage("units") private var units: Units = .metric
@@ -18,7 +19,8 @@ struct SettingsView: View {
     @AppStorage("weatherUpdateFrequency") private var weatherUpdateFrequency: UpdateFrequency = .hourly
     @AppStorage("defaultCity") private var defaultCity: String = "New York"
     
-    private let cities: [City] = [.newYork, .london, .tokyo, .paris, .sydney]
+    
+    @Query private var cities: [FavouriteCity]
     
     var body: some View {
         NavigationView {

@@ -10,6 +10,7 @@ import SwiftData
 
 @main
 struct WeatherAPPApp: App {
+    @State private var selectedTab = 1
     
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
@@ -26,7 +27,7 @@ struct WeatherAPPApp: App {
     
     var body: some Scene {
         WindowGroup {
-            TabView {
+            TabView(selection: $selectedTab) {
                 SettingsView()
                     .tabItem {
                         Image(systemName: "gear")
@@ -34,24 +35,25 @@ struct WeatherAPPApp: App {
                         Text("Settings")
                             .foregroundStyle(Color.black.opacity(0.8))
                     }
-                    
+                    .tag(0)
                 
-                WeatherView()
+                MainView()
                     .tabItem {
                         Image(systemName: "cloud.fill")
                             .foregroundStyle(Color.black.opacity(0.8))
                         Text("Weather")
                             .foregroundStyle(Color.black.opacity(0.8))
                     }
-                    
+                    .tag(1)
                 
                 SearchView()
                     .tabItem {
                         Image(systemName: "magnifyingglass")
-                        .foregroundStyle(Color.black.opacity(0.8))
+                            .foregroundStyle(Color.black.opacity(0.8))
                         Text("Search")
-                        .foregroundStyle(Color.black.opacity(0.8))
+                            .foregroundStyle(Color.black.opacity(0.8))
                     }
+                    .tag(2)
             }
             .accentColor(.black)
             

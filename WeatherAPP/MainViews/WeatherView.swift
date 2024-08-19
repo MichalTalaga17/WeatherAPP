@@ -72,17 +72,7 @@ struct WeatherView: View {
                         }
                     }
                     .padding()
-                } else if let location = locationManager.location {
-                    Text("Fetching data for location...")
-                        .onAppear {
-                            fetchCityName(from: location) { cityName in
-                                self.cityName = cityName
-                                self.loadWeatherData()
-                            }
-                        }
-                } else {
-                    Text("Fetching location...")
-                }
+                } 
             }
             .navigationBarBackButtonHidden(true)
         }
