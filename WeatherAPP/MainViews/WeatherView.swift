@@ -4,7 +4,6 @@
 //
 //  Created by Michał Talaga on 16/08/2024.
 //
-
 import SwiftUI
 import CoreLocation
 
@@ -12,7 +11,7 @@ struct WeatherView: View {
     // MARK: - Properties
     @AppStorage("airQuality") private var airQuality: Bool = true
     @AppStorage("iconsColorsBasedOnWeather") private var iconsColorsBasedOnWeather: Bool = true
-    @AppStorage("backgroundStyle") private var backgroundStyle: BackgroundStyle = .none
+    @AppStorage("backgroundStyle") private var backgroundStyle: BackgroundStyle = .gradient
     
     @StateObject private var locationManager = LocationManager()
     
@@ -21,78 +20,69 @@ struct WeatherView: View {
     @State private var pollution: PollutionData?
     @State private var errorMessage: String?
     
+    
     @State private var cityName: String?
     
-    // Initializer
     init(cityName: String? = nil) {
-        _cityName = State(initialValue: cityName)
-    }
+            _cityName = State(initialValue: cityName)
+        }
+        
     
     // MARK: - Body
     var body: some View {
         NavigationView {
             ZStack {
-                if let cityName = cityName {
+                if backgroundStyle == .gradient {
                     backgroundView(for: currentWeather?.weather.first?.icon ?? "01d")
                         .edgesIgnoringSafeArea(.all)
-                    
-                    if let errorMessage = errorMessage {
-                        VStack {
-                            Text("Error: \(errorMessage)")
-                                .foregroundColor(.red)
-                                .padding()
-                            Button(action: {
-                                loadWeatherData()
-                            }) {
-                                Text("Retry")
-                                    .padding()
-                                    .background(Color.blue)
-                                    .foregroundColor(.white)
-                                    .cornerRadius(10)
-                            }
-                        }
-                    } else {
-                        ScrollView {
-                            VStack(alignment: .center) {
-                                if let weather = currentWeather {
-                                    weatherDetails(for: weather)
-                                }
-                                
-                                if let forecast = forecast {
-                                    forecastView(for: forecast)
-                                }
-                                
-                                if airQuality, let pollution = pollution {
-                                    PollutionDataView(pollutionEntry: pollution.list.first!)
-                                }
-                            }
-                            .padding()
-                        }
-                    }
-                } else if let location = locationManager.location {
+                }
+                
+                if let errorMessage = errorMessage {
                     VStack {
-                        ProgressView("Loading Weather Data...")
-                            .onAppear {
-                                loadWeatherData()
-                            }
+                        Text("Error: \(errorMessage)")
+                            .foregroundColor(.red)
+                            .padding()
+                        Button(action: {
+                            loadWeatherData()
+                        }) {
+                            Text("Retry")
+                                .padding()
+                                .background(Color.blue)
+                                .foregroundColor(.white)
+                                .cornerRadius(10)
+                        }
                     }
-                    .padding()
+                } else if cityName != nil {
+                        VStack(alignment: .center) {
+                            if let weather = currentWeather {
+                                weatherDetails(for: weather)
+                            }
+                            
+                            if let forecast = forecast {
+                                forecastView(for: forecast)
+                            }
+                            
+                            if airQuality, let pollution = pollution {
+                                PollutionDataView(pollutionEntry: pollution.list.first!)
+                            }
+                        }
+                        .padding()
+                } else if let location = locationManager.location {
+                    Text("Fetching data for location...")
+                        .onAppear {
+                            fetchCityName(from: location) { cityName in
+                                self.cityName = cityName
+                                self.loadWeatherData()
+                            }
+                        }
                 } else {
                     Text("Fetching location...")
-                        .onAppear {
-                                                    locationManager.requestLocation { result in
-                                                        switch result {
-                                                        case .success(let location):
-                                                            fetchCityName(from: location) { cityName in
-                                                                self.cityName = cityName
-                                                                self.loadWeatherData()
-                                                            }
-                                                        case .failure(let error):
-                                                            errorMessage = "Failed to get location: \(error.localizedDescription)"
-                                                        }
-                                                    }
-                                                }
                 }
+            }
+        }
+        .onAppear {
+            if cityName != nil || locationManager.location != nil {
+                loadWeatherData()
             }
         }
     }
@@ -301,15 +291,7 @@ struct WeatherView: View {
             }
         }
     }
-    
-    private func gradientBackground(for icon: String) -> some View {
-        let gradient = LinearGradient(gradient: Gradient(colors: [Color.blue, Color.purple]),
-                                      startPoint: .topLeading,
-                                      endPoint: .bottomTrailing)
-        return gradient.edgesIgnoringSafeArea(.all)
-    }
 }
-
 struct PollutionDataView: View {
     let pollutionEntry: PollutionEntry
     
@@ -367,7 +349,7 @@ struct WeatherDetailRow: View {
         }
     }
 }
-
 #Preview {
-    WeatherView(cityName: "Zembrzyce")
+    WeatherView(cityName: "New York")
 }
+

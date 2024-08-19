@@ -59,7 +59,6 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     func requestLocation(completion: @escaping (Result<CLLocation, Error>) -> Void) {
         if CLLocationManager.locationServicesEnabled() {
             locationManager.requestLocation()
-            // Handle the completion in didUpdateLocations
             self.requestLocationCompletion = completion
         } else {
             completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Location services are not enabled."])))
