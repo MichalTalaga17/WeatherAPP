@@ -5,6 +5,7 @@
 //  Created by Michał Talaga on 19/08/2024.
 //
 
+
 import SwiftUI
 import CoreLocation
 import SwiftData
@@ -29,8 +30,6 @@ struct MainView: View {
     
     @State private var cityName: String?
     @State private var isFavourite: Bool = false
-    @State private var isLoadingLocation: Bool = false
-    @State private var isLoadingWeatherData: Bool = false
     
     init(cityName: String? = nil) {
         _cityName = State(initialValue: cityName)
@@ -38,72 +37,78 @@ struct MainView: View {
     
     // MARK: - Body
     var body: some View {
-            NavigationView {
-                ZStack {
-                    if backgroundStyle == .gradient {
-                        backgroundView(for: currentWeather?.weather.first?.icon ?? "01d")
-                            .edgesIgnoringSafeArea(.all)
-                    }
-                    
-                    if let errorMessage = errorMessage {
-                        VStack {
-                            Text("Error: \(errorMessage)")
-                                .foregroundColor(.red)
-                                .padding()
-                            Button(action: {
-                                loadWeatherData()
-                            }) {
-                                Text("Retry")
-                                    .padding()
-                                    .background(Color.blue)
-                                    .foregroundColor(.white)
-                                    .cornerRadius(10)
-                            }
-                        }
-                    } else if isLoadingLocation {
-                        Text("Fetching data for location...")
-                    } else if isLoadingWeatherData {
-                        Text("Loading weather data...")
-                    } else {
-                        if let cityName = self.cityName ?? locationManager.cityName, !cityName.isEmpty {
-                            VStack(alignment: .center) {
-                                if let weather = currentWeather {
-                                    weatherDetails(for: weather)
-                                }
-                                
-                                if let forecast = forecast {
-                                    forecastView(for: forecast)
-                                }
-                                
-                                if airQuality, let pollution = pollution {
-                                    PollutionDataView(pollutionEntry: pollution.list.first!)
-                                }
-                            }
-                            .padding()
-                        } else {
-                            Text("City name is not set.")
-                        }
-                    }
+        NavigationView {
+            ZStack {
+                if backgroundStyle == .gradient {
+                    backgroundView(for: currentWeather?.weather.first?.icon ?? "01d")
+                        .edgesIgnoringSafeArea(.all)
                 }
-                .onAppear {
-                    if defaultCity == "Your location" {
-                        if let location = locationManager.location {
-                            isLoadingLocation = true
-                            fetchCityName(from: location) { resolvedCityName in
-                                self.cityName = resolvedCityName
-                                loadWeatherData(for: resolvedCityName)
+                
+                if let errorMessage = errorMessage {
+                    VStack {
+                        Text("Error: \(errorMessage)")
+                            .foregroundColor(.red)
+                            .padding()
+                        Button(action: {
+                            loadWeatherData() // Retry fetching data
+                        }) {
+                            Text("Retry")
+                                .padding()
+                                .background(Color.blue)
+                                .foregroundColor(.white)
+                                .cornerRadius(10)
+                        }
+                    }
+                } else if defaultCity == "Your location" {
+                    if let location = locationManager.location {
+                        Text("Fetching data for location...")
+                            .onAppear {
+                                fetchCityName(from: location) { cityName in
+                                    self.cityName = cityName
+                                    self.loadWeatherData() // Fetch data for the resolved city name
+                                }
+                            }
+                    } else {
+                        Text("Fetching location...")
+                    }
+                } else {
+                    if !defaultCity.isEmpty {
+                        VStack(alignment: .center) {
+                            if let weather = currentWeather {
+                                weatherDetails(for: weather)
+                            }
+                            
+                            if let forecast = forecast {
+                                forecastView(for: forecast)
+                            }
+                            
+                            if airQuality, let pollution = pollution {
+                                PollutionDataView(pollutionEntry: pollution.list.first!)
                             }
                         }
+                        .padding()
                     } else {
-                        loadWeatherData(for: defaultCity)
+                        Text("City name is not set.")
                     }
                 }
             }
+            .navigationBarBackButtonHidden(true)
+            .onAppear {
+                if defaultCity == "Your location" && locationManager.location != nil {
+                    loadWeatherData() // Fetch data based on the location
+                    checkIfFavourite()
+                } else if !defaultCity.isEmpty {
+                    loadWeatherData(for: defaultCity) // Fetch data for the city in defaultCity
+                    checkIfFavourite()
+                }
+            }
         }
-    
+    }
+
     private func weatherDetails(for weather: CurrentData) -> some View {
         VStack(alignment: .center) {
             VStack {
+                // Display city name based on the value of `defaultCity`
                 Text(defaultCity == "Your location" ? (cityName ?? locationManager.cityName) : defaultCity)
                     .font(.title3)
                 
@@ -141,20 +146,18 @@ struct MainView: View {
             weatherDetailsGrid(weather)
         }
     }
-    
+
     // MARK: - Data Fetching
     private func loadWeatherData(for city: String? = nil) {
         let resolvedCity = city ?? cityName ?? locationManager.cityName
-        
-        isLoadingWeatherData = true
         
         if resolvedCity == "Unknown" {
             locationManager.requestLocation { result in
                 switch result {
                 case .success(let location):
-                    fetchCityName(from: location) { resolvedCityName in
-                        self.cityName = resolvedCityName
-                        self.fetchWeatherData(for: resolvedCityName)
+                    fetchCityName(from: location) { cityName in
+                        self.cityName = cityName
+                        self.fetchWeatherData(for: cityName)
                     }
                 case .failure(let error):
                     self.errorMessage = "Failed to get location: \(error.localizedDescription)"
@@ -170,6 +173,7 @@ struct MainView: View {
             switch result {
             case .success(let weatherData):
                 currentWeather = weatherData
+                // Update mainIcon after fetching weather data
                 if let icon = weatherData.weather.first?.icon {
                     mainIcon = icon
                 }
@@ -195,8 +199,6 @@ struct MainView: View {
                 errorMessage = error.localizedDescription
             }
         }
-        
-        isLoadingWeatherData = false
     }
     
     // MARK: - Favourites Management
@@ -252,6 +254,8 @@ struct MainView: View {
             }
         }
     }
+    
+    
     
     private func weatherInfoView(_ weather: CurrentData) -> some View {
         VStack {
@@ -426,4 +430,3 @@ struct WeatherDetailRow: View {
 #Preview {
     MainView(cityName: "New York")
 }
-
