@@ -24,6 +24,7 @@ class API {
     func fetchForecastData(forCity city: String, completion: @escaping (Result<ForecastData, Error>) -> Void) {
         let encodedCity = city.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
         let urlString = "https://api.openweathermap.org/data/2.5/forecast?q=\(encodedCity)&appid=\(API.key)&units=\(units)"
+        print(urlString)
 
         guard let url = URL(string: urlString) else {
             let error = NSError(domain: "Invalid URL", code: -1, userInfo: nil)
@@ -62,6 +63,7 @@ class API {
     func fetchCurrentWeatherData(forCity city: String, completion: @escaping (Result<CurrentData, Error>) -> Void) {
         let encodedCity = city.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
         let urlString = "https://api.openweathermap.org/data/2.5/weather?q=\(encodedCity)&appid=\(API.key)&units=\(units)"
+        print(urlString)
         guard let url = URL(string: urlString) else {
             completion(.failure(NSError(domain: "Invalid URL", code: -1, userInfo: nil)))
             return
@@ -98,6 +100,7 @@ class API {
                 let longitude = weatherData.coord.lon
                 
                 let urlString = "https://api.openweathermap.org/data/2.5/air_pollution?lat=\(latitude)&lon=\(longitude)&appid=\(API.key)"
+                print(urlString)
                 guard let url = URL(string: urlString) else {
                     completion(.failure(NSError(domain: "Invalid URL", code: -1, userInfo: nil)))
                     return
