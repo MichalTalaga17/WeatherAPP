@@ -41,9 +41,8 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         requestLocationCompletion = nil
     }
     
-    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        // No longer needed, handled by new authorization check
-        switch CLLocationManager.authorizationStatus() {
+    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        switch manager.authorizationStatus {
         case .authorizedWhenInUse, .authorizedAlways:
             if CLLocationManager.locationServicesEnabled() {
                 locationManager.startUpdatingLocation()
@@ -51,6 +50,7 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         case .denied, .restricted:
             print("Location services are restricted or denied.")
         case .notDetermined:
+            // Request authorization if it hasn't been determined yet
             locationManager.requestWhenInUseAuthorization()
         @unknown default:
             print("Unknown location authorization status.")
@@ -82,7 +82,7 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     
     func requestLocation(completion: @escaping (Result<CLLocation, Error>) -> Void) {
         if CLLocationManager.locationServicesEnabled() {
-            switch CLLocationManager.authorizationStatus() {
+            switch locationManager.authorizationStatus {
             case .notDetermined:
                 // Authorization status is not determined, will wait for the callback
                 self.requestLocationCompletion = completion

@@ -45,26 +45,28 @@ struct SearchView: View {
                         }
                         .disabled(cityName.isEmpty)
                     }
+                    .padding(.vertical, 40)
                     
-                    VStack(alignment: .leading, spacing: 10) {
+                    VStack(alignment: .leading, spacing: 15) {
                         ForEach(cities, id: \.self) { city in
                             NavigationLink(destination: WeatherView(cityName: city.name)) {
                                 HStack(spacing: 5) {
                                     Text(city.name)
                                         .font(.title2)
+                                        .padding()
                                     Spacer()
                                     HStack {
                                         if let temperature = city.temperature {
                                             Text("\(Int(temperature))°")
-                                                .font(.title3 .bold())
+                                                .font(.title2 .bold())
                                         }
                                         if let icon = city.weatherIcon {
                                             IconConvert(for: icon, useWeatherColors: iconsColorsBasedOnWeather)
+                                                .padding()
                                         }
                                     }
                                 }
                             }
-                            .padding(10)
                             .background(Color.white.opacity(0.2))
                             .cornerRadius(15)
                             .task {
