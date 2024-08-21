@@ -1,11 +1,3 @@
-//
-//  MainView.swift
-//  WeatherAPP
-//
-//  Created by Michał Talaga on 19/08/2024.
-//
-
-
 import SwiftUI
 import CoreLocation
 import SwiftData
@@ -45,98 +37,80 @@ struct MainView: View {
                 }
                 
                 if let errorMessage = errorMessage {
-                    VStack {
-                        Text("Error: \(errorMessage)")
-                            .foregroundColor(.red)
-                            .padding()
-                        Button(action: {
-                            loadWeatherData()
-                        }) {
-                            Text("Retry")
-                                .padding()
-                                .background(Color.blue)
-                                .foregroundColor(.white)
-                                .cornerRadius(10)
-                        }
-                    }
-                } else if defaultCity == "Your location" {
-                    if let location = locationManager.location {
-                        Text("Fetching data for location...")
+                    errorView(errorMessage: errorMessage)
+                } else {
+                    weatherContent
+                }
+            }
+        }
+    }
+    
+    private var weatherContent: some View {
+        Group {
+            if defaultCity == "Your location" {
+                if let location = locationManager.location {
+                    if let cityName = self.cityName {
+                        weatherView(for: cityName)
                             .onAppear {
                                 fetchCityName(from: location) { resolvedCityName in
-                                    print(resolvedCityName)
                                     self.cityName = resolvedCityName
                                     self.loadWeatherData(for: resolvedCityName)
                                 }
                             }
-                    }  else {
-                        if !defaultCity.isEmpty {
-                            VStack(alignment: .center) {
-                                if let weather = currentWeather {
-                                    weatherDetails(for: weather)
-                                }
-                                
-                                if let forecast = forecast {
-                                    forecastView(for: forecast)
-                                }
-                                
-                                if airQuality, let pollution = pollution {
-                                    PollutionDataView(pollutionEntry: pollution.list.first!)
+                    } else {
+                        Text("Fetching city name...")
+                            .onAppear {
+                                fetchCityName(from: location) { resolvedCityName in
+                                    self.cityName = resolvedCityName
+                                    self.loadWeatherData(for: resolvedCityName)
                                 }
                             }
-                            .padding()
-                        } else {
-                            Text("City name is not set.")
-                        }
                     }
-                    
+                } else {
+                    Text("Unable to get location.")
                 }
-                    
-                
+            } else {
+                weatherView(for: defaultCity)
             }
-            
         }
     }
     
-    private func weatherDetails(for weather: CurrentData) -> some View {
+    private func weatherView(for city: String) -> some View {
         VStack(alignment: .center) {
-            VStack {
-                // Display city name based on the value of `defaultCity`
-                Text(defaultCity == "Your location" ? (cityName ?? locationManager.cityName) : defaultCity)
-                    .font(.title3)
-                
-                Text("\(Int(weather.main.temp))°")
-                    .font(.system(size: 80))
-                
-                if let weatherDescription = weather.weather.first?.description {
-                    Text(weatherDescription.capitalized)
-                }
-                
-                Text("From \(Int(weather.main.temp_min))° to \(Int(weather.main.temp_max))°")
-                    .font(.callout)
-                
-                Button(action: {
-                    toggleFavourite()
-                }) {
-                    if isFavourite {
-                        Image(systemName: "star.fill")
-                    } else {
-                        Image(systemName: "star")
-                    }
-                }
-                .padding(10)
-                .padding(.horizontal)
-                .background(Color.white.opacity(0.2))
-                .cornerRadius(20)
-            }
-            .padding(.bottom)
-            
-            LazyVGrid(columns: Array(repeating: .init(.flexible(), spacing: 10), count: 2), spacing: 10) {
-                weatherInfoView(weather)
-                weatherAdditionalInfoView(weather)
+            if let weather = currentWeather {
+                weatherDetails(for: weather)
             }
             
-            weatherDetailsGrid(weather)
+            if let forecast = forecast {
+                forecastView(for: forecast)
+            }
+            
+            if airQuality, let pollution = pollution {
+                PollutionDataView(pollutionEntry: pollution.list.first!)
+            }
+        }
+        .padding()
+        .onAppear {
+            self.cityName = city
+            self.loadWeatherData(for: city)
+            self.checkIfFavourite()
+        }
+    }
+    
+    private func errorView(errorMessage: String) -> some View {
+        VStack {
+            Text("Error: \(errorMessage)")
+                .foregroundColor(.red)
+                .padding()
+            Button(action: {
+                loadWeatherData()
+            }) {
+                Text("Retry")
+                    .padding()
+                    .background(Color.blue)
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
+            }
         }
     }
     
@@ -248,7 +222,47 @@ struct MainView: View {
         }
     }
     
-    
+    private func weatherDetails(for weather: CurrentData) -> some View {
+        VStack(alignment: .center) {
+            VStack {
+                // Display city name based on the value of `defaultCity`
+                Text(defaultCity == "Your location" ? (cityName ?? locationManager.cityName) : defaultCity)
+                    .font(.title3)
+                
+                Text("\(Int(weather.main.temp))°")
+                    .font(.system(size: 80))
+                
+                if let weatherDescription = weather.weather.first?.description {
+                    Text(weatherDescription.capitalized)
+                }
+                
+                Text("From \(Int(weather.main.temp_min))° to \(Int(weather.main.temp_max))°")
+                    .font(.callout)
+                
+                Button(action: {
+                    toggleFavourite()
+                }) {
+                    if isFavourite {
+                        Image(systemName: "star.fill")
+                    } else {
+                        Image(systemName: "star")
+                    }
+                }
+                .padding(10)
+                .padding(.horizontal)
+                .background(Color.white.opacity(0.2))
+                .cornerRadius(20)
+            }
+            .padding(.bottom)
+            
+            LazyVGrid(columns: Array(repeating: .init(.flexible(), spacing: 10), count: 2), spacing: 10) {
+                weatherInfoView(weather)
+                weatherAdditionalInfoView(weather)
+            }
+            
+            weatherDetailsGrid(weather)
+        }
+    }
     
     private func weatherInfoView(_ weather: CurrentData) -> some View {
         VStack {
