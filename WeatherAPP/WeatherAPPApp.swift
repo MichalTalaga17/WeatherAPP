@@ -37,7 +37,7 @@ struct WeatherAPPApp: App {
                     }
                     .tag(0)
                 
-                MainView2()
+                MainView()
                     .tabItem {
                         Image(systemName: "cloud.fill")
                             .foregroundStyle(Color.black.opacity(0.8))
