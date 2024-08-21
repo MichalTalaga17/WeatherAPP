@@ -1,3 +1,10 @@
+//
+//  MainView.swift
+//  WeatherAPP
+//
+//  Created by Michał Talaga on 16/08/2024.
+//
+
 import SwiftUI
 import CoreLocation
 import SwiftData
@@ -52,6 +59,7 @@ struct MainView: View {
                     if let cityName = self.cityName {
                         weatherView(for: cityName)
                             .onAppear {
+                                // Ensure cityName is set before loading weather data
                                 fetchCityName(from: location) { resolvedCityName in
                                     self.cityName = resolvedCityName
                                     self.loadWeatherData(for: resolvedCityName)
@@ -256,78 +264,67 @@ struct MainView: View {
             .padding(.bottom)
             
             LazyVGrid(columns: Array(repeating: .init(.flexible(), spacing: 10), count: 2), spacing: 10) {
-                weatherInfoView(weather)
-                weatherAdditionalInfoView(weather)
+                VStack {
+                    Spacer()
+                    HStack {
+                        Spacer()
+                        HStack(spacing: 30) {
+                            VStack {
+                                IconConvert(for: "sunrise.fill", useWeatherColors: iconsColorsBasedOnWeather)
+                                Text(formatUnixTimeToHourAndMinute(weather.sys.sunrise, timezone: weather.timezone))
+                            }
+                            VStack {
+                                IconConvert(for: "sunset.fill", useWeatherColors: iconsColorsBasedOnWeather)
+                                Text(formatUnixTimeToHourAndMinute(weather.sys.sunset, timezone: weather.timezone))
+                            }
+                        }
+                        Spacer()
+                    }
+                    Spacer()
+                }
+                .padding(.horizontal)
+                .padding(.vertical, 5)
+                .background(Color.white.opacity(0.2))
+                .cornerRadius(8)
+                
+                VStack {
+                    Spacer()
+                    HStack {
+                        Spacer()
+                        HStack(alignment: .center) {
+                            if let icon = weather.weather.first?.icon {
+                                IconConvert(for: icon, useWeatherColors: iconsColorsBasedOnWeather)
+                            }
+                            VStack {
+                                Text("\(weather.clouds.all)%")
+                                    .font(.title2 .bold())
+                                Text("\(weather.visibility / 1000) km")
+                            }
+                        }
+                        Spacer()
+                    }
+                    Spacer()
+                }
+                .padding(.horizontal)
+                .padding(.vertical, 5)
+                .background(Color.white.opacity(0.2))
+                .cornerRadius(8)
             }
             
-            weatherDetailsGrid(weather)
-        }
-    }
-    
-    private func weatherInfoView(_ weather: CurrentData) -> some View {
-        VStack {
-            Spacer()
-            HStack {
-                Spacer()
-                HStack(spacing: 30) {
-                    VStack {
-                        IconConvert(for: "sunrise.fill", useWeatherColors: iconsColorsBasedOnWeather)
-                        Text(formatUnixTimeToHourAndMinute(weather.sys.sunrise, timezone: weather.timezone))
-                    }
-                    VStack {
-                        IconConvert(for: "sunset.fill", useWeatherColors: iconsColorsBasedOnWeather)
-                        Text(formatUnixTimeToHourAndMinute(weather.sys.sunset, timezone: weather.timezone))
-                    }
+            VStack {
+                LazyVGrid(columns: Array(repeating: .init(.flexible(), spacing: 0), count: 2), spacing: 0) {
+                    WeatherDetailRow(title: "Humidity", value: "\(weather.main.humidity)%")
+                    WeatherDetailRow(title: "Pressure", value: "\(weather.main.pressure) hPa")
                 }
-                Spacer()
-            }
-            Spacer()
-        }
-        .padding(.horizontal)
-        .padding(.vertical, 5)
-        .background(Color.white.opacity(0.2))
-        .cornerRadius(8)
-    }
-    
-    private func weatherAdditionalInfoView(_ weather: CurrentData) -> some View {
-        VStack {
-            Spacer()
-            HStack {
-                Spacer()
-                HStack(alignment: .center) {
-                    if let icon = weather.weather.first?.icon {
-                        IconConvert(for: icon, useWeatherColors: iconsColorsBasedOnWeather)
-                    }
-                    VStack {
-                        Text("\(weather.clouds.all)%")
-                            .font(.title2 .bold())
-                        Text("\(weather.visibility / 1000) km")
-                    }
+                LazyVGrid(columns: Array(repeating: .init(.flexible(), spacing: 0), count: 2), spacing: 0) {
+                    WeatherDetailRow(title: "Wind Speed", value: "\(Int(weather.wind.speed)) m/s")
+                    WeatherDetailRow(title: "Precipitation", value: getPrecipitationInfo(weather))
                 }
-                Spacer()
             }
-            Spacer()
+            .padding()
+            .background(Color.white.opacity(0.2))
+            .cornerRadius(8)
         }
-        .padding(.horizontal)
-        .padding(.vertical, 5)
-        .background(Color.white.opacity(0.2))
-        .cornerRadius(8)
-    }
-    
-    private func weatherDetailsGrid(_ weather: CurrentData) -> some View {
-        VStack {
-            LazyVGrid(columns: Array(repeating: .init(.flexible(), spacing: 0), count: 2), spacing: 0) {
-                WeatherDetailRow(title: "Humidity", value: "\(weather.main.humidity)%")
-                WeatherDetailRow(title: "Pressure", value: "\(weather.main.pressure) hPa")
-            }
-            LazyVGrid(columns: Array(repeating: .init(.flexible(), spacing: 0), count: 2), spacing: 0) {
-                WeatherDetailRow(title: "Wind Speed", value: "\(Int(weather.wind.speed)) m/s")
-                WeatherDetailRow(title: "Precipitation", value: getPrecipitationInfo(weather))
-            }
-        }
-        .padding()
-        .background(Color.white.opacity(0.2))
-        .cornerRadius(8)
     }
     
     private func forecastView(for forecast: ForecastData) -> some View {
