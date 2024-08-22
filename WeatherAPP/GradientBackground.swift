@@ -100,7 +100,7 @@ func gradientBackground(for iconName: String) -> LinearGradient {
         
     case "13d":
         gradient = LinearGradient(
-            gradient: Gradient(colors: [Color.blue.opacity(0.2), Color.white.opacity(0.7)]),
+            gradient: Gradient(colors: [Color.white.opacity(0.7), Color.blue.opacity(0.2)]),
             startPoint: .top,
             endPoint: .bottom
         )

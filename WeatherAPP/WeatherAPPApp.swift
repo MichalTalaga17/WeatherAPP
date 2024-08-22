@@ -31,31 +31,25 @@ struct WeatherAPPApp: App {
                 SettingsView()
                     .tabItem {
                         Image(systemName: "gear")
-                            .foregroundStyle(Color.black.opacity(0.8))
                         Text("Settings")
-                            .foregroundStyle(Color.black.opacity(0.8))
                     }
                     .tag(0)
                 
                 MainView()
                     .tabItem {
                         Image(systemName: "cloud.fill")
-                            .foregroundStyle(Color.black.opacity(0.8))
                         Text("Weather")
-                            .foregroundStyle(Color.black.opacity(0.8))
                     }
                     .tag(1)
                 
                 SearchView()
                     .tabItem {
                         Image(systemName: "magnifyingglass")
-                            .foregroundStyle(Color.black.opacity(0.8))
                         Text("Search")
-                            .foregroundStyle(Color.black.opacity(0.8))
                     }
                     .tag(2)
             }
-            .accentColor(.black)
+            .accentColor(.white)
             
             .modelContainer(for: FavouriteCity.self)
         }
