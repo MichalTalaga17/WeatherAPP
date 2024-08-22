@@ -65,7 +65,7 @@ struct SettingsView: View {
                     
                     Section(header: Text("Notifications")) {
                         Toggle("Storm Notifications", isOn: $stormNotifications)
-                        Toggle("Air Quality Information", isOn: $airQuality)
+                        
                     }
                     
                     Section(header: Text("Preferences")) {
@@ -85,6 +85,7 @@ struct SettingsView: View {
                         }
                         
                         Toggle("Data Saving Mode", isOn: $dataSavingMode)
+                        Toggle("Air Quality Information", isOn: $airQuality)
                     }
                     
                     Section(header: Text("About")) {

@@ -30,7 +30,8 @@ struct PollutionDataView: View {
     var body: some View {
         VStack {
             if let pollution = pollution {
-                Text("Air Quality Index: \(pollution.aqi ?? 0)")
+                // Replace 'aqi' with the actual property available in PollutionData
+                Text("Air Quality Index: \(pollution.list. ?? 0)")
                     .font(.headline)
                 // Additional pollution details here
             } else {
