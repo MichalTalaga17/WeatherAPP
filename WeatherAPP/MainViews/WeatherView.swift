@@ -1,10 +1,9 @@
 //
-//  Weather.swift
+//  WeatherView.swift
 //  WeatherAPP
 //
 //  Created by Michał Talaga on 16/08/2024.
 //
-
 
 import SwiftUI
 import CoreLocation
@@ -72,7 +71,7 @@ struct WeatherView: View {
                         }
                     }
                     .padding()
-                } 
+                }
             }
             .navigationBarBackButtonHidden(true)
         }
@@ -167,7 +166,6 @@ struct WeatherView: View {
             isFavourite = cities.contains(where: { $0.name == cityName })
         }
     }
-    
     
     // MARK: - Helper Functions
     private func fetchCityName(from location: CLLocation, completion: @escaping (String) -> Void) {
@@ -312,17 +310,7 @@ struct WeatherView: View {
         .cornerRadius(8)
     }
     
-    private func getPrecipitationInfo(_ weather: CurrentData) -> String {
-        if let rain = weather.rain?.hour1 {
-            return "\(rain) mm"
-        } else if let snow = weather.snow?.hour1 {
-            return "\(snow) mm"
-        } else {
-            return "0"
-        }
-    }
     
-    // MARK: - Background Handling
     private func backgroundView(for icon: String) -> some View {
         Group {
             if backgroundStyle == .gradient {
@@ -334,7 +322,21 @@ struct WeatherView: View {
     }
 }
 
-#Preview {
-    WeatherView(cityName: "New York")
+
+
+
+// MARK: - Precipitation Info
+func getPrecipitationInfo(_ weather: CurrentData) -> String {
+    if let rainVolume = weather.rain?.hour1 {
+        return "\(rainVolume) mm/h"
+    } else if let snowVolume = weather.snow?.hour1 {
+        return "\(snowVolume) mm/h"
+    } else {
+        return "0"
+    }
 }
 
+// MARK: - Preview
+#Preview {
+    WeatherView(cityName: "London")
+}

@@ -22,7 +22,8 @@ class API {
     
     // Metoda do pobierania danych prognozy pogody
     func fetchForecastData(forCity city: String, completion: @escaping (Result<ForecastData, Error>) -> Void) {
-        let encodedCity = city.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+        let trimmedCity = city.trimmingCharacters(in: .whitespacesAndNewlines)
+        let encodedCity = trimmedCity.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
         let urlString = "https://api.openweathermap.org/data/2.5/forecast?q=\(encodedCity)&appid=\(API.key)&units=\(units)"
         print(urlString)
 
@@ -61,7 +62,8 @@ class API {
     
     // Metoda do pobierania bieżących danych pogodowych
     func fetchCurrentWeatherData(forCity city: String, completion: @escaping (Result<CurrentData, Error>) -> Void) {
-        let encodedCity = city.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+        let trimmedCity = city.trimmingCharacters(in: .whitespacesAndNewlines)
+        let encodedCity = trimmedCity.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
         let urlString = "https://api.openweathermap.org/data/2.5/weather?q=\(encodedCity)&appid=\(API.key)&units=\(units)"
         print(urlString)
         guard let url = URL(string: urlString) else {
@@ -93,7 +95,9 @@ class API {
     }
     
     func fetchAirPollutionData(forCity city: String, completion: @escaping (Result<PollutionData, Error>) -> Void) {
-        fetchCurrentWeatherData(forCity: city) { result in
+        let trimmedCity = city.trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        fetchCurrentWeatherData(forCity: trimmedCity) { result in
             switch result {
             case .success(let weatherData):
                 let latitude = weatherData.coord.lat

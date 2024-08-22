@@ -39,7 +39,7 @@ struct SearchView: View {
                         NavigationLink(destination: WeatherView(cityName: cityName)) {
                             Text("Go")
                                 .padding()
-                                .background(cityName.isEmpty ? Color.white.opacity(0.4) : Color.white.opacity(0.8))
+                                .background(cityName.isEmpty ? Color.black.opacity(0.4) : Color.black.opacity(0.8))
                                 .foregroundColor(.white)
                                 .cornerRadius(8)
                         }
