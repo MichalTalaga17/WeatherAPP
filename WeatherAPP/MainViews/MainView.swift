@@ -38,6 +38,9 @@ struct MainView: View {
                 if backgroundStyle == .gradient {
                     backgroundView(for: currentWeather?.weather.first?.icon ?? "01d")
                         .edgesIgnoringSafeArea(.all)
+                } else {
+                    Color.clear
+                        .edgesIgnoringSafeArea(.all)
                 }
                 
                 if let errorMessage = errorMessage {
