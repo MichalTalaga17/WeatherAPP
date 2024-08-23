@@ -1,0 +1,42 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "Key" : {
+      "extractionState" : "manual"
+    },
+    "Key 1" : {
+      "extractionState" : "manual"
+    },
+    "Key 2" : {
+      "extractionState" : "manual"
+    },
+    "Key 3" : {
+      "extractionState" : "manual"
+    },
+    "Key 4" : {
+      "extractionState" : "manual"
+    },
+    "Key 5" : {
+      "extractionState" : "manual"
+    },
+    "Key 6" : {
+      "extractionState" : "manual"
+    },
+    "Key 7" : {
+      "extractionState" : "manual"
+    },
+    "Key 8" : {
+      "extractionState" : "manual"
+    },
+    "Key 9" : {
+      "extractionState" : "manual"
+    },
+    "Key 10" : {
+      "extractionState" : "manual"
+    },
+    "Key 11" : {
+      "extractionState" : "manual"
+    }
+  },
+  "version" : "1.0"
+}

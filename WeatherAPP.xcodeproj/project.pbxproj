@@ -35,6 +35,9 @@
 		47BCAA302C77E9EC00DF4831 /* PollutionData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47B3FF742C6FE59E00F179EA /* PollutionData.swift */; };
 		47BCAA312C77E9EF00DF4831 /* CurrentData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47B3FF722C6FE57200F179EA /* CurrentData.swift */; };
 		47BCAA322C77E9F200DF4831 /* ForecastData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47B3FF762C6FE5B800F179EA /* ForecastData.swift */; };
+		47BCAA362C789EBB00DF4831 /* WeatherAPPwidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47BCAA0D2C77E45D00DF4831 /* WeatherAPPwidgets.swift */; };
+		47BCAA372C789ED000DF4831 /* AppIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47BCAA0F2C77E45D00DF4831 /* AppIntent.swift */; };
+		47BCAA382C78A0B900DF4831 /* LoctionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47B3FF6D2C6FE43700F179EA /* LoctionManager.swift */; };
 		47EC68B72C5D50AC001BA302 /* WeatherAPPApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47EC68B62C5D50AC001BA302 /* WeatherAPPApp.swift */; };
 		47EC68B92C5D50AC001BA302 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47EC68B82C5D50AC001BA302 /* SearchView.swift */; };
 		47EC68BD2C5D50AD001BA302 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 47EC68BC2C5D50AD001BA302 /* Assets.xcassets */; };
@@ -330,6 +333,7 @@
 			files = (
 				47BCAA322C77E9F200DF4831 /* ForecastData.swift in Sources */,
 				47BCAA302C77E9EC00DF4831 /* PollutionData.swift in Sources */,
+				47BCAA382C78A0B900DF4831 /* LoctionManager.swift in Sources */,
 				47BCAA0A2C77E45D00DF4831 /* WeatherAPPwidgetsBundle.swift in Sources */,
 				47BCAA222C77E75100DF4831 /* API.swift in Sources */,
 				47BCAA102C77E45D00DF4831 /* AppIntent.swift in Sources */,
@@ -352,12 +356,14 @@
 				47EC68B72C5D50AC001BA302 /* WeatherAPPApp.swift in Sources */,
 				47B3FF6C2C6FB61700F179EA /* CityListView.swift in Sources */,
 				47B3FF682C6FAB5D00F179EA /* PrivacyPolicyView.swift in Sources */,
+				47BCAA362C789EBB00DF4831 /* WeatherAPPwidgets.swift in Sources */,
 				47B3FF632C6F972600F179EA /* WeatherView.swift in Sources */,
 				47B3FF752C6FE59E00F179EA /* PollutionData.swift in Sources */,
 				478FE0712C73D62F003A5654 /* MainView.swift in Sources */,
 				47BCAA2F2C77E9DF00DF4831 /* CurrentData.swift in Sources */,
 				47B3FF712C6FE55600F179EA /* API.swift in Sources */,
 				47B3FF662C6FAB4D00F179EA /* AboutView.swift in Sources */,
+				47BCAA372C789ED000DF4831 /* AppIntent.swift in Sources */,
 				47B3FF772C6FE5B800F179EA /* ForecastData.swift in Sources */,
 				478FE06F2C738AB8003A5654 /* City.swift in Sources */,
 			);

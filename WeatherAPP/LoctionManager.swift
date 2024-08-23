@@ -59,7 +59,7 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     
     // Custom Methods
 
-    private func fetchCityName(from location: CLLocation?) {
+     func fetchCityName(from location: CLLocation?) {
         guard let location = location else { return }
         
         let geocoder = CLGeocoder()

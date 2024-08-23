@@ -7,6 +7,7 @@
 
 import WidgetKit
 import SwiftUI
+import CoreLocation
 
 struct Provider: AppIntentTimelineProvider {
     func placeholder(in context: Context) -> SimpleEntry {
@@ -32,10 +33,50 @@ struct Provider: AppIntentTimelineProvider {
     }
 }
 
+struct LocationProvider: TimelineProvider {
+    @ObservedObject var locationManager = LocationManager()
+    
+    func placeholder(in context: Context) -> SimpleLocationEntry {
+        SimpleLocationEntry(date: Date(), cityName: "Loading...")
+    }
+
+    func getSnapshot(in context: Context, completion: @escaping (SimpleLocationEntry) -> Void) {
+        let entry = SimpleLocationEntry(date: Date(), cityName: locationManager.cityName)
+        completion(entry)
+    }
+
+    func getTimeline(in context: Context, completion: @escaping (Timeline<SimpleLocationEntry>) -> Void) {
+        var entries: [SimpleLocationEntry] = []
+        let currentDate = Date()
+        
+        // Pobierz aktualną lokalizację
+        locationManager.requestLocation { result in
+            switch result {
+            case .success(let location):
+                locationManager.fetchCityName(from: location)
+                let entry = SimpleLocationEntry(date: currentDate, cityName: locationManager.cityName)
+                entries.append(entry)
+            case .failure(let error):
+                print("Failed to get location: \(error.localizedDescription)")
+                let entry = SimpleLocationEntry(date: currentDate, cityName: "Unknown")
+                entries.append(entry)
+            }
+            
+            let timeline = Timeline(entries: entries, policy: .atEnd)
+            completion(timeline)
+        }
+    }
+}
+
 struct SimpleEntry: TimelineEntry {
     let date: Date
     let configuration: ConfigurationAppIntent
 }
+struct SimpleLocationEntry: TimelineEntry {
+    let date: Date
+    let cityName: String
+}
+
 
 struct WeatherAPPwidgetsEntryView : View {
     var entry: Provider.Entry
@@ -50,6 +91,24 @@ struct WeatherAPPwidgetsEntryView : View {
         }
     }
 }
+
+struct LocationWidgetEntryView : View {
+    var entry: LocationProvider.Entry
+
+    var body: some View {
+        VStack {
+            Text("Your Location:")
+            Text(entry.cityName)
+                .font(.title)
+                .fontWeight(.bold)
+                .padding(.top, 5)
+            Text("Updated:")
+            Text(entry.date, style: .time)
+        }
+        .padding()
+    }
+}
+
 
 struct WeatherAPPwidgets: Widget {
     let kind: String = "WeatherAPPwidgets"
@@ -73,6 +132,21 @@ extension ConfigurationAppIntent {
         let intent = ConfigurationAppIntent()
         intent.choosenCity = "Nowy Jork"
         return intent
+    }
+}
+
+// Konfiguracja nowego widgetu
+struct LocationWidget: Widget {
+    let kind: String = "LocationWidget"
+
+    var body: some WidgetConfiguration {
+        StaticConfiguration(kind: kind, provider: LocationProvider()) { entry in
+            LocationWidgetEntryView(entry: entry)
+                .containerBackground(.fill.tertiary, for: .widget)
+        }
+        .configurationDisplayName("Current Location Widget")
+        .description("Displays the current city name based on your location.")
+        .supportedFamilies([.systemSmall, .systemMedium])
     }
 }
 

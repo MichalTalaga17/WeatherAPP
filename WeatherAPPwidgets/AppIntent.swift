@@ -7,6 +7,7 @@
 
 import WidgetKit
 import AppIntents
+import SwiftUI
 
 struct ConfigurationAppIntent: WidgetConfigurationIntent {
     static var title: LocalizedStringResource = "Configuration"
