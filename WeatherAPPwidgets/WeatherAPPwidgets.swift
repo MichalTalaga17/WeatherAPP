@@ -182,17 +182,18 @@ struct WeatherProvider: TimelineProvider {
         locationManager.requestLocation { result in
             switch result {
             case .success(let location):
-                let lat = location.coordinate.latitude
-                let lon = location.coordinate.longitude
-                
-                api.fetchCurrentWeatherData(forCity: "\(lat),\(lon)") { result in
-                    switch result {
-                    case .success(let data):
-                        let temperature = "\(data.main.temp)°C"
-                        completion(temperature)
-                    case .failure:
-                        completion("--")
+                if locationManager.cityName != "Unknown" {
+                    api.fetchCurrentWeatherData(forCity: locationManager.cityName) { result in
+                        switch result {
+                        case .success(let data):
+                            let temperature = "\(data.main.temp)°C"
+                            completion(temperature)
+                        case .failure:
+                            completion("--")
+                        }
                     }
+                } else {
+                    completion("--")
                 }
             case .failure:
                 completion("--")
