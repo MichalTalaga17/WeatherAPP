@@ -37,7 +37,7 @@ struct LocationProvider: TimelineProvider {
     @ObservedObject var locationManager = LocationManager()
     
     func placeholder(in context: Context) -> SimpleLocationEntry {
-        SimpleLocationEntry(date: Date(), cityName: "Loading...")
+        SimpleLocationEntry(date: Date(), cityName: "London")
     }
 
     func getSnapshot(in context: Context, completion: @escaping (SimpleLocationEntry) -> Void) {
@@ -147,6 +147,83 @@ struct LocationWidget: Widget {
         .configurationDisplayName("Current Location Widget")
         .description("Displays the current city name based on your location.")
         .supportedFamilies([.systemSmall, .systemMedium])
+    }
+}
+
+struct WeatherEntry: TimelineEntry {
+    let date: Date
+    let temperature: String
+}
+
+struct WeatherProvider: TimelineProvider {
+    let locationManager = LocationManager()
+    let api = API.shared
+    
+    func placeholder(in context: Context) -> WeatherEntry {
+        WeatherEntry(date: Date(), temperature: "--")
+    }
+
+    func getSnapshot(in context: Context, completion: @escaping (WeatherEntry) -> Void) {
+        fetchTemperature { temperature in
+            let entry = WeatherEntry(date: Date(), temperature: temperature)
+            completion(entry)
+        }
+    }
+
+    func getTimeline(in context: Context, completion: @escaping (Timeline<WeatherEntry>) -> Void) {
+        fetchTemperature { temperature in
+            let entry = WeatherEntry(date: Date(), temperature: temperature)
+            let timeline = Timeline(entries: [entry], policy: .atEnd)
+            completion(timeline)
+        }
+    }
+    
+    private func fetchTemperature(completion: @escaping (String) -> Void) {
+        locationManager.requestLocation { result in
+            switch result {
+            case .success(let location):
+                let lat = location.coordinate.latitude
+                let lon = location.coordinate.longitude
+                
+                api.fetchCurrentWeatherData(forCity: "\(lat),\(lon)") { result in
+                    switch result {
+                    case .success(let data):
+                        let temperature = "\(data.main.temp)°C"
+                        completion(temperature)
+                    case .failure:
+                        completion("--")
+                    }
+                }
+            case .failure:
+                completion("--")
+            }
+        }
+    }
+}
+
+struct WeatherWidgetEntryView: View {
+    var entry: WeatherProvider.Entry
+
+    var body: some View {
+        VStack {
+            Text("Current Temperature")
+            Text(entry.temperature)
+                .font(.largeTitle)
+        }
+        .padding()
+    }
+}
+
+struct WeatherWidget: Widget {
+    let kind: String = "WeatherWidget"
+
+    var body: some WidgetConfiguration {
+        StaticConfiguration(kind: kind, provider: WeatherProvider()) { entry in
+            WeatherWidgetEntryView(entry: entry)
+                .containerBackground(.fill.tertiary, for: .widget)
+        }
+        .configurationDisplayName("Weather Widget")
+        .description("Displays the current temperature based on your location.")
     }
 }
 
