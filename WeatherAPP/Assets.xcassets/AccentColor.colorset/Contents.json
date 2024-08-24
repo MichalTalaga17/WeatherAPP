@@ -2,10 +2,10 @@
   "colors" : [
     {
       "color" : {
-        "platform" : "universal",
+        "platform" : "ios",
         "reference" : "labelColor"
       },
-      "idiom" : "universal"
+      "idiom" : "iphone"
     },
     {
       "appearances" : [
@@ -15,15 +15,10 @@
         }
       ],
       "color" : {
-        "color-space" : "srgb",
-        "components" : {
-          "alpha" : "1.000",
-          "blue" : "0.000",
-          "green" : "0.000",
-          "red" : "0.000"
-        }
+        "platform" : "ios",
+        "reference" : "labelColor"
       },
-      "idiom" : "universal"
+      "idiom" : "iphone"
     },
     {
       "appearances" : [
@@ -33,10 +28,10 @@
         }
       ],
       "color" : {
-        "platform" : "osx",
-        "reference" : "textColor"
+        "platform" : "ios",
+        "reference" : "labelColor"
       },
-      "idiom" : "universal"
+      "idiom" : "iphone"
     }
   ],
   "info" : {

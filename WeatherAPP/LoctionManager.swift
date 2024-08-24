@@ -41,22 +41,6 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         requestLocationCompletion = nil
     }
     
-    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-        switch manager.authorizationStatus {
-        case .authorizedWhenInUse, .authorizedAlways:
-            if CLLocationManager.locationServicesEnabled() {
-                locationManager.startUpdatingLocation()
-            }
-        case .denied, .restricted:
-            print("Location services are restricted or denied.")
-        case .notDetermined:
-            // Request authorization if it hasn't been determined yet
-            locationManager.requestWhenInUseAuthorization()
-        @unknown default:
-            print("Unknown location authorization status.")
-        }
-    }
-    
     // Custom Methods
 
      func fetchCityName(from location: CLLocation?) {
