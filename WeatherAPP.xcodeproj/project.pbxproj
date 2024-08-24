@@ -41,6 +41,7 @@
 		47BCAA3A2C79D1C700DF4831 /* LocationTempWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47BCAA392C79D1C700DF4831 /* LocationTempWidget.swift */; };
 		47BCAA3B2C79D1C700DF4831 /* LocationTempWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47BCAA392C79D1C700DF4831 /* LocationTempWidget.swift */; };
 		47BCAA3C2C79E98300DF4831 /* IconConvert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47B3FF782C6FEEAA00F179EA /* IconConvert.swift */; };
+		47BCAA3D2C79F17900DF4831 /* GradientBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478FE0662C729EE0003A5654 /* GradientBackground.swift */; };
 		47EC68B72C5D50AC001BA302 /* WeatherAPPApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47EC68B62C5D50AC001BA302 /* WeatherAPPApp.swift */; };
 		47EC68B92C5D50AC001BA302 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47EC68B82C5D50AC001BA302 /* SearchView.swift */; };
 		47EC68BD2C5D50AD001BA302 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 47EC68BC2C5D50AD001BA302 /* Assets.xcassets */; };
@@ -341,6 +342,7 @@
 				47BCAA302C77E9EC00DF4831 /* PollutionData.swift in Sources */,
 				47BCAA382C78A0B900DF4831 /* LoctionManager.swift in Sources */,
 				47BCAA3C2C79E98300DF4831 /* IconConvert.swift in Sources */,
+				47BCAA3D2C79F17900DF4831 /* GradientBackground.swift in Sources */,
 				47BCAA0A2C77E45D00DF4831 /* WeatherAPPwidgetsBundle.swift in Sources */,
 				47BCAA222C77E75100DF4831 /* API.swift in Sources */,
 				47BCAA102C77E45D00DF4831 /* AppIntent.swift in Sources */,

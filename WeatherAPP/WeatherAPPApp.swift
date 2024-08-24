@@ -49,7 +49,7 @@ struct WeatherAPPApp: App {
                     }
                     .tag(2)
             }
-            .accentColor(.white)
+            .accentColor(.accentColor)
             
             .modelContainer(for: FavouriteCity.self)
         }
