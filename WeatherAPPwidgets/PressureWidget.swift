@@ -103,18 +103,22 @@ struct PressureWidgetEntryView: View {
     }
     
     var body: some View {
-        VStack(alignment: .leading) {
-            Text(entry.cityName)
-                .font(.headline)
-            Gauge(value: pressureValue, in: 950...1050) {
-            } currentValueLabel: {
-                Text("\(Int(pressureValue)) hPa")
-                    .foregroundColor(.blue)
+        HStack{
+            VStack(alignment: .leading) {
+                Text(entry.cityName)
                     .font(.headline)
+                Spacer()
+                    VStack(alignment: .leading){
+                        Text("\(Int(pressureValue))")
+                            .font(.title .bold())
+                        Text("hPa")
+                    }
+                    .padding(.horizontal, 15)
+                    .padding(.vertical, 10)
+                    .background(Color.accentColor.opacity(0.2))
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
             }
-            .scaleEffect(1.7)
-            .gaugeStyle(.accessoryCircularCapacity)
-            .frame(width: 100, height: 100)
+            Spacer()
         }
     }
 }

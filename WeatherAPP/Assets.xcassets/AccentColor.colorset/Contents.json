@@ -3,7 +3,7 @@
     {
       "color" : {
         "platform" : "ios",
-        "reference" : "labelColor"
+        "reference" : "lightTextColor"
       },
       "idiom" : "iphone"
     },
@@ -16,7 +16,7 @@
       ],
       "color" : {
         "platform" : "ios",
-        "reference" : "labelColor"
+        "reference" : "darkTextColor"
       },
       "idiom" : "iphone"
     },
@@ -29,7 +29,7 @@
       ],
       "color" : {
         "platform" : "ios",
-        "reference" : "labelColor"
+        "reference" : "lightTextColor"
       },
       "idiom" : "iphone"
     }
