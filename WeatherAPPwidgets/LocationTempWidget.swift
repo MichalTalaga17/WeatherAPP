@@ -1,3 +1,10 @@
+//
+//  LocationWidgets.swift
+//  WeatherAPPwidgets
+//
+//  Created by Michał Talaga on 22/08/2024.
+//
+
 import SwiftUI
 import WidgetKit
 import CoreLocation
@@ -137,6 +144,9 @@ struct LocationTempWidgetEntryView: View {
             VStack(alignment: .leading) {
                 Text(entry.cityName)
                     .font(.headline)
+                Text(entry.weatherDescription)
+                    .font(.subheadline)
+                    .foregroundColor(.gray)
                 Text(entry.temperature)
                     .font(.title2)
                 Spacer()
@@ -163,32 +173,33 @@ struct LocationTempWidgetEntryView: View {
                 }
                 Spacer()
                 IconConvert(for: entry.weatherIcon, useWeatherColors: true)
-                    .scaleEffect(2.0)
-                    .frame(width: 80, height: 80)
+                    .scaleEffect(1.25)
+                    .frame(width: 50, height: 50)
             }
             
             Spacer()
             
             HStack {
-                VStack(alignment: .leading) {
-                    Text("Wilgotność:")
-                    Text("Wiatr:")
-                    Text("Ciśnienie:")
-                    Text("Odczuwalna:")
-                }
-                .font(.footnote)
-                .foregroundColor(.gray)
-                
-                VStack(alignment: .leading) {
-                    Text(entry.humidity)
-                    Text(entry.windSpeed)
-                    Text(entry.pressure)
+                HStack{
+                    Image(systemName: "thermometer")
                     Text(entry.feelsLike)
                 }
-                .font(.footnote)
+                HStack{
+                    Image(systemName: "drop.fill")
+                    Text(entry.humidity)
+                }
+                
+                HStack{
+                    Image(systemName: "wind")
+                    Text(entry.windSpeed)
+                }
+                HStack{
+                    Image(systemName: "gauge")
+                    Text(entry.pressure)
+                }
             }
         }
-        .padding()
+        .padding(.vertical)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
@@ -214,11 +225,11 @@ struct LocationTempWidget: Widget {
 #Preview(as: .systemSmall) {
     LocationTempWidget()
 } timeline: {
-    LocationTempWidgetEntry(date: Date(), temperature: "20 °C", cityName: "Miasto Przykładowe", weatherIcon: "01d", humidity: "60%", windSpeed: "10 km/h", weatherDescription: "Czyste niebo", pressure: "1015 hPa", feelsLike: "18 °C")
+    LocationTempWidgetEntry(date: Date(), temperature: "20 °C", cityName: "Warszawa", weatherIcon: "01d", humidity: "60%", windSpeed: "10 km/h", weatherDescription: "Czyste niebo", pressure: "1015 hPa", feelsLike: "18 °C")
 }
 
 #Preview(as: .systemMedium) {
     LocationTempWidget()
 } timeline: {
-    LocationTempWidgetEntry(date: Date(), temperature: "20 °C", cityName: "Miasto Przykładowe", weatherIcon: "01d", humidity: "60%", windSpeed: "10 km/h", weatherDescription: "Czyste niebo", pressure: "1015 hPa", feelsLike: "18 °C")
+    LocationTempWidgetEntry(date: Date(), temperature: "20 °C", cityName: "Warszawa", weatherIcon: "01d", humidity: "60%", windSpeed: "10 km/h", weatherDescription: "Czyste niebo", pressure: "1015 hPa", feelsLike: "18 °C")
 }
