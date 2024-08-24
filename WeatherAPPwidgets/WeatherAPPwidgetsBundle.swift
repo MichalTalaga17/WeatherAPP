@@ -11,10 +11,7 @@ import SwiftUI
 @main
 struct WeatherAPPwidgetsBundle: WidgetBundle {
     var body: some Widget {
-//        WeatherAPPwidgets()
-//        LocationWidget()
         LocationTempWidget()
-        PressureWidget()
         WeatherWidget()
     }
 }

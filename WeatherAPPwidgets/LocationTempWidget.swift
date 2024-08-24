@@ -96,8 +96,8 @@ struct LocationTempWidgetProvider: TimelineProvider {
                         case .success(let data):
                             let temperature = "\(Int(data.main.temp)) °C"
                             let weatherIcon = data.weather.first?.icon ?? "01d" // Domyślny ikon
-                            let humidity = "\(data.main.humidity)%"
-                            let windSpeed = "\(Int(data.wind.speed)) km/h"
+                            let humidity = "\(data.main.humidity)\n%"
+                            let windSpeed = "\(Int(data.wind.speed))\nkm/h"
                             let weatherDescription = data.weather.first?.description.capitalized ?? "Brak danych"
                             let pressure = "\(data.main.pressure) hPa"
                             let feelsLike = "\(Int(data.main.feels_like)) °C"
