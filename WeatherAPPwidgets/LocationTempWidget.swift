@@ -9,40 +9,47 @@ import SwiftUI
 import WidgetKit
 import CoreLocation
 
-// MARK: - Weather Entry
+// MARK: - LocationTempWidget Entry
 
-struct WeatherEntry: TimelineEntry {
+/// Represents a single entry in the location temperature widget timeline.
+struct LocationTempWidgetEntry: TimelineEntry {
     let date: Date
     let temperature: String
     let cityName: String
+    let weatherIcon: String
 }
 
-// MARK: - Weather Provider
+// MARK: - LocationTempWidget Provider
 
-struct WeatherProvider: TimelineProvider {
+/// Provides data for the location temperature widget timeline.
+struct LocationTempWidgetProvider: TimelineProvider {
     @ObservedObject private var locationManager = LocationManager()
     private let api = API.shared
     
-    func placeholder(in context: Context) -> WeatherEntry {
-        WeatherEntry(date: Date(), temperature: "--", cityName: "Unknown")
+    /// Provides a placeholder entry for the widget.
+    func placeholder(in context: Context) -> LocationTempWidgetEntry {
+        LocationTempWidgetEntry(date: Date(), temperature: "--", cityName: "Unknown", weatherIcon: "01d")
     }
 
-    func getSnapshot(in context: Context, completion: @escaping (WeatherEntry) -> Void) {
-        fetchTemperature { temperature, cityName in
-            let entry = WeatherEntry(date: Date(), temperature: temperature, cityName: cityName)
+    /// Provides a snapshot entry for the widget.
+    func getSnapshot(in context: Context, completion: @escaping (LocationTempWidgetEntry) -> Void) {
+        fetchTemperature { temperature, cityName, weatherIcon in
+            let entry = LocationTempWidgetEntry(date: Date(), temperature: temperature, cityName: cityName, weatherIcon: weatherIcon)
             completion(entry)
         }
     }
 
-    func getTimeline(in context: Context, completion: @escaping (Timeline<WeatherEntry>) -> Void) {
-        fetchTemperature { temperature, cityName in
-            let entry = WeatherEntry(date: Date(), temperature: temperature, cityName: cityName)
+    /// Provides a timeline of entries for the widget.
+    func getTimeline(in context: Context, completion: @escaping (Timeline<LocationTempWidgetEntry>) -> Void) {
+        fetchTemperature { temperature, cityName, weatherIcon in
+            let entry = LocationTempWidgetEntry(date: Date(), temperature: temperature, cityName: cityName, weatherIcon: weatherIcon)
             let timeline = Timeline(entries: [entry], policy: .atEnd)
             completion(timeline)
         }
     }
     
-    private func fetchTemperature(completion: @escaping (String, String) -> Void) {
+    /// Fetches the current temperature, city name, and weather icon.
+    private func fetchTemperature(completion: @escaping (String, String, String) -> Void) {
         locationManager.requestLocation { result in
             switch result {
             case .success(let location):
@@ -55,60 +62,72 @@ struct WeatherProvider: TimelineProvider {
                         switch result {
                         case .success(let data):
                             let temperature = "\(Int(data.main.temp)) °C"
-                            print("Temperature fetched successfully: \(temperature)")
-                            completion(temperature, locationManager.cityName)
+                            let weatherIcon = data.weather.first?.icon ?? "01d" // Default icon
+                            print("Temperature and icon fetched successfully: \(temperature), \(weatherIcon)")
+                            completion(temperature, locationManager.cityName, weatherIcon)
                         case .failure(let error):
                             print("Failed to fetch weather data: \(error.localizedDescription)")
-                            completion("--", locationManager.cityName)
+                            completion("--", locationManager.cityName, "01d")
                         }
                     }
                 } else {
                     print("City name is unknown, cannot fetch weather data.")
-                    completion("--", "Unknown")
+                    completion("--", "Unknown", "01d")
                 }
                 
             case .failure(let error):
                 print("Failed to get location: \(error.localizedDescription)")
-                completion("--", "Unknown")
+                completion("--", "Unknown", "01d")
             }
         }
     }
 }
 
-// MARK: - Weather Widget View
+// MARK: - LocationTempWidget View
 
-struct WeatherWidgetEntryView: View {
-    var entry: WeatherEntry
+/// The view that displays the weather information in the widget.
+struct LocationTempWidgetEntryView: View {
+    var entry: LocationTempWidgetEntry
 
     var body: some View {
         VStack {
             Text(entry.cityName)
                 .font(.headline)
-            Text(entry.temperature)
-                .font(.largeTitle)
+            
+            HStack {
+                IconConvert(for: entry.weatherIcon, useWeatherColors: true)
+                    .frame(width: 50, height: 50) // Adjust size as needed
+                
+                Text(entry.temperature)
+                    .font(.largeTitle)
+            }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color.white.opacity(0.2))
     }
 }
 
-// MARK: - Weather Widget Configuration
+// MARK: - LocationTempWidget Configuration
 
-struct WeatherWidget: Widget {
-    let kind: String = "WeatherWidget"
+/// The main widget configuration.
+struct LocationTempWidget: Widget {
+    let kind: String = "LocationTempWidget"
 
     var body: some WidgetConfiguration {
-        StaticConfiguration(kind: kind, provider: WeatherProvider()) { entry in
-            WeatherWidgetEntryView(entry: entry)
+        StaticConfiguration(kind: kind, provider: LocationTempWidgetProvider()) { entry in
+            LocationTempWidgetEntryView(entry: entry)
                 .containerBackground(.fill.tertiary, for: .widget)
         }
-        .configurationDisplayName("Weather Widget")
-        .description("Displays the current temperature based on your location.")
+        .configurationDisplayName("Location Temperature Widget")
+        .description("Displays the current temperature and weather conditions based on your location.")
     }
 }
 
 // MARK: - Preview
 
+/// Preview configuration for the widget.
 #Preview(as: .systemSmall) {
-    WeatherWidget()
+    LocationTempWidget()
 } timeline: {
-    WeatherEntry(date: Date(), temperature: "20", cityName: "Sample City")
+    LocationTempWidgetEntry(date: Date(), temperature: "20 °C", cityName: "Sample City", weatherIcon: "01d")
 }

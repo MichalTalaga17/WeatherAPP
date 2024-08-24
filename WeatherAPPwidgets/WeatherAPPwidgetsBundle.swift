@@ -13,6 +13,6 @@ struct WeatherAPPwidgetsBundle: WidgetBundle {
     var body: some Widget {
 //        WeatherAPPwidgets()
 //        LocationWidget()
-        WeatherWidget()
+        LocationTempWidget()
     }
 }
