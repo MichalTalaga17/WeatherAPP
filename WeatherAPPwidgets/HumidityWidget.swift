@@ -42,7 +42,7 @@ struct HumidityWidgetProvider: TimelineProvider {
     private func fetchHumidityData(completion: @escaping (HumidityWidgetEntry) -> Void) {
         locationManager.requestLocation { result in
             switch result {
-            case .success(let location):
+            case .success(_):
                 guard locationManager.cityName != "Unknown" else {
                     completion(HumidityWidgetEntry(date: Date(), cityName: "Nieznane", humidity: "-- %"))
                     return
@@ -80,12 +80,9 @@ struct HumidityWidgetEntryView: View {
                     .font(.headline)
                 Spacer()
                 VStack(alignment: .leading) {
-                    Text("\(humidityValue)")
+                    Text("\(humidityValue)%")
                         .font(.title.bold())
                         .foregroundColor(.blue)
-                    Text("%")
-                        .foregroundColor(.blue)
-                        .font(.title3)
                 }
                 .padding(.horizontal, 15)
                 .padding(.vertical, 5)
@@ -94,7 +91,6 @@ struct HumidityWidgetEntryView: View {
             }
             Spacer()
         }
-        .padding()
     }
 }
 

@@ -48,12 +48,16 @@ struct PressureWidgetProvider: TimelineProvider {
     /// Funkcja zwracająca dane dla harmonogramu widgetu.
     func getTimeline(in context: Context, completion: @escaping (Timeline<PressureWidgetEntry>) -> Void) {
         fetchPressure { pressure, cityName in
+            let currentDate = Date()
+            let refreshDate = Calendar.current.date(byAdding: .minute, value: 15, to: currentDate) ?? Date()
+            
             let entry = PressureWidgetEntry(
-                date: Date(),
+                date: currentDate,
                 cityName: cityName,
                 pressure: pressure
             )
-            let timeline = Timeline(entries: [entry], policy: .atEnd)
+            
+            let timeline = Timeline(entries: [entry], policy: .after(refreshDate))
             completion(timeline)
         }
     }

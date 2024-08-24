@@ -150,4 +150,110 @@ import CoreLocation
 //     }
 // }
 
+import WidgetKit
+import SwiftUI
+import CoreLocation
+
+struct WeatherEntry: TimelineEntry {
+    var date: Date
+    let cityName: String
+    let value: String
+    let displayOption: DisplayOption
+}
+
+struct WeatherProvider: AppIntentTimelineProvider {
+    @ObservedObject private var locationManager = LocationManager()
+    private let api = API.shared
+    
+    func placeholder(in context: Context) -> WeatherEntry {
+        WeatherEntry(date: Date(), cityName: "Unknown", value: "--", displayOption: .humidity)
+    }
+
+    func snapshot(for configuration: WeatherConfigurationIntent, in context: Context) async -> WeatherEntry {
+        await fetchWeatherData(for: configuration)
+    }
+
+    func timeline(for configuration: WeatherConfigurationIntent, in context: Context) async -> Timeline<WeatherEntry> {
+        let entry = await fetchWeatherData(for: configuration)
+        return Timeline(entries: [entry], policy: .atEnd)
+    }
+
+    private func fetchWeatherData(for configuration: WeatherConfigurationIntent) async -> WeatherEntry {
+        let currentDate = Date()
+        let displayOption = configuration.displayOption
+        
+        return await withCheckedContinuation { continuation in
+            locationManager.requestLocation { result in
+                switch result {
+                case .success(_):
+                    guard locationManager.cityName != "Unknown" else {
+                        continuation.resume(returning: WeatherEntry(date: currentDate, cityName: "Unknown", value: "--", displayOption: displayOption))
+                        return
+                    }
+                    
+                    api.fetchCurrentWeatherData(forCity: locationManager.cityName) { result in
+                        switch result {
+                        case .success(let data):
+                            let value: String
+                            switch displayOption {
+                            case .humidity:
+                                value = "\(data.main.humidity) %"
+                            case .pressure:
+                                value = "\(data.main.pressure) hPa"
+                            }
+                            continuation.resume(returning: WeatherEntry(date: currentDate, cityName: locationManager.cityName, value: value, displayOption: displayOption))
+                        case .failure:
+                            continuation.resume(returning: WeatherEntry(date: currentDate, cityName: locationManager.cityName, value: "--", displayOption: displayOption))
+                        }
+                    }
+                case .failure:
+                    continuation.resume(returning: WeatherEntry(date: currentDate, cityName: "Unknown", value: "--", displayOption: displayOption))
+                }
+            }
+        }
+    }
+}
+struct WeatherEntryView: View {
+    var entry: WeatherProvider.Entry
+    
+    var body: some View {
+        HStack {
+            VStack(alignment: .leading) {
+                Text(entry.cityName)
+                    .font(.headline)
+                Spacer()
+                VStack(alignment: .leading) {
+                    Text(entry.value)
+                        .font(.title.bold())
+                        .foregroundColor(.blue)
+                    Text(entry.displayOption == .humidity ? "Humidity" : "Pressure")
+                        .font(.subheadline)
+                }
+                .padding(.horizontal, 15)
+                .padding(.vertical, 5)
+                .background(Color.accentColor.opacity(0.2))
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+            }
+            Spacer()
+        }
+    }
+}
+struct WeatherWidget: Widget {
+    let kind: String = "WeatherWidget"
+
+    var body: some WidgetConfiguration {
+        AppIntentConfiguration(kind: kind, intent: WeatherConfigurationIntent.self, provider: WeatherProvider()) { entry in
+            WeatherEntryView(entry: entry)
+                .containerBackground(.fill.tertiary, for: .widget)
+        }
+        .configurationDisplayName("Weather Widget")
+        .description("Displays either humidity or pressure based on your selection.")
+        .supportedFamilies([.systemSmall, .systemMedium])
+    }
+}
+#Preview(as: .systemSmall) {
+    WeatherWidget()
+} timeline: {
+    WeatherEntry(date: Date(), cityName: "Warszawa", value: "65 %", displayOption: .humidity )
+}
 
