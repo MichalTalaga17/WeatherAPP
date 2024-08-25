@@ -139,6 +139,7 @@ struct AirQualitySmallWidgetEntryView: View {
                 .padding(.top, 5)
             }
         }
+        .padding()
     }
 }
 struct AirQualitySmallWidget: Widget {

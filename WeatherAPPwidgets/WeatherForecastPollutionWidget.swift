@@ -14,7 +14,15 @@ struct WeatherForecastPollutionEntry: TimelineEntry {
     let date: Date
     let cityName: String
     let currentTemperature: String
+    let weatherDescription: String
+    let minTemperature: String
+    let maxTemperature: String
     let weatherIcon: String
+    let humidity: String
+    let pressure: String
+    let windSpeed: String
+    let precipitation: String
+    let cloudiness: String
     let forecast: [ForecastDay]
     let aqi: Int
     let aqiDescription: String
@@ -30,7 +38,15 @@ struct WeatherForecastPollutionProvider: TimelineProvider {
             date: Date(),
             cityName: "Unknown",
             currentTemperature: "--",
+            weatherDescription: "Unknown",
+            minTemperature: "--",
+            maxTemperature: "--",
             weatherIcon: "01d",
+            humidity: "--",
+            pressure: "--",
+            windSpeed: "--",
+            precipitation: "--",
+            cloudiness: "--",
             forecast: [],
             aqi: 0,
             aqiDescription: "Unknown",
@@ -65,7 +81,7 @@ struct WeatherForecastPollutionProvider: TimelineProvider {
                         let latestEntry = pollutionData.list.first ?? PollutionEntry(main: MainPollution(aqi: 0), components: PollutionComponents(co: 0, no: 0, no2: 0, o3: 0, so2: 0, pm2_5: 0, pm10: 0, nh3: 0))
                         let forecast = forecastData.list.prefix(5).map { item in
                             let date = Date(timeIntervalSince1970: TimeInterval(item.dt))
-                            let temperature = "\(Int(item.main.temp)) °C"
+                            let temperature = "\(Int(item.main.temp))°"
                             let weatherIcon = item.weather.first?.icon ?? "01d"
                             return ForecastDay(date: date, temperature: temperature, weatherIcon: weatherIcon)
                         }
@@ -73,8 +89,16 @@ struct WeatherForecastPollutionProvider: TimelineProvider {
                         let entry = WeatherForecastPollutionEntry(
                             date: Date(),
                             cityName: forecastData.city.name,
-                            currentTemperature: "\(Int(forecastData.list.first?.main.temp ?? 0)) °C",
+                            currentTemperature: "\(Int(forecastData.list.first?.main.temp ?? 0))°",
+                            weatherDescription: forecastData.list.first?.weather.first?.description.capitalized ?? "Unknown",
+                            minTemperature: "\(Int(forecastData.list.min(by: { $0.main.temp_min < $1.main.temp_min })?.main.temp_min ?? 0))°",
+                            maxTemperature: "\(Int(forecastData.list.max(by: { $0.main.temp_max < $1.main.temp_max })?.main.temp_max ?? 0))°",
                             weatherIcon: forecastData.list.first?.weather.first?.icon ?? "01d",
+                            humidity: "\(Int(forecastData.list.first?.main.humidity ?? 0))%",
+                            pressure: "\(Int(forecastData.list.first?.main.pressure ?? 0)) hPa",
+                            windSpeed: "\(Int(forecastData.list.first?.wind.speed ?? 0)) m/s",
+                            precipitation: "\(forecastData.list.first?.rain?.h1 ?? 0.0) mm",
+                            cloudiness: "\(Int(forecastData.list.first?.clouds.all ?? 0))%",
                             forecast: forecast,
                             aqi: latestEntry.main.aqi,
                             aqiDescription: aqiDescription(for: latestEntry.main.aqi),
@@ -88,8 +112,16 @@ struct WeatherForecastPollutionProvider: TimelineProvider {
                         let entry = WeatherForecastPollutionEntry(
                             date: Date(),
                             cityName: forecastData.city.name,
-                            currentTemperature: "\(Int(forecastData.list.first?.main.temp ?? 0)) °C",
+                            currentTemperature: "\(Int(forecastData.list.first?.main.temp ?? 0))°",
+                            weatherDescription: forecastData.list.first?.weather.first?.description.capitalized ?? "Unknown",
+                            minTemperature: "\(Int(forecastData.list.min(by: { $0.main.temp_min < $1.main.temp_min })?.main.temp_min ?? 0))°",
+                            maxTemperature: "\(Int(forecastData.list.max(by: { $0.main.temp_max < $1.main.temp_max })?.main.temp_max ?? 0))°",
                             weatherIcon: forecastData.list.first?.weather.first?.icon ?? "01d",
+                            humidity: "--",
+                            pressure: "--",
+                            windSpeed: "--",
+                            precipitation: "--",
+                            cloudiness: "--",
                             forecast: [],
                             aqi: 0,
                             aqiDescription: "Unknown",
@@ -106,7 +138,15 @@ struct WeatherForecastPollutionProvider: TimelineProvider {
                     date: Date(),
                     cityName: "Unknown",
                     currentTemperature: "--",
+                    weatherDescription: "Unknown",
+                    minTemperature: "--",
+                    maxTemperature: "--",
                     weatherIcon: "01d",
+                    humidity: "--",
+                    pressure: "--",
+                    windSpeed: "--",
+                    precipitation: "--",
+                    cloudiness: "--",
                     forecast: [],
                     aqi: 0,
                     aqiDescription: "Unknown",
@@ -117,6 +157,7 @@ struct WeatherForecastPollutionProvider: TimelineProvider {
             }
         }
     }
+    
     func aqiDescription(for aqi: Int) -> String {
         switch aqi {
         case 1:
@@ -134,58 +175,117 @@ struct WeatherForecastPollutionProvider: TimelineProvider {
         }
     }
 }
+
 struct WeatherForecastPollutionEntryView: View {
     var entry: WeatherForecastPollutionEntry
     
     var body: some View {
         VStack(alignment: .leading) {
-            HStack {
-                Text(entry.cityName)
-                    .font(.headline)
+            HStack(alignment: .top) {
+                VStack(alignment: .leading) {
+                    Text(entry.cityName)
+                        .font(.headline)
+                        .padding(.bottom, 2)
+                    Text(entry.weatherDescription)
+                        .font(.subheadline)
+                    Text("Min: \(entry.minTemperature) Max: \(entry.maxTemperature)")
+                        .font(.subheadline)
+                }
                 Spacer()
                 VStack(alignment: .trailing) {
                     Text(entry.currentTemperature)
                         .font(.largeTitle)
-                        .foregroundColor(.blue)
-                    Image(systemName: entry.weatherIcon)
-                        .resizable()
-                        .scaledToFit()
+                        .fontWeight(.bold)
+                    IconConvert(for: entry.weatherIcon, useWeatherColors: true)
                         .frame(width: 40, height: 40)
                 }
+            }
+            Spacer().frame(height: 10)
+            
+            HStack {
+                VStack {
+                    Text("Humidity")
+                        .font(.caption)
+                    Text(entry.humidity)
+                        .font(.subheadline)
+                }
+                .frame(maxWidth: .infinity)
+                
+                VStack {
+                    Text("Pressure")
+                        .font(.caption)
+                    Text(entry.pressure)
+                        .font(.subheadline)
+                }
+                .frame(maxWidth: .infinity)
+                
+                VStack {
+                    Text("Wind")
+                        .font(.caption)
+                    Text(entry.windSpeed)
+                        .font(.subheadline)
+                }
+                .frame(maxWidth: .infinity)
+                
+                VStack {
+                    Text("Precipitation")
+                        .font(.caption)
+                    Text(entry.precipitation)
+                        .font(.subheadline)
+                }
+                .frame(maxWidth: .infinity)
+                
+                VStack {
+                    Text("Cloudiness")
+                        .font(.caption)
+                    Text(entry.cloudiness)
+                        .font(.subheadline)
+                }
+                .frame(maxWidth: .infinity)
             }
             
             Spacer().frame(height: 10)
             
             HStack {
-                ForEach(entry.forecast) { day in
+                ForEach(entry.forecast.prefix(5)) { day in
                     VStack {
                         Text(hourFormatter.string(from: day.date))
                             .font(.footnote)
-                        Image(systemName: day.weatherIcon)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 20, height: 20)
+                            .padding(.bottom, 4)
+                        IconConvert(for: day.weatherIcon, useWeatherColors: true)
+                            .padding(.bottom, 4)
                         Text(day.temperature)
-                            .font(.footnote)
+                            .font(.callout)
                     }
-                    .padding(.horizontal, 4)
+                    .frame(maxWidth: .infinity)
                 }
             }
             
             Spacer().frame(height: 10)
             
-            VStack(alignment: .leading) {
-                Text("Air Quality: \(entry.aqiDescription)")
-                    .font(.subheadline)
-                    .foregroundColor(entry.aqiColor())
-                Text("PM2.5: \(entry.pm25, specifier: "%.1f") µg/m³")
-                    .font(.footnote)
-                Text("PM10: \(entry.pm10, specifier: "%.1f") µg/m³")
-                    .font(.footnote)
+            HStack(alignment: .top) {
+                VStack {
+                    Text("\(entry.aqiDescription)")
+                        .foregroundColor(entry.aqiColor())
+                    Text("Air Quality")
+                        .font(.subheadline)
+                }
+                .frame(maxWidth: .infinity)
+                
+                VStack {
+                    Text("\(entry.pm25, specifier: "%.1f")")
+                    Text("PM2.5")
+                        .font(.subheadline)
+                }
+                .frame(maxWidth: .infinity)
+                
+                VStack {
+                    Text("\(entry.pm10, specifier: "%.1f")")
+                    Text("PM10")
+                        .font(.subheadline)
+                }
+                .frame(maxWidth: .infinity)
             }
-            .padding(10)
-            .background(Color.accentColor.opacity(0.1))
-            .clipShape(RoundedRectangle(cornerRadius: 10))
         }
         .padding()
     }
@@ -209,6 +309,7 @@ extension WeatherForecastPollutionEntry {
         }
     }
 }
+
 struct WeatherForecastPollutionWidget: Widget {
     let kind: String = "WeatherForecastPollutionWidget"
     
@@ -222,6 +323,7 @@ struct WeatherForecastPollutionWidget: Widget {
         .supportedFamilies([.systemLarge])
     }
 }
+
 #Preview(as: .systemLarge) {
     WeatherForecastPollutionWidget()
 } timeline: {
@@ -229,11 +331,21 @@ struct WeatherForecastPollutionWidget: Widget {
         date: Date(),
         cityName: "Warszawa",
         currentTemperature: "22 °C",
+        weatherDescription: "Clear Sky",
+        minTemperature: "15°C",
+        maxTemperature: "25°C",
         weatherIcon: "01d",
+        humidity: "60%",
+        pressure: "1015 hPa",
+        windSpeed: "5 m/s",
+        precipitation: "0.0 mm",
+        cloudiness: "10%",
         forecast: [
             ForecastDay(date: Date(), temperature: "20°C", weatherIcon: "01d"),
-            ForecastDay(date: Date().addingTimeInterval(3600 * 24), temperature: "18°C", weatherIcon: "02d"),
-            ForecastDay(date: Date().addingTimeInterval(3600 * 24 * 2), temperature: "19°C", weatherIcon: "03d")
+            ForecastDay(date: Date().addingTimeInterval(3600 * 3), temperature: "18°C", weatherIcon: "02d"),
+            ForecastDay(date: Date().addingTimeInterval(3600 * 6), temperature: "19°C", weatherIcon: "03d"),
+            ForecastDay(date: Date().addingTimeInterval(3600 * 9), temperature: "20°C", weatherIcon: "01d"),
+            ForecastDay(date: Date().addingTimeInterval(3600 * 12), temperature: "18°C", weatherIcon: "02d")
         ],
         aqi: 2,
         aqiDescription: "Fair",
