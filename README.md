@@ -1,19 +1,18 @@
 # WeatherApp
 
-WeatherApp is a weather application built in SwiftUI, utilizing `SwiftData` for data management and `WidgetKit` to display a dynamic widget on the home screen. The app allows users to search for cities, save favorite locations, and display current and forecasted weather conditions.
+WeatherApp is a comprehensive weather application built with SwiftUI, leveraging `SwiftData` for efficient data management and `WidgetKit` to provide a dynamic and customizable widget experience on the home screen. This app allows users to search for cities, save favorite locations, and access detailed weather information.
 
 ## Features
 
-- **Weather Search:** Users can search for weather in selected cities using the OpenWeatherMap API.
-- **Favorites List:** Users can add cities to their favorites for quick access to current weather information.
-
-
-
+- **Weather Search:** Search for weather information by entering city names using the OpenWeatherMap API.
+- **Favorites List:** Easily add cities to a favorites list for quick access to current weather updates.
+- **Customizable Settings:** Personalize your weather experience with various settings options, including units of measurement and display preferences.
+- **Enhanced Widgets:** The app includes multiple widget configurations that provide dynamic and detailed weather updates directly on your home screen.
 
 ## Requirements
 
 - Xcode 14.0 or newer
-- iOS 15.0 or newer
+- iOS 17.0 or newer
 - OpenWeatherMap account to obtain an API key
 
 ## Installation
@@ -25,21 +24,25 @@ WeatherApp is a weather application built in SwiftUI, utilizing `SwiftData` for 
 2. **Building and running:**
    - Select the app target and run the project on a simulator or device.
 
-
 ## Usage
 
 1. **Search for a city:**
-   - Enter the city name in the search field and press `Search` to display the current weather for the selected location.
+   - Enter the city name in the search field and press `Search` to view current weather details for the selected location.
 
 2. **Add to Favorites:**
-   - You can add searched cities to your favorites list. These cities will appear on the main list in the app.
+   - Add searched cities to your favorites list for quick access. These cities will be readily accessible from the main list in the app.
 
+3. **Customize Settings:**
+   - Access the settings menu to adjust preferences such as temperature units, display options, and more.
+
+4. **Widget Customization:**
+   - Explore and configure various widgets to display different types of weather information on your home screen, including current conditions and forecasts.
 
 ## Future Development
 
-- **Notifications:** Adding notifications for changing weather conditions.
-- **Expanded Widget:** Enhancing the widget with additional information, such as forecasts for the coming hours.
-- **Support for more cities:** Allowing multiple cities to be added to the widget.
+- **Notifications:** Plan to add notifications for significant weather changes.
+- **Expanded Widget Options:** Further enhancement of widget features to include extended forecasts and additional weather data.
+- **Broader City Support:** Implementing support for more cities and locations to enrich user experience.
 
 ## Author
 
