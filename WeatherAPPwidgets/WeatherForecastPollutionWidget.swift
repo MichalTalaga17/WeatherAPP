@@ -62,7 +62,9 @@ struct WeatherForecastPollutionProvider: TimelineProvider {
     
     func getTimeline(in context: Context, completion: @escaping (Timeline<WeatherForecastPollutionEntry>) -> Void) {
         fetchCombinedData { entry in
-            let timeline = Timeline(entries: [entry], policy: .atEnd)
+            let nextUpdateDate = Calendar.current.date(byAdding: .minute, value: 15, to: Date())!
+                    let timeline = Timeline(entries: [entry], policy: .after(nextUpdateDate))
+                    
             completion(timeline)
         }
     }

@@ -64,7 +64,7 @@ struct AirQualitySmallWidgetProvider: TimelineProvider {
     
     private func fetchAirQuality(completion: @escaping (AirQualitySmallWidgetEntry) -> Void) {
         // Replace "Your City" with a valid city name or fetch it from a stored setting
-        let city = "Your City"
+        let city = "Zembrzyce"
         
         api.fetchAirPollutionData(forCity: city) { result in
             switch result {

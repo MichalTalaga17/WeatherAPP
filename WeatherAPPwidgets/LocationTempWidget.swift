@@ -76,7 +76,10 @@ struct LocationTempWidgetProvider: TimelineProvider {
                 pressure: pressure,
                 feelsLike: feelsLike
             )
-            let timeline = Timeline(entries: [entry], policy: .atEnd)
+            let nextUpdateDate = Calendar.current.date(byAdding: .minute, value: 15, to: Date())!
+            let timeline = Timeline(entries: [entry], policy: .after(nextUpdateDate))
+                    
+            
             completion(timeline)
         }
     }

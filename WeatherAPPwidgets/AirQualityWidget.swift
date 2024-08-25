@@ -5,7 +5,6 @@
 //  Created by Michał Talaga on 25/08/2024.
 //
 
-import Foundation
 import SwiftUI
 import WidgetKit
 
@@ -18,6 +17,7 @@ struct AirQualityWidgetEntry: TimelineEntry {
     let components: PollutionComponents
 }
 
+// MARK: - AirQualityWidget Provider
 struct AirQualityWidgetProvider: TimelineProvider {
     @ObservedObject private var locationManager = LocationManager()
     private let api = API.shared
@@ -83,6 +83,7 @@ struct AirQualityWidgetProvider: TimelineProvider {
             }
         }
     }
+    
     func aqiDescription(for aqi: Int) -> String {
         switch aqi {
         case 1:
@@ -101,13 +102,38 @@ struct AirQualityWidgetProvider: TimelineProvider {
     }
 }
 
-
+// MARK: - AirQualityWidget Entry View
 struct AirQualityWidgetEntryView: View {
     var entry: AirQualityWidgetEntry
     
     @Environment(\.widgetFamily) var widgetFamily
     
     var body: some View {
+        switch widgetFamily {
+        case .systemSmall:
+            smallView
+        case .systemMedium:
+            mediumView
+        default:
+            smallView
+        }
+    }
+    
+    var smallView: some View {
+        VStack(alignment: .leading, spacing: 5) {
+            Text(entry.cityName)
+                .font(.headline)
+            
+            Text("Air Quality: \(entry.aqiDescription)")
+                .font(.body)
+                .foregroundColor(Color.white.opacity(0.8))
+        }
+        .padding()
+        .background(Color.blue.opacity(0.8))
+        .clipShape(RoundedRectangle(cornerRadius: 10))
+    }
+    
+    var mediumView: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text(entry.cityName)
                 .font(.headline)
@@ -116,21 +142,22 @@ struct AirQualityWidgetEntryView: View {
                 .font(.title2)
                 .padding(.bottom, 5)
             
-            if widgetFamily == .systemMedium {
-                HStack(alignment: .center) {
-                    Text("CO: \(String(format: "%.1f", entry.components.co)) µg/m³")
-                    Text("NO: \(String(format: "%.1f", entry.components.no)) µg/m³")
-                    Text("NO₂: \(String(format: "%.1f", entry.components.no2)) µg/m³")
-                    Text("O₃: \(String(format: "%.1f", entry.components.o3)) µg/m³")
-                    Text("SO₂: \(String(format: "%.1f", entry.components.so2)) µg/m³")
-                    Text("PM₂.₅: \(String(format: "%.1f", entry.components.pm2_5)) µg/m³")
-                    Text("PM₁₀: \(String(format: "%.1f", entry.components.pm10)) µg/m³")
-                    Text("NH₃: \(String(format: "%.1f", entry.components.nh3)) µg/m³")
-                }
-                .font(.footnote)
-                .padding(.top, 10)
+            HStack(alignment: .center) {
+                Text("CO: \(String(format: "%.1f", entry.components.co)) µg/m³")
+                Text("NO: \(String(format: "%.1f", entry.components.no)) µg/m³")
+                Text("NO₂: \(String(format: "%.1f", entry.components.no2)) µg/m³")
+                Text("O₃: \(String(format: "%.1f", entry.components.o3)) µg/m³")
+                Text("SO₂: \(String(format: "%.1f", entry.components.so2)) µg/m³")
+                Text("PM₂.₅: \(String(format: "%.1f", entry.components.pm2_5)) µg/m³")
+                Text("PM₁₀: \(String(format: "%.1f", entry.components.pm10)) µg/m³")
+                Text("NH₃: \(String(format: "%.1f", entry.components.nh3)) µg/m³")
             }
+            .font(.footnote)
+            .padding(.top, 10)
         }
+        .padding()
+        .background(Color.blue.opacity(0.8))
+        .clipShape(RoundedRectangle(cornerRadius: 10))
     }
 }
 
@@ -145,11 +172,23 @@ struct AirQualityWidget: Widget {
         }
         .configurationDisplayName("Air Quality Widget")
         .description("Displays the air quality information for your location.")
-        .supportedFamilies([.systemMedium])
+        .supportedFamilies([.systemSmall, .systemMedium])
     }
 }
 
 // MARK: - Preview
+#Preview(as: .systemSmall) {
+    AirQualityWidget()
+} timeline: {
+    AirQualityWidgetEntry(
+        date: Date(),
+        cityName: "Warsaw",
+        aqi: 2,
+        aqiDescription: "Fair",
+        components: PollutionComponents(co: 0.5, no: 0.1, no2: 0.2, o3: 0.3, so2: 0.4, pm2_5: 10, pm10: 20, nh3: 0.05)
+    )
+}
+
 #Preview(as: .systemMedium) {
     AirQualityWidget()
 } timeline: {

@@ -138,4 +138,3 @@ struct WeatherWidget: Widget {
 } timeline: {
     WeatherEntry(date: Date(), cityName: "Warszawa", value: "65 %", displayOption: .precipitation )
 }
-

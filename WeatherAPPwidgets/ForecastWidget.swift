@@ -171,4 +171,3 @@ struct ForecastWidget: Widget {
 } timeline: {
     ForecastWidgetEntry(date: Date(), forecast: [], cityName: "Warszawa", temperature: "20 °C", weatherIcon: "01d")
 }
-
