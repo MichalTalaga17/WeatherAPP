@@ -35,6 +35,7 @@ struct MainView: View {
     var body: some View {
         NavigationView {
             ZStack {
+                
                 if backgroundStyle == .gradient {
                     backgroundView(for: currentWeather?.weather.first?.icon ?? "01d")
                         .edgesIgnoringSafeArea(.all)
@@ -75,6 +76,7 @@ struct MainView: View {
                         }
                     }
                 }
+                
             }
         }
     }

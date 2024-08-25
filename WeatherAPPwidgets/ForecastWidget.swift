@@ -103,8 +103,12 @@ struct ForecastWidgetProvider: TimelineProvider {
     }
 }
 
-// MARK: - ForecastWidget View
-/// Widok dla widgetu prognozy pogody, wyświetlający prognozę na najbliższe dni.
+let hourFormatter: DateFormatter = {
+    let formatter = DateFormatter()
+    formatter.dateFormat = "HH"
+    return formatter
+}()
+
 struct ForecastWidgetEntryView: View {
     var entry: ForecastWidgetEntry
     
@@ -119,24 +123,22 @@ struct ForecastWidgetEntryView: View {
                 Text(entry.temperature)
                     .font(.largeTitle)
             }
-            Text("Prognoza na najbliższe dni")
-                .font(.subheadline)
-                .foregroundColor(.gray)
             
             Spacer()
             
-            ForEach(entry.forecast) { day in
-                HStack {
-                    Text(day.date, style: .date)
-                        .font(.footnote)
-                    Spacer()
-                    IconConvert(for: day.weatherIcon, useWeatherColors: true)
-                    Text(day.temperature)
-                        .font(.footnote)
+            HStack {
+                ForEach(entry.forecast) { day in
+                    VStack {
+                        Text(hourFormatter.string(from: day.date))
+                            .font(.footnote)
+                        IconConvert(for: day.weatherIcon, useWeatherColors: true)
+                        Text(day.temperature)
+                            .font(.footnote)
+                    }
+                    .padding(.horizontal, 4)
                 }
             }
         }
-        .padding()
     }
 }
 

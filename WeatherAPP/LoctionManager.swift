@@ -41,6 +41,26 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         requestLocationCompletion = nil
     }
     
+    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        switch manager.authorizationStatus {
+        case .authorizedWhenInUse, .authorizedAlways:
+            if CLLocationManager.locationServicesEnabled() {
+                // Tworzymy niestandardową kolejkę, aby uniknąć blokowania głównego wątku
+                let myQueue = DispatchQueue(label: "myOwnQueue")
+                myQueue.async {
+                    self.locationManager.startUpdatingLocation()
+                }
+            }
+        case .denied, .restricted:
+            print("Usługi lokalizacyjne są ograniczone lub odrzucone.")
+        case .notDetermined:
+            // Żądanie autoryzacji, jeśli nie zostało jeszcze określone
+            locationManager.requestWhenInUseAuthorization()
+        @unknown default:
+            print("Nieznany status autoryzacji lokalizacji.")
+        }
+    }
+    
     // Custom Methods
 
      func fetchCityName(from location: CLLocation?) {
