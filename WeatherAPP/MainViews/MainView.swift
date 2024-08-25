@@ -214,7 +214,7 @@ struct MainView: View {
         let geocoder = CLGeocoder()
         geocoder.reverseGeocodeLocation(location) { placemarks, error in
             if let error = error {
-                print("Reverse geocoding failed: \(error.localizedDescription)")
+                print("MV: Reverse geocoding failed: \(error.localizedDescription)")
                 completion("Unknown")
                 return
             }

@@ -45,41 +45,46 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         switch manager.authorizationStatus {
         case .authorizedWhenInUse, .authorizedAlways:
             if CLLocationManager.locationServicesEnabled() {
-                // Tworzymy niestandardową kolejkę, aby uniknąć blokowania głównego wątku
-                let myQueue = DispatchQueue(label: "myOwnQueue")
-                myQueue.async {
+                // Make sure to start updating location on a background thread
+                DispatchQueue.global(qos: .background).async {
                     self.locationManager.startUpdatingLocation()
                 }
             }
         case .denied, .restricted:
-            print("Usługi lokalizacyjne są ograniczone lub odrzucone.")
+            print("Location services are restricted or denied.")
         case .notDetermined:
-            // Żądanie autoryzacji, jeśli nie zostało jeszcze określone
+            // Request authorization if not determined
             locationManager.requestWhenInUseAuthorization()
         @unknown default:
-            print("Nieznany status autoryzacji lokalizacji.")
+            print("Unknown location authorization status.")
         }
     }
     
     // Custom Methods
 
-     func fetchCityName(from location: CLLocation?) {
+    func fetchCityName(from location: CLLocation?) {
         guard let location = location else { return }
         
         let geocoder = CLGeocoder()
         geocoder.reverseGeocodeLocation(location) { [weak self] placemarks, error in
             if let error = error {
-                print("Reverse geocoding failed: \(error.localizedDescription)")
-                self?.cityName = "Unknown"
+                print("LM: Reverse geocoding failed: \(error.localizedDescription)")
+                DispatchQueue.main.async {
+                    self?.cityName = "Unknown"
+                }
                 return
             }
             
             if let placemark = placemarks?.first {
                 let city = placemark.locality ?? "Unknown"
-                self?.cityName = city
+                DispatchQueue.main.async {
+                    self?.cityName = city
+                }
             } else {
                 print("No placemark found, setting city as Unknown")
-                self?.cityName = "Unknown"
+                DispatchQueue.main.async {
+                    self?.cityName = "Unknown"
+                }
             }
         }
     }
@@ -92,7 +97,9 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
                 self.requestLocationCompletion = completion
                 locationManager.requestWhenInUseAuthorization()
             case .authorizedWhenInUse, .authorizedAlways:
-                locationManager.requestLocation()
+                DispatchQueue.global(qos: .background).async {
+                    self.locationManager.requestLocation()
+                }
                 self.requestLocationCompletion = completion
             case .denied, .restricted:
                 completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Location services are restricted or denied."])))

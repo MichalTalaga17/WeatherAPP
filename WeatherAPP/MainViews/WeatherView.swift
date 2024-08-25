@@ -175,7 +175,7 @@ struct WeatherView: View {
         let geocoder = CLGeocoder()
         geocoder.reverseGeocodeLocation(location) { placemarks, error in
             if let error = error {
-                print("Reverse geocoding failed: \(error.localizedDescription)")
+                print("WV: Reverse geocoding failed: \(error.localizedDescription)")
                 completion("Unknown")
                 return
             }
