@@ -25,7 +25,7 @@
 		47BCAA052C77E45D00DF4831 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 47BCAA042C77E45D00DF4831 /* WidgetKit.framework */; };
 		47BCAA072C77E45D00DF4831 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 47BCAA062C77E45D00DF4831 /* SwiftUI.framework */; };
 		47BCAA0A2C77E45D00DF4831 /* WeatherAPPwidgetsBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47BCAA092C77E45D00DF4831 /* WeatherAPPwidgetsBundle.swift */; };
-		47BCAA0E2C77E45D00DF4831 /* WeatherAPPwidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47BCAA0D2C77E45D00DF4831 /* WeatherAPPwidgets.swift */; };
+		47BCAA0E2C77E45D00DF4831 /* WeatherWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47BCAA0D2C77E45D00DF4831 /* WeatherWidget.swift */; };
 		47BCAA102C77E45D00DF4831 /* AppIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47BCAA0F2C77E45D00DF4831 /* AppIntent.swift */; };
 		47BCAA122C77E45E00DF4831 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 47BCAA112C77E45E00DF4831 /* Assets.xcassets */; };
 		47BCAA162C77E45E00DF4831 /* WeatherAPPwidgetsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 47BCAA022C77E45D00DF4831 /* WeatherAPPwidgetsExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -35,7 +35,7 @@
 		47BCAA302C77E9EC00DF4831 /* PollutionData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47B3FF742C6FE59E00F179EA /* PollutionData.swift */; };
 		47BCAA312C77E9EF00DF4831 /* CurrentData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47B3FF722C6FE57200F179EA /* CurrentData.swift */; };
 		47BCAA322C77E9F200DF4831 /* ForecastData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47B3FF762C6FE5B800F179EA /* ForecastData.swift */; };
-		47BCAA362C789EBB00DF4831 /* WeatherAPPwidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47BCAA0D2C77E45D00DF4831 /* WeatherAPPwidgets.swift */; };
+		47BCAA362C789EBB00DF4831 /* WeatherWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47BCAA0D2C77E45D00DF4831 /* WeatherWidget.swift */; };
 		47BCAA372C789ED000DF4831 /* AppIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47BCAA0F2C77E45D00DF4831 /* AppIntent.swift */; };
 		47BCAA382C78A0B900DF4831 /* LoctionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47B3FF6D2C6FE43700F179EA /* LoctionManager.swift */; };
 		47BCAA3A2C79D1C700DF4831 /* LocationTempWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47BCAA392C79D1C700DF4831 /* LocationTempWidget.swift */; };
@@ -46,6 +46,8 @@
 		47BCAA462C7B1D7700DF4831 /* ForecastWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47BCAA442C7B1D7700DF4831 /* ForecastWidget.swift */; };
 		47BCAA482C7B494C00DF4831 /* AirQualityWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47BCAA472C7B494B00DF4831 /* AirQualityWidget.swift */; };
 		47BCAA492C7B494C00DF4831 /* AirQualityWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47BCAA472C7B494B00DF4831 /* AirQualityWidget.swift */; };
+		47BCAA4C2C7B596800DF4831 /* AirQualitySmallWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47BCAA4B2C7B596800DF4831 /* AirQualitySmallWidget.swift */; };
+		47BCAA4D2C7B596800DF4831 /* AirQualitySmallWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47BCAA4B2C7B596800DF4831 /* AirQualitySmallWidget.swift */; };
 		47EC68B72C5D50AC001BA302 /* WeatherAPPApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47EC68B62C5D50AC001BA302 /* WeatherAPPApp.swift */; };
 		47EC68B92C5D50AC001BA302 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47EC68B82C5D50AC001BA302 /* SearchView.swift */; };
 		47EC68BD2C5D50AD001BA302 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 47EC68BC2C5D50AD001BA302 /* Assets.xcassets */; };
@@ -98,13 +100,14 @@
 		47BCAA042C77E45D00DF4831 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		47BCAA062C77E45D00DF4831 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		47BCAA092C77E45D00DF4831 /* WeatherAPPwidgetsBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WeatherAPPwidgetsBundle.swift; path = /Users/michaltalaga/Desktop/iOS/WeatherAPP/WeatherAPPwidgets/WeatherAPPwidgetsBundle.swift; sourceTree = "<absolute>"; usesTabs = 0; };
-		47BCAA0D2C77E45D00DF4831 /* WeatherAPPwidgets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherAPPwidgets.swift; sourceTree = "<group>"; };
+		47BCAA0D2C77E45D00DF4831 /* WeatherWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherWidget.swift; sourceTree = "<group>"; };
 		47BCAA0F2C77E45D00DF4831 /* AppIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIntent.swift; sourceTree = "<group>"; };
 		47BCAA112C77E45E00DF4831 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		47BCAA132C77E45E00DF4831 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		47BCAA392C79D1C700DF4831 /* LocationTempWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationTempWidget.swift; sourceTree = "<group>"; };
 		47BCAA442C7B1D7700DF4831 /* ForecastWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForecastWidget.swift; sourceTree = "<group>"; };
 		47BCAA472C7B494B00DF4831 /* AirQualityWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirQualityWidget.swift; sourceTree = "<group>"; };
+		47BCAA4B2C7B596800DF4831 /* AirQualitySmallWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirQualitySmallWidget.swift; sourceTree = "<group>"; };
 		47EC68B32C5D50AC001BA302 /* WeatherAPP.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WeatherAPP.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		47EC68B62C5D50AC001BA302 /* WeatherAPPApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherAPPApp.swift; sourceTree = "<group>"; };
 		47EC68B82C5D50AC001BA302 /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
@@ -175,8 +178,9 @@
 			children = (
 				47BCAA092C77E45D00DF4831 /* WeatherAPPwidgetsBundle.swift */,
 				47BCAA442C7B1D7700DF4831 /* ForecastWidget.swift */,
-				47BCAA0D2C77E45D00DF4831 /* WeatherAPPwidgets.swift */,
+				47BCAA0D2C77E45D00DF4831 /* WeatherWidget.swift */,
 				47BCAA472C7B494B00DF4831 /* AirQualityWidget.swift */,
+				47BCAA4B2C7B596800DF4831 /* AirQualitySmallWidget.swift */,
 				47BCAA392C79D1C700DF4831 /* LocationTempWidget.swift */,
 				47BCAA0F2C77E45D00DF4831 /* AppIntent.swift */,
 				47BCAA112C77E45E00DF4831 /* Assets.xcassets */,
@@ -347,6 +351,7 @@
 			files = (
 				47BCAA322C77E9F200DF4831 /* ForecastData.swift in Sources */,
 				47BCAA3B2C79D1C700DF4831 /* LocationTempWidget.swift in Sources */,
+				47BCAA4D2C7B596800DF4831 /* AirQualitySmallWidget.swift in Sources */,
 				47BCAA302C77E9EC00DF4831 /* PollutionData.swift in Sources */,
 				47BCAA382C78A0B900DF4831 /* LoctionManager.swift in Sources */,
 				47BCAA3C2C79E98300DF4831 /* IconConvert.swift in Sources */,
@@ -357,7 +362,7 @@
 				47BCAA222C77E75100DF4831 /* API.swift in Sources */,
 				47BCAA102C77E45D00DF4831 /* AppIntent.swift in Sources */,
 				47BCAA312C77E9EF00DF4831 /* CurrentData.swift in Sources */,
-				47BCAA0E2C77E45D00DF4831 /* WeatherAPPwidgets.swift in Sources */,
+				47BCAA0E2C77E45D00DF4831 /* WeatherWidget.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -365,6 +370,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				47BCAA4C2C7B596800DF4831 /* AirQualitySmallWidget.swift in Sources */,
 				47B3FF7B2C6FEF4F00F179EA /* Converters.swift in Sources */,
 				47BCAA482C7B494C00DF4831 /* AirQualityWidget.swift in Sources */,
 				47B3FF792C6FEEAA00F179EA /* IconConvert.swift in Sources */,
@@ -378,7 +384,7 @@
 				47B3FF6C2C6FB61700F179EA /* CityListView.swift in Sources */,
 				47B3FF682C6FAB5D00F179EA /* PrivacyPolicyView.swift in Sources */,
 				47BCAA3A2C79D1C700DF4831 /* LocationTempWidget.swift in Sources */,
-				47BCAA362C789EBB00DF4831 /* WeatherAPPwidgets.swift in Sources */,
+				47BCAA362C789EBB00DF4831 /* WeatherWidget.swift in Sources */,
 				47B3FF632C6F972600F179EA /* WeatherView.swift in Sources */,
 				47B3FF752C6FE59E00F179EA /* PollutionData.swift in Sources */,
 				478FE0712C73D62F003A5654 /* MainView.swift in Sources */,
