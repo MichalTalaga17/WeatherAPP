@@ -13,13 +13,11 @@ WeatherApp is a comprehensive weather application built with SwiftUI, leveraging
 
 - Xcode 14.0 or newer
 - iOS 17.0 or newer
-- OpenWeatherMap account to obtain an API key
 
 ## Installation
 
 1. **Set up the project:**
    - Clone the repository and open the project in Xcode.
-   - Add your API key to `API.swift` where `key` is located.
 
 2. **Building and running:**
    - Select the app target and run the project on a simulator or device.
@@ -27,7 +25,7 @@ WeatherApp is a comprehensive weather application built with SwiftUI, leveraging
 ## Usage
 
 1. **Search for a city:**
-   - Enter the city name in the search field and press `Search` to view current weather details for the selected location.
+   - Enter the city name in the search field and press `Go` to view current weather details for the selected location.
 
 2. **Add to Favorites:**
    - Add searched cities to your favorites list for quick access. These cities will be readily accessible from the main list in the app.
