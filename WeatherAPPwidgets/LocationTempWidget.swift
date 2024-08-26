@@ -150,11 +150,12 @@ struct LocationTempWidgetEntryView: View {
                     .font(.subheadline)
                     .foregroundColor(.gray)
                 Spacer()
-                HStack(alignment: .center){
+                HStack(alignment: .center, spacing: 20){
                     Text(entry.temperature)
-                        .font(.title .bold())
-                    Spacer()
+                        .font(.title2.bold())
                     IconConvert(for: entry.weatherIcon, useWeatherColors: false)
+                        .scaleEffect(0.8)
+                        .frame(width: 30, height: 10)
                 }
                 .foregroundStyle(Color.blue)
                 .padding(.horizontal, 7)
@@ -162,6 +163,7 @@ struct LocationTempWidgetEntryView: View {
                 .background(Color.blue.opacity(0.2))
                 .clipShape(RoundedRectangle(cornerRadius: 10))
             }
+            Spacer()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }

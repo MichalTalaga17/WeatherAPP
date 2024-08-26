@@ -241,7 +241,7 @@ struct WeatherForecastPollutionEntryView: View {
                         .font(.headline)
                     Text(entry.currentWeatherDescription)
                         .font(.subheadline)
-                        .foregroundStyle(Color.gray)
+                        .foregroundColor(.gray)
                 }
                 Spacer()
                 

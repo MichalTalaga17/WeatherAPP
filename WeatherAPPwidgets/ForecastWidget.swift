@@ -132,7 +132,7 @@ struct ForecastWidgetEntryView: View {
             }
             .padding(.horizontal, 15)
             .padding(.vertical, 10)
-            .background(Color.red.opacity(0.2))
+            .background(Color.blue.opacity(0.2))
             .clipShape(RoundedRectangle(cornerRadius: 10))
         }
     }

@@ -85,16 +85,17 @@ struct WeatherEntryView: View {
                 Text(entry.cityName)
                     .font(.headline)
                 Text(entry.displayOption.displayName)
-                    .font(.caption)
+                    .font(.subheadline)
+                    .foregroundColor(.gray)
                 Spacer()
                 VStack(alignment: .leading) {
                     Text(entry.value)
-                        .font(.title.bold())
+                        .font(.title2.bold())
                         .foregroundStyle(Color.blue)
                     
                 }
-                .padding(.horizontal, 15)
-                .padding(.vertical, 5)
+                .padding(.horizontal, 10)
+                .padding(.vertical, 10)
                 .background(Color.blue.opacity(0.2))
                 .clipShape(RoundedRectangle(cornerRadius: 10))
             }

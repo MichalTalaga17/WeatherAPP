@@ -125,10 +125,11 @@ struct AirQualityWidgetEntryView: View {
                 Text(entry.cityName)
                     .font(.headline)
                 Text("Air Quality")
-                    .font(.caption)
+                    .font(.subheadline)
+                    .foregroundColor(.gray)
                 Spacer()
                 Text("\(entry.aqiDescription)")
-                    .font(.title.bold())
+                    .font(.title2.bold())
                     .foregroundStyle(Color.blue)
                     .padding(.horizontal, 15)
                     .padding(.vertical, 5)
@@ -143,15 +144,16 @@ struct AirQualityWidgetEntryView: View {
     var mediumView: some View {
         VStack(alignment: .leading) {
             HStack{
-                VStack{
+                VStack(alignment: .leading){
                     Text(entry.cityName)
                         .font(.headline)
                     Text("Air Quality")
-                        .font(.caption)
+                        .font(.subheadline)
+                        .foregroundColor(.gray)
                 }
                 Spacer()
                 Text("\(entry.aqiDescription)")
-                    .font(.title)
+                    .font(.title .bold())
             }
             Spacer()
             HStack(alignment: .center) {
@@ -213,7 +215,7 @@ struct AirQualityWidgetEntryView: View {
                 .frame(maxWidth: .infinity)
             }
             .foregroundStyle(Color.blue)
-            .padding(.vertical, 5)
+            .padding(3)
             .background(Color.blue.opacity(0.2))
             .clipShape(RoundedRectangle(cornerRadius: 10))
             .font(.footnote)
