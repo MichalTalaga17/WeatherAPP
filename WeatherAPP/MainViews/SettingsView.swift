@@ -189,3 +189,4 @@ enum BackgroundStyle: String, CaseIterable, Identifiable {
 #Preview {
     SettingsView()
 }
+
