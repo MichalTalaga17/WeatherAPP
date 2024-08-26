@@ -58,13 +58,14 @@ struct SettingsView: View {
                         
                         Picker("Background Style", selection: $backgroundStyle) {
                             Text("None").tag(BackgroundStyle.none)
-                            Text("Animated").tag(BackgroundStyle.animated)
+                            //Text("Animated").tag(BackgroundStyle.animated)
                             Text("Gradient").tag(BackgroundStyle.gradient)
                         }
                     }
                     
                     Section(header: Text("Notifications")) {
                         Toggle("Storm Notifications", isOn: $stormNotifications)
+                            .disabled(true)
                         
                     }
                     
@@ -75,6 +76,7 @@ struct SettingsView: View {
                             Text("Hourly").tag(UpdateFrequency.hourly)
                             Text("Daily").tag(UpdateFrequency.daily)
                         }
+                        .disabled(true)
                     }
                     
                     Section(header: Text("General")) {
@@ -83,9 +85,12 @@ struct SettingsView: View {
                                 Text(lang.rawValue).tag(lang)
                             }
                         }
+                        .disabled(true)
                         
                         Toggle("Data Saving Mode", isOn: $dataSavingMode)
+                            .disabled(true)
                         Toggle("Air Quality Information", isOn: $airQuality)
+                            .disabled(true)
                     }
                     
                     Section(header: Text("About")) {
