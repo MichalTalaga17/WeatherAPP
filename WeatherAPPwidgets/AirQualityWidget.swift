@@ -120,44 +120,104 @@ struct AirQualityWidgetEntryView: View {
     }
     
     var smallView: some View {
-        VStack(alignment: .leading, spacing: 5) {
-            Text(entry.cityName)
-                .font(.headline)
-            
-            Text("Air Quality: \(entry.aqiDescription)")
-                .font(.body)
-                .foregroundColor(Color.white.opacity(0.8))
+        return HStack(alignment: .top) {
+            VStack(alignment: .leading){
+                Text(entry.cityName)
+                    .font(.headline)
+                Text("Air Quality")
+                    .font(.caption)
+                Spacer()
+                Text("\(entry.aqiDescription)")
+                    .font(.title.bold())
+                    .foregroundStyle(Color.blue)
+                    .padding(.horizontal, 15)
+                    .padding(.vertical, 5)
+                    .background(Color.blue.opacity(0.2))
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+            }
+            Spacer()
         }
-        .padding()
-        .background(Color.blue.opacity(0.8))
-        .clipShape(RoundedRectangle(cornerRadius: 10))
+        
     }
     
     var mediumView: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text(entry.cityName)
-                .font(.headline)
-            
-            Text("Air Quality: \(entry.aqiDescription)")
-                .font(.title2)
-                .padding(.bottom, 5)
-            
-            HStack(alignment: .center) {
-                Text("CO: \(String(format: "%.1f", entry.components.co)) µg/m³")
-                Text("NO: \(String(format: "%.1f", entry.components.no)) µg/m³")
-                Text("NO₂: \(String(format: "%.1f", entry.components.no2)) µg/m³")
-                Text("O₃: \(String(format: "%.1f", entry.components.o3)) µg/m³")
-                Text("SO₂: \(String(format: "%.1f", entry.components.so2)) µg/m³")
-                Text("PM₂.₅: \(String(format: "%.1f", entry.components.pm2_5)) µg/m³")
-                Text("PM₁₀: \(String(format: "%.1f", entry.components.pm10)) µg/m³")
-                Text("NH₃: \(String(format: "%.1f", entry.components.nh3)) µg/m³")
+        VStack(alignment: .leading) {
+            HStack{
+                VStack{
+                    Text(entry.cityName)
+                        .font(.headline)
+                    Text("Air Quality")
+                        .font(.caption)
+                }
+                Spacer()
+                Text("\(entry.aqiDescription)")
+                    .font(.title)
             }
+            Spacer()
+            HStack(alignment: .center) {
+                VStack(spacing: 2){
+                    Text("\(String(format: "%.0f", entry.components.co))")
+                        .font(.callout .bold())
+                    Text("CO")
+                        .font(.caption2)
+                }
+                .frame(maxWidth: .infinity)
+                VStack(spacing: 2){
+                    Text("\(String(format: "%.0f", entry.components.no))")
+                        .font(.callout .bold())
+                    Text("NO")
+                        .font(.caption2)
+                }
+                .frame(maxWidth: .infinity)
+                VStack(spacing: 2){
+                    Text("\(String(format: "%.0f", entry.components.no2))")
+                        .font(.callout .bold())
+                    Text("NO₂")
+                        .font(.caption2)
+                }
+                .frame(maxWidth: .infinity)
+                VStack(spacing: 2){
+                    Text("\(String(format: "%.0f", entry.components.o3))")
+                        .font(.callout .bold())
+                    Text("O₃")
+                        .font(.caption2)
+                }
+                .frame(maxWidth: .infinity)
+                VStack(spacing: 2){
+                    Text("\(String(format: "%.0f", entry.components.so2))")
+                        .font(.callout .bold())
+                    Text("SO₂")
+                        .font(.caption2)
+                }
+                .frame(maxWidth: .infinity)
+                VStack(spacing: 2){
+                    Text("\(String(format: "%.0f", entry.components.pm2_5))")
+                        .font(.callout .bold())
+                    Text("PM25")
+                        .font(.caption2)
+                }
+                .frame(maxWidth: .infinity)
+                VStack(spacing: 2){
+                    Text("\(String(format: "%.0f", entry.components.pm10))")
+                        .font(.callout .bold())
+                    Text("PM10")
+                        .font(.caption2)
+                }
+                .frame(maxWidth: .infinity)
+                VStack(spacing: 2){
+                    Text("\(String(format: "%.0f", entry.components.nh3))")
+                        .font(.callout .bold())
+                    Text("NH₃")
+                        .font(.caption2)
+                }
+                .frame(maxWidth: .infinity)
+            }
+            .foregroundStyle(Color.blue)
+            .padding(.vertical, 5)
+            .background(Color.blue.opacity(0.2))
+            .clipShape(RoundedRectangle(cornerRadius: 10))
             .font(.footnote)
-            .padding(.top, 10)
         }
-        .padding()
-        .background(Color.blue.opacity(0.8))
-        .clipShape(RoundedRectangle(cornerRadius: 10))
     }
 }
 

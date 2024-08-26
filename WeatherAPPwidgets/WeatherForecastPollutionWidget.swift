@@ -246,18 +246,16 @@ struct WeatherForecastPollutionEntryView: View {
                 Spacer()
                 
                 VStack {
-                    Text(entry.currentTemperature)
-                        .font(.largeTitle)
                     Text("From \(entry.minTemperature) to \(entry.maxTemperature)")
                         .font(.subheadline)
                         .foregroundStyle(Color.gray)
+                    Text(entry.currentTemperature)
+                        .font(.largeTitle)
                 }
             }
             Spacer()
-            VStack(spacing: 25){
-                Spacer()
+            VStack(spacing: 20){
                 HStack {
-                    Spacer()
                     VStack{
                         Text("\(entry.currentHumidity)%")
                             .font(.callout .bold())
@@ -285,7 +283,6 @@ struct WeatherForecastPollutionEntryView: View {
                         Text("Clouds")
                             .font(.caption2)
                     }
-                    Spacer()
                 }
                 HStack {
                     ForEach(entry.forecast) { day in
@@ -305,24 +302,31 @@ struct WeatherForecastPollutionEntryView: View {
                 HStack(alignment: .top) {
                     VStack {
                         Text("\(entry.aqiDescription)")
+                            .font(.callout .bold())
                         Text("Air Quality")
-                            .font(.subheadline)
+                            .font(.caption2)
                     }
                     .frame(maxWidth: .infinity)
                     VStack {
                         Text("\(entry.pm25, specifier: "%.1f")")
+                            .font(.callout .bold())
                         Text("PM2.5")
-                            .font(.subheadline)
+                            .font(.caption2)
                     }
                     .frame(maxWidth: .infinity)
                     VStack {
                         Text("\(entry.pm10, specifier: "%.1f")")
+                            .font(.callout .bold())
                         Text("PM10")
-                            .font(.subheadline)
+                            .font(.caption2)
                     }
                     .frame(maxWidth: .infinity)
                 }
             }
+            .padding(.horizontal, 15)
+            .padding(.vertical, 20)
+            .background(Color.blue.opacity(0.2))
+            .clipShape(RoundedRectangle(cornerRadius: 10))
         }
     }
 }
