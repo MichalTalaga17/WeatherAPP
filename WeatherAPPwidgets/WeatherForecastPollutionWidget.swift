@@ -247,7 +247,7 @@ struct WeatherForecastPollutionEntryView: View {
                 
                 VStack {
                     Text("From \(entry.minTemperature) to \(entry.maxTemperature)")
-                        .font(.subheadline)
+                        .font(.caption)
                         .foregroundStyle(Color.gray)
                     Text(entry.currentTemperature)
                         .font(.largeTitle)

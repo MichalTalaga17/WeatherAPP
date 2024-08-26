@@ -20,7 +20,7 @@ struct LocationTempWidgetEntry: TimelineEntry {
     let windSpeed: String
     let weatherDescription: String
     let pressure: String
-    let feelsLike: String
+    let precipitation: String // Nowe pole dla opadów
 }
 
 // MARK: - LocationTempWidget Provider
@@ -40,13 +40,13 @@ struct LocationTempWidgetProvider: TimelineProvider {
             windSpeed: "-- km/h",
             weatherDescription: "Brak danych",
             pressure: "-- hPa",
-            feelsLike: "-- °C"
+            precipitation: "-- mm" // Domyślna wartość opadów
         )
     }
     
     /// Funkcja zwracająca dane dla widoku w trybie podglądu.
     func getSnapshot(in context: Context, completion: @escaping (LocationTempWidgetEntry) -> Void) {
-        fetchTemperature { temperature, cityName, weatherIcon, humidity, windSpeed, weatherDescription, pressure, feelsLike in
+        fetchTemperature { temperature, cityName, weatherIcon, humidity, windSpeed, weatherDescription, pressure, precipitation in
             let entry = LocationTempWidgetEntry(
                 date: Date(),
                 temperature: temperature,
@@ -56,7 +56,7 @@ struct LocationTempWidgetProvider: TimelineProvider {
                 windSpeed: windSpeed,
                 weatherDescription: weatherDescription,
                 pressure: pressure,
-                feelsLike: feelsLike
+                precipitation: precipitation
             )
             completion(entry)
         }
@@ -64,7 +64,7 @@ struct LocationTempWidgetProvider: TimelineProvider {
     
     /// Funkcja zwracająca dane dla harmonogramu widgetu.
     func getTimeline(in context: Context, completion: @escaping (Timeline<LocationTempWidgetEntry>) -> Void) {
-        fetchTemperature { temperature, cityName, weatherIcon, humidity, windSpeed, weatherDescription, pressure, feelsLike in
+        fetchTemperature { temperature, cityName, weatherIcon, humidity, windSpeed, weatherDescription, pressure, precipitation in
             let entry = LocationTempWidgetEntry(
                 date: Date(),
                 temperature: temperature,
@@ -74,7 +74,7 @@ struct LocationTempWidgetProvider: TimelineProvider {
                 windSpeed: windSpeed,
                 weatherDescription: weatherDescription,
                 pressure: pressure,
-                feelsLike: feelsLike
+                precipitation: precipitation
             )
             let nextUpdateDate = Calendar.current.date(byAdding: .minute, value: 15, to: Date())!
             let timeline = Timeline(entries: [entry], policy: .after(nextUpdateDate))
@@ -97,28 +97,27 @@ struct LocationTempWidgetProvider: TimelineProvider {
                     api.fetchCurrentWeatherData(forCity: locationManager.cityName) { result in
                         switch result {
                         case .success(let data):
-                            let temperature = "\(Int(data.main.temp)) °C"
-                            let weatherIcon = data.weather.first?.icon ?? "01d" // Domyślny ikon
-                            let humidity = "\(data.main.humidity)\n%"
-                            let windSpeed = "\(Int(data.wind.speed))\nkm/h"
+                            let temperature = "\(Int(data.main.temp))°"
+                            let weatherIcon = data.weather.first?.icon ?? "01d"
+                            let humidity = "\(data.main.humidity)%"
+                            let windSpeed = "\(Int(data.wind.speed)) km/h"
                             let weatherDescription = data.weather.first?.description.capitalized ?? "Brak danych"
                             let pressure = "\(data.main.pressure) hPa"
-                            let feelsLike = "\(Int(data.main.feels_like)) °C"
-                            print("Dane pogodowe pobrane pomyślnie: \(temperature), \(weatherIcon), \(humidity), \(windSpeed), \(weatherDescription), \(pressure), \(feelsLike)")
-                            completion(temperature, locationManager.cityName, weatherIcon, humidity, windSpeed, weatherDescription, pressure, feelsLike)
+                            let precipitation = "\(data.rain?.hour1 ?? 0) mm" // Nowe przetwarzanie opadów
+                            completion(temperature, locationManager.cityName, weatherIcon, humidity, windSpeed, weatherDescription, pressure, precipitation)
                         case .failure(let error):
                             print("Nie udało się pobrać danych pogodowych: \(error.localizedDescription)")
-                            completion("--", locationManager.cityName, "01d", "--%", "-- km/h", "Brak danych", "-- hPa", "-- °C")
+                            completion("--", locationManager.cityName, "01d", "--%", "-- km/h", "Brak danych", "-- hPa", "-- mm")
                         }
                     }
                 } else {
                     print("Nazwa miasta jest nieznana, nie można pobrać danych pogodowych.")
-                    completion("--", "Nieznane", "01d", "--%", "-- km/h", "Brak danych", "-- hPa", "-- °C")
+                    completion("--", "Nieznane", "01d", "--%", "-- km/h", "Brak danych", "-- hPa", "-- mm")
                 }
                 
             case .failure(let error):
                 print("Nie udało się pobrać lokalizacji: \(error.localizedDescription)")
-                completion("--", "Nieznane", "01d", "--%", "-- km/h", "Brak danych", "-- hPa", "-- °C")
+                completion("--", "Nieznane", "01d", "--%", "-- km/h", "Brak danych", "-- hPa", "-- mm")
             }
         }
     }
@@ -150,59 +149,85 @@ struct LocationTempWidgetEntryView: View {
                 Text(entry.weatherDescription)
                     .font(.subheadline)
                     .foregroundColor(.gray)
-                Text(entry.temperature)
-                    .font(.title2)
                 Spacer()
-                IconConvert(for: entry.weatherIcon, useWeatherColors: true)
-                    .scaleEffect(1.3)
-                    .frame(width: 60, height: 60)
+                HStack(alignment: .center){
+                    Text(entry.temperature)
+                        .font(.title .bold())
+                    Spacer()
+                    IconConvert(for: entry.weatherIcon, useWeatherColors: false)
+                }
+                .foregroundStyle(Color.blue)
+                .padding(.horizontal, 7)
+                .padding(.vertical, 10)
+                .background(Color.blue.opacity(0.2))
+                .clipShape(RoundedRectangle(cornerRadius: 10))
             }
-            Spacer()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
     
     var mediumView: some View {
         VStack(alignment: .leading) {
-            HStack {
+            HStack(alignment: .top) {
                 VStack(alignment: .leading) {
                     Text(entry.cityName)
                         .font(.headline)
-                    Text(entry.temperature)
-                        .font(.largeTitle)
                     Text(entry.weatherDescription)
                         .font(.subheadline)
                         .foregroundColor(.gray)
+                    
                 }
                 Spacer()
-                IconConvert(for: entry.weatherIcon, useWeatherColors: true)
-                    .scaleEffect(1.25)
-                    .frame(width: 50, height: 50)
+                HStack{
+                    IconConvert(for: entry.weatherIcon, useWeatherColors: false)
+                        .scaleEffect(1.2)
+                }
             }
             
             Spacer()
             
             HStack {
-                HStack{
+                VStack{
+                    Text(entry.temperature)
+                        .font(.callout .bold())
                     Image(systemName: "thermometer")
-                    Text(entry.feelsLike)
+                        .frame(width: 10, height: 10)
                 }
-                HStack{
-                    Image(systemName: "drop.fill")
+                Spacer()
+                VStack{
                     Text(entry.humidity)
+                        .font(.callout .bold())
+                    Image(systemName: "drop.fill")
+                        .frame(width: 10, height: 10)
                 }
-                
-                HStack{
-                    Image(systemName: "wind")
+                Spacer()
+                VStack{
                     Text(entry.windSpeed)
+                        .font(.callout .bold())
+                    Image(systemName: "wind")
+                        .frame(width: 10, height: 10)
                 }
-                HStack{
-                    Image(systemName: "gauge")
+                Spacer()
+                VStack{
                     Text(entry.pressure)
+                        .font(.callout .bold())
+                    Image(systemName: "gauge")
+                        .frame(width: 10, height: 10)
+                }
+                Spacer()
+                VStack{
+                    Text(entry.precipitation)  // Wyświetlanie opadów
+                        .font(.callout.bold())
+                    Image(systemName: "cloud.rain.fill")
+                        .frame(width: 10, height: 10)
                 }
             }
+            .foregroundStyle(Color.blue)
+            .padding(.horizontal, 7)
+            .padding(.vertical, 15)
+            .background(Color.blue.opacity(0.2))
+            .clipShape(RoundedRectangle(cornerRadius: 10))
         }
-        .padding(.vertical)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
@@ -228,11 +253,11 @@ struct LocationTempWidget: Widget {
 #Preview(as: .systemSmall) {
     LocationTempWidget()
 } timeline: {
-    LocationTempWidgetEntry(date: Date(), temperature: "20 °C", cityName: "Warszawa", weatherIcon: "01d", humidity: "60%", windSpeed: "10 km/h", weatherDescription: "Czyste niebo", pressure: "1015 hPa", feelsLike: "18 °C")
+    LocationTempWidgetEntry(date: Date(), temperature: "20°", cityName: "Warszawa", weatherIcon: "01d", humidity: "60%", windSpeed: "10 km/h", weatherDescription: "Słonecznie", pressure: "1013 hPa", precipitation: "0 mm")
 }
 
 #Preview(as: .systemMedium) {
     LocationTempWidget()
 } timeline: {
-    LocationTempWidgetEntry(date: Date(), temperature: "20 °C", cityName: "Warszawa", weatherIcon: "01d", humidity: "60%", windSpeed: "10 km/h", weatherDescription: "Czyste niebo", pressure: "1015 hPa", feelsLike: "18 °C")
+    LocationTempWidgetEntry(date: Date(), temperature: "20°", cityName: "Warszawa", weatherIcon: "01d", humidity: "60%", windSpeed: "10 km/h", weatherDescription: "Słonecznie", pressure: "1013 hPa", precipitation: "0 mm")
 }
