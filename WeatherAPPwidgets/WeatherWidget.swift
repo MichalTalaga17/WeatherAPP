@@ -131,7 +131,7 @@ struct WeatherWidget: Widget {
         }
         .configurationDisplayName("Weather Widget")
         .description("Displays various weather metrics based on your selection.")
-        .supportedFamilies([.systemSmall, .systemMedium])
+        .supportedFamilies([.systemSmall])
     }
 }
 

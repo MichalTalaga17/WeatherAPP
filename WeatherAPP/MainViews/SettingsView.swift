@@ -9,6 +9,7 @@ import SwiftUI
 import SwiftData
 
 struct SettingsView: View {
+    // AppStorage Properties
     @AppStorage("units") private var units: Units = .metric
     @AppStorage("iconsColorsBasedOnWeather") private var iconsColorsBasedOnWeather: Bool = false
     @AppStorage("backgroundStyle") private var backgroundStyle: BackgroundStyle = .none
@@ -18,9 +19,9 @@ struct SettingsView: View {
     @AppStorage("language") private var language: Language = .english
     @AppStorage("weatherUpdateFrequency") private var weatherUpdateFrequency: UpdateFrequency = .hourly
     @AppStorage("defaultCity") private var defaultCity: String = "Your location"
-    
     @AppStorage("mainIcon") private var mainIcon: String = ""
     
+    // Query Property for Favorite Cities
     @Query private var cities: [FavouriteCity]
     
     var body: some View {
@@ -36,77 +37,101 @@ struct SettingsView: View {
                 }
                 
                 Form {
-                    Section(header: Text("Default City")) {
-                        Picker("Select City", selection: $defaultCity) {
-                            ForEach(cities) { city in
-                                Text(city.name).tag(city.name)
-                            }
-                            Text("Your location").tag("Your location")
-                        }
-                    }
-                    
-                    Section(header: Text("Units")) {
-                        Picker("Temperature Units", selection: $units) {
-                            Text("Metric").tag(Units.metric)
-                            Text("Imperial").tag(Units.imperial)
-                        }
-                        .pickerStyle(SegmentedPickerStyle())
-                    }
-                    
-                    Section(header: Text("Appearance")) {
-                        Toggle("Icons Colors Based on Weather", isOn: $iconsColorsBasedOnWeather)
-                        
-                        Picker("Background Style", selection: $backgroundStyle) {
-                            Text("None").tag(BackgroundStyle.none)
-                            //Text("Animated").tag(BackgroundStyle.animated)
-                            Text("Gradient").tag(BackgroundStyle.gradient)
-                        }
-                    }
-                    
-                    Section(header: Text("Notifications")) {
-                        Toggle("Storm Notifications", isOn: $stormNotifications)
-                            .disabled(true)
-                        
-                    }
-                    
-                    Section(header: Text("Preferences")) {
-                        Picker("Widgets update Frequency", selection: $weatherUpdateFrequency) {
-                            Text("15 Minutes").tag(UpdateFrequency.minutes15)
-                            Text("30 Minutes").tag(UpdateFrequency.minutes30)
-                            Text("Hourly").tag(UpdateFrequency.hourly)
-                            Text("Daily").tag(UpdateFrequency.daily)
-                        }
-                        .disabled(true)
-                    }
-                    
-                    Section(header: Text("General")) {
-                        Picker("Language", selection: $language) {
-                            ForEach(Language.allCases, id: \.self) { lang in
-                                Text(lang.rawValue).tag(lang)
-                            }
-                        }
-                        .disabled(true)
-                        
-                        Toggle("Data Saving Mode", isOn: $dataSavingMode)
-                            .disabled(true)
-                        Toggle("Air Quality Information", isOn: $airQuality)
-                            .disabled(true)
-                    }
-                    
-                    Section(header: Text("About")) {
-                        NavigationLink("About the App") {
-                            AboutView()
-                        }
-                        NavigationLink("Privacy Policy") {
-                            PrivacyPolicyView()
-                        }
-                    }
+                    defaultCitySection
+                    unitsSection
+                    appearanceSection
+                    notificationsSection
+                    preferencesSection
+                    generalSection
+                    aboutSection
                 }
                 .background(Color.white)
                 .navigationTitle("Settings")
             }
         }
     }
+    
+    // MARK: - Sections
+    
+    private var defaultCitySection: some View {
+        Section(header: Text("Default City")) {
+            Picker("Select City", selection: $defaultCity) {
+                ForEach(cities) { city in
+                    Text(city.name).tag(city.name)
+                }
+                Text("Your location").tag("Your location")
+            }
+        }
+    }
+    
+    private var unitsSection: some View {
+        Section(header: Text("Units")) {
+            Picker("Temperature Units", selection: $units) {
+                Text("Metric").tag(Units.metric)
+                Text("Imperial").tag(Units.imperial)
+            }
+            .pickerStyle(SegmentedPickerStyle())
+        }
+    }
+    
+    private var appearanceSection: some View {
+        Section(header: Text("Appearance")) {
+            Toggle("Icons Colors Based on Weather", isOn: $iconsColorsBasedOnWeather)
+            Picker("Background Style", selection: $backgroundStyle) {
+                Text("None").tag(BackgroundStyle.none)
+                Text("Gradient").tag(BackgroundStyle.gradient)
+            }
+        }
+    }
+    
+    private var notificationsSection: some View {
+        Section(header: Text("Notifications")) {
+            Toggle("Storm Notifications", isOn: $stormNotifications)
+                .disabled(true)
+        }
+    }
+    
+    private var preferencesSection: some View {
+        Section(header: Text("Preferences")) {
+            Picker("Widgets update Frequency", selection: $weatherUpdateFrequency) {
+                Text("15 Minutes").tag(UpdateFrequency.minutes15)
+                Text("30 Minutes").tag(UpdateFrequency.minutes30)
+                Text("Hourly").tag(UpdateFrequency.hourly)
+                Text("Daily").tag(UpdateFrequency.daily)
+            }
+            .disabled(true)
+        }
+    }
+    
+    private var generalSection: some View {
+        Section(header: Text("General")) {
+            Picker("Language", selection: $language) {
+                ForEach(Language.allCases, id: \.self) { lang in
+                    Text(lang.rawValue).tag(lang)
+                }
+            }
+            .disabled(true)
+            
+            Toggle("Data Saving Mode", isOn: $dataSavingMode)
+                .disabled(true)
+            
+            Toggle("Air Quality Information", isOn: $airQuality)
+                .disabled(true)
+        }
+    }
+    
+    private var aboutSection: some View {
+        Section(header: Text("About")) {
+            NavigationLink("About the App") {
+                AboutView()
+            }
+            NavigationLink("Privacy Policy") {
+                PrivacyPolicyView()
+            }
+        }
+    }
+    
+    // MARK: - Helper Views
     
     private func gradientBackground() -> some View {
         LinearGradient(
@@ -116,6 +141,8 @@ struct SettingsView: View {
         )
     }
 }
+
+// MARK: - Enums
 
 enum Units: String, Identifiable, CaseIterable {
     case metric = "metric"
@@ -149,9 +176,6 @@ enum Language: String, CaseIterable, Identifiable {
     var id: String { self.rawValue }
 }
 
-
-
-
 enum BackgroundStyle: String, CaseIterable, Identifiable {
     case none = "None"
     case animated = "Animated"
@@ -159,6 +183,8 @@ enum BackgroundStyle: String, CaseIterable, Identifiable {
     
     var id: String { self.rawValue }
 }
+
+// MARK: - Preview
 
 #Preview {
     SettingsView()

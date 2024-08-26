@@ -48,7 +48,7 @@ struct AirQualityWidgetProvider: TimelineProvider {
     private func fetchAirQuality(completion: @escaping (AirQualityWidgetEntry) -> Void) {
         locationManager.requestLocation { result in
             switch result {
-            case .success(let location):
+            case .success(_):
                 api.fetchAirPollutionData(forCity: locationManager.cityName) { result in
                     switch result {
                     case .success(let data):

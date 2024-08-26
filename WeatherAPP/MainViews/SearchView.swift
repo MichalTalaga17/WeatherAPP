@@ -9,17 +9,21 @@ import SwiftUI
 import SwiftData
 
 struct SearchView: View {
+    // AppStorage Properties
     @AppStorage("iconsColorsBasedOnWeather") private var iconsColorsBasedOnWeather: Bool = true
     @AppStorage("mainIcon") private var mainIcon: String = ""
     @AppStorage("backgroundStyle") private var backgroundStyle: BackgroundStyle = .gradient
     
+    // Query Property for Favorite Cities
     @Query private var cities: [FavouriteCity]
+    
+    // State for the Search TextField
     @State private var cityName: String = ""
     
     var body: some View {
         NavigationView {
             ZStack {
-                // Background Gradient
+                // Background View
                 if backgroundStyle == .gradient {
                     backgroundView(for: mainIcon)
                         .edgesIgnoringSafeArea(.all)
@@ -29,57 +33,77 @@ struct SearchView: View {
                 }
                 
                 VStack(alignment: .leading) {
-                    
-                    HStack {
-                        TextField("Search for city", text: $cityName)
-                            .padding()
-                            .background(Color.white.opacity(0.1))
-                            .cornerRadius(8)
-                        
-                        NavigationLink(destination: WeatherView(cityName: cityName)) {
-                            Text("Go")
-                                .padding()
-                                .background(cityName.isEmpty ? Color.black.opacity(0.4) : Color.black.opacity(0.8))
-                                .foregroundColor(.white)
-                                .cornerRadius(8)
-                        }
-                        .disabled(cityName.isEmpty)
-                    }
-                    .padding(.vertical, 40)
-                    
-                    VStack(alignment: .leading, spacing: 15) {
-                        ForEach(cities, id: \.self) { city in
-                            NavigationLink(destination: WeatherView(cityName: city.name)) {
-                                HStack(spacing: 5) {
-                                    Text(city.name)
-                                        .font(.title2)
-                                        .padding()
-                                    Spacer()
-                                    HStack {
-                                        if let temperature = city.temperature {
-                                            Text("\(Int(temperature))°")
-                                                .font(.title2 .bold())
-                                        }
-                                        if let icon = city.weatherIcon {
-                                            IconConvert(for: icon, useWeatherColors: iconsColorsBasedOnWeather)
-                                                .padding()
-                                        }
-                                    }
-                                }
-                            }
-                            .background(Color.white.opacity(0.2))
-                            .cornerRadius(15)
-                            .task {
-                                await fetchWeatherData(for: city)
-                            }
-                        }
-                    }
+                    searchFieldSection
+                    citiesListSection
                     Spacer()
                 }
                 .padding()
             }
         }
     }
+    
+    // MARK: - Sections
+    
+    private var searchFieldSection: some View {
+        HStack {
+            TextField("Search for city", text: $cityName)
+                .padding()
+                .background(Color.white.opacity(0.1))
+                .cornerRadius(8)
+            
+            NavigationLink(destination: WeatherView(cityName: cityName)) {
+                Text("Go")
+                    .padding()
+                    .background(cityName.isEmpty ? Color.black.opacity(0.4) : Color.black.opacity(0.8))
+                    .foregroundColor(.white)
+                    .cornerRadius(8)
+            }
+            .disabled(cityName.isEmpty)
+        }
+        .padding(.vertical, 40)
+    }
+    
+    private var citiesListSection: some View {
+        VStack(alignment: .leading, spacing: 15) {
+            ForEach(cities, id: \.self) { city in
+                NavigationLink(destination: WeatherView(cityName: city.name)) {
+                    cityRow(for: city)
+                }
+                .background(Color.white.opacity(0.2))
+                .cornerRadius(15)
+                .task {
+                    await fetchWeatherData(for: city)
+                }
+            }
+        }
+    }
+    
+    // MARK: - Helper Views
+    
+    private func cityRow(for city: FavouriteCity) -> some View {
+        HStack(spacing: 5) {
+            Text(city.name)
+                .font(.title2)
+                .padding()
+            Spacer()
+            HStack {
+                if let temperature = city.temperature {
+                    Text("\(Int(temperature))°")
+                        .font(.title2.bold())
+                }
+                if let icon = city.weatherIcon {
+                    IconConvert(for: icon, useWeatherColors: iconsColorsBasedOnWeather)
+                        .padding()
+                }
+            }
+        }
+    }
+    
+    private func backgroundView(for icon: String) -> some View {
+        gradientBackground(for: icon)
+    }
+    
+    // MARK: - Networking
     
     func fetchWeatherData(for city: FavouriteCity) async {
         API.shared.fetchCurrentWeatherData(forCity: city.name) { result in
@@ -95,12 +119,9 @@ struct SearchView: View {
             }
         }
     }
-    
-    private func backgroundView(for icon: String) -> some View {
-        // Here we set the gradient background based on the icon
-        gradientBackground(for: icon)
-    }
 }
+
+// MARK: - Preview
 
 #Preview {
     SearchView()
