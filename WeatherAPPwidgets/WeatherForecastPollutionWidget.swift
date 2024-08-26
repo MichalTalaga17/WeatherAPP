@@ -63,8 +63,8 @@ struct WeatherForecastPollutionProvider: TimelineProvider {
     func getTimeline(in context: Context, completion: @escaping (Timeline<WeatherForecastPollutionEntry>) -> Void) {
         fetchCombinedData { entry in
             let nextUpdateDate = Calendar.current.date(byAdding: .minute, value: 15, to: Date())!
-                    let timeline = Timeline(entries: [entry], policy: .after(nextUpdateDate))
-                    
+            let timeline = Timeline(entries: [entry], policy: .after(nextUpdateDate))
+            
             completion(timeline)
         }
     }
@@ -96,14 +96,14 @@ struct WeatherForecastPollutionProvider: TimelineProvider {
                                         
                                         let minTemp = currentWeatherData.main.temp_min
                                         let maxTemp = currentWeatherData.main.temp_max
-
+                                        
                                         let entry = WeatherForecastPollutionEntry(
                                             date: Date(),
                                             cityName: forecastData.city.name,
                                             currentTemperature: "\(Int(currentWeatherData.main.temp)) °C",
                                             currentWeatherDescription: currentWeatherData.weather.first?.description ?? "No description",
-                                            minTemperature: "\(Int(minTemp)) °C",
-                                            maxTemperature: "\(Int(maxTemp)) °C",
+                                            minTemperature: "\(Int(minTemp))°",
+                                            maxTemperature: "\(Int(maxTemp))°",
                                             weatherIcon: currentWeatherData.weather.first?.icon ?? "01d",
                                             forecast: forecast,
                                             aqi: latestEntry.main.aqi,
@@ -211,7 +211,7 @@ struct WeatherForecastPollutionProvider: TimelineProvider {
             }
         }
     }
-
+    
     func aqiDescription(for aqi: Int) -> String {
         switch aqi {
         case 1:
@@ -239,89 +239,90 @@ struct WeatherForecastPollutionEntryView: View {
                 VStack(alignment: .leading) {
                     Text(entry.cityName)
                         .font(.headline)
-                    HStack {
-                        Text("Min: \(entry.minTemperature)")
-                            .font(.subheadline)
-                        Text("Max: \(entry.maxTemperature)")
-                            .font(.subheadline)
-                    }
                     Text(entry.currentWeatherDescription)
+                        .font(.subheadline)
+                        .foregroundStyle(Color.gray)
                 }
                 Spacer()
-                Text(entry.currentTemperature)
-                    .font(.largeTitle)
-            }
-            HStack {
+                
                 VStack {
-                    Text("Humidity: \(entry.currentHumidity)%")
-                    Text("Pressure: \(entry.currentPressure) hPa")
-                    Text("Wind: \(entry.currentWindSpeed, specifier: "%.1f") m/s")
-                    Text("Clouds: \(entry.currentCloudCoverage)%")
+                    Text(entry.currentTemperature)
+                        .font(.largeTitle)
+                    Text("From \(entry.minTemperature) to \(entry.maxTemperature)")
+                        .font(.subheadline)
+                        .foregroundStyle(Color.gray)
                 }
-                .font(.subheadline)
-                .padding()
             }
-            .border(Color.gray)
-            
             Spacer()
-            
-            HStack {
-                ForEach(entry.forecast) { day in
+            VStack(spacing: 25){
+                Spacer()
+                HStack {
+                    Spacer()
+                    VStack{
+                        Text("\(entry.currentHumidity)%")
+                            .font(.callout .bold())
+                        Text("Humidity")
+                            .font(.caption2)
+                    }
+                    Spacer()
+                    VStack{
+                        Text("\(entry.currentPressure) hPa")
+                            .font(.callout .bold())
+                        Text("Pressure")
+                            .font(.caption2)
+                    }
+                    Spacer()
+                    VStack{
+                        Text("\(entry.currentWindSpeed, specifier: "%.1f") m/s")
+                            .font(.callout .bold())
+                        Text("Wind")
+                            .font(.caption2)
+                    }
+                    Spacer()
+                    VStack{
+                        Text("\(entry.currentCloudCoverage)%")
+                            .font(.callout .bold())
+                        Text("Clouds")
+                            .font(.caption2)
+                    }
+                    Spacer()
+                }
+                HStack {
+                    ForEach(entry.forecast) { day in
+                        VStack {
+                            Text(hourFormatter.string(from: day.date))
+                                .font(.footnote)
+                                .padding(.bottom, 4)
+                            IconConvert(for: day.weatherIcon, useWeatherColors: false)
+                                .padding(.bottom, 4)
+                            Text(day.temperature)
+                                .font(.callout)
+                        }
+                        .frame(maxWidth: .infinity)
+                    }
+                }
+                
+                HStack(alignment: .top) {
                     VStack {
-                        Text(hourFormatter.string(from: day.date))
-                            .font(.footnote)
-                            .padding(.bottom, 4)
-                        IconConvert(for: day.weatherIcon, useWeatherColors: true)
-                            .padding(.bottom, 4)
-                        Text(day.temperature)
-                            .font(.callout)
+                        Text("\(entry.aqiDescription)")
+                        Text("Air Quality")
+                            .font(.subheadline)
+                    }
+                    .frame(maxWidth: .infinity)
+                    VStack {
+                        Text("\(entry.pm25, specifier: "%.1f")")
+                        Text("PM2.5")
+                            .font(.subheadline)
+                    }
+                    .frame(maxWidth: .infinity)
+                    VStack {
+                        Text("\(entry.pm10, specifier: "%.1f")")
+                        Text("PM10")
+                            .font(.subheadline)
                     }
                     .frame(maxWidth: .infinity)
                 }
             }
-            
-            Spacer()
-            
-            HStack(alignment: .top) {
-                VStack {
-                    Text("\(entry.aqiDescription)")
-                        .foregroundColor(entry.aqiColor())
-                    Text("Air Quality")
-                        .font(.subheadline)
-                }
-                .frame(maxWidth: .infinity)
-                VStack {
-                    Text("\(entry.pm25, specifier: "%.1f")")
-                    Text("PM2.5")
-                        .font(.subheadline)
-                }
-                .frame(maxWidth: .infinity)
-                VStack {
-                    Text("\(entry.pm10, specifier: "%.1f")")
-                    Text("PM10")
-                        .font(.subheadline)
-                }
-                .frame(maxWidth: .infinity)
-            }
-        }
-    }
-}
-
-extension WeatherForecastPollutionEntry {
-    func aqiColor() -> Color {
-        switch aqi {
-        case 1:
-            return .green
-        case 2:
-            return .yellow
-        case 3:
-            return .orange
-        case 4:
-            return .red
-        case 5:
-            return .purple
-        default:
-            return .gray
         }
     }
 }
@@ -348,8 +349,8 @@ struct WeatherForecastPollutionWidget: Widget {
         cityName: "Warszawa",
         currentTemperature: "22 °C",
         currentWeatherDescription: "Clear sky",
-        minTemperature: "18 °C",
-        maxTemperature: "23 °C",
+        minTemperature: "18°",
+        maxTemperature: "23°",
         weatherIcon: "01d",
         forecast: [
             ForecastDay(date: Date().addingTimeInterval(3600 * 24), temperature: "20°C", weatherIcon: "01d"),

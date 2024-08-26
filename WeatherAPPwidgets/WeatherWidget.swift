@@ -84,17 +84,18 @@ struct WeatherEntryView: View {
             VStack(alignment: .leading) {
                 Text(entry.cityName)
                     .font(.headline)
+                Text(entry.displayOption.displayName)
+                    .font(.caption)
                 Spacer()
                 VStack(alignment: .leading) {
                     Text(entry.value)
                         .font(.title.bold())
-                        .foregroundColor(.blue)
-                    Text(entry.displayOption.displayName)
-                        .font(.subheadline)
+                        .foregroundStyle(Color.blue)
+                    
                 }
                 .padding(.horizontal, 15)
                 .padding(.vertical, 5)
-                .background(Color.accentColor.opacity(0.2))
+                .background(Color.blue.opacity(0.2))
                 .clipShape(RoundedRectangle(cornerRadius: 10))
             }
             Spacer()
@@ -136,5 +137,5 @@ struct WeatherWidget: Widget {
 #Preview(as: .systemSmall) {
     WeatherWidget()
 } timeline: {
-    WeatherEntry(date: Date(), cityName: "Warszawa", value: "65 %", displayOption: .precipitation )
+    WeatherEntry(date: Date(), cityName: "Warszawa", value: "1200 hPa", displayOption: .precipitation )
 }

@@ -16,7 +16,6 @@ struct ForecastWidgetEntry: TimelineEntry {
     let date: Date
     let forecast: [ForecastDay]
     let cityName: String
-    let temperature: String
     let weatherIcon: String
 }
 
@@ -38,19 +37,17 @@ struct ForecastWidgetProvider: TimelineProvider {
             date: Date(),
             forecast: [],
             cityName: "Nieznane",
-            temperature: "--",
             weatherIcon: "01d"
         )
     }
     
     /// Funkcja zwracająca dane dla widoku w trybie podglądu.
     func getSnapshot(in context: Context, completion: @escaping (ForecastWidgetEntry) -> Void) {
-        fetchForecast { forecast, cityName, temperature, weatherIcon in
+        fetchForecast { forecast, cityName, weatherIcon in
             let entry = ForecastWidgetEntry(
                 date: Date(),
                 forecast: forecast,
                 cityName: cityName,
-                temperature: temperature,
                 weatherIcon: weatherIcon
             )
             completion(entry)
@@ -59,12 +56,11 @@ struct ForecastWidgetProvider: TimelineProvider {
     
     /// Funkcja zwracająca dane dla harmonogramu widgetu.
     func getTimeline(in context: Context, completion: @escaping (Timeline<ForecastWidgetEntry>) -> Void) {
-        fetchForecast { forecast, cityName, temperature, weatherIcon in
+        fetchForecast { forecast, cityName, weatherIcon in
             let entry = ForecastWidgetEntry(
                 date: Date(),
                 forecast: forecast,
                 cityName: cityName,
-                temperature: temperature,
                 weatherIcon: weatherIcon
             )
             let timeline = Timeline(entries: [entry], policy: .atEnd)
@@ -73,31 +69,30 @@ struct ForecastWidgetProvider: TimelineProvider {
     }
     
     /// Funkcja pobierająca prognozę pogody.
-    private func fetchForecast(completion: @escaping ([ForecastDay], String, String, String) -> Void) {
+    private func fetchForecast(completion: @escaping ([ForecastDay], String, String) -> Void) {
         locationManager.requestLocation { result in
             switch result {
-            case .success(let location):
+            case .success(_):
                 api.fetchForecastData(forCity: locationManager.cityName) { result in
                     switch result {
                     case .success(let data):
                         let forecast = data.list.prefix(5).map { item in
                             let date = Date(timeIntervalSince1970: TimeInterval(item.dt))
-                            let temperature = "\(Int(item.main.temp)) °C"
+                            let temperature = "\(Int(item.main.temp))°C"
                             let weatherIcon = item.weather.first?.icon ?? "01d"
                             return ForecastDay(date: date, temperature: temperature, weatherIcon: weatherIcon)
                         }
                         let cityName = data.city.name
-                        let temperature = "\(Int(data.list.first?.main.temp ?? 0)) °C"
                         let weatherIcon = data.list.first?.weather.first?.icon ?? "01d"
-                        completion(forecast, cityName, temperature, weatherIcon)
+                        completion(forecast, cityName, weatherIcon)
                     case .failure(let error):
                         print("Nie udało się pobrać danych prognozy: \(error.localizedDescription)")
-                        completion([], "Nieznane", "--", "01d")
+                        completion([], "Nieznane", "01d")
                     }
                 }
             case .failure(let error):
                 print("Nie udało się pobrać lokalizacji: \(error.localizedDescription)")
-                completion([], "Nieznane", "--", "01d")
+                completion([], "Nieznane", "01d")
             }
         }
     }
@@ -116,12 +111,9 @@ struct ForecastWidgetEntryView: View {
     
     var body: some View {
         VStack(alignment: .leading) {
-            HStack {
+            HStack(alignment: .top) {
                 Text(entry.cityName)
                     .font(.headline)
-                Spacer()
-                Text(entry.temperature)
-                    .font(.largeTitle)
             }
             
             Spacer()
@@ -130,14 +122,18 @@ struct ForecastWidgetEntryView: View {
                 ForEach(entry.forecast) { day in
                     VStack {
                         Text(hourFormatter.string(from: day.date))
-                            .font(.footnote)
-                        IconConvert(for: day.weatherIcon, useWeatherColors: true)
+                            .font(.custom("", size: 12))
+                        IconConvert(for: day.weatherIcon, useWeatherColors: false)
                         Text(day.temperature)
-                            .font(.footnote)
+                            .font(.callout)
                     }
-                    .padding(.horizontal, 4)
+                    .frame(maxWidth: .infinity)
                 }
             }
+            .padding(.horizontal, 15)
+            .padding(.vertical, 10)
+            .background(Color.red.opacity(0.2))
+            .clipShape(RoundedRectangle(cornerRadius: 10))
         }
     }
 }
@@ -154,20 +150,24 @@ struct ForecastWidget: Widget {
         }
         .configurationDisplayName("Widget prognozy pogody")
         .description("Wyświetla prognozę pogody na najbliższe dni.")
-        .supportedFamilies([.systemSmall, .systemMedium])
+        .supportedFamilies([ .systemMedium])
     }
 }
 
 // MARK: - Preview
-/// Podgląd widgetu w trybie edycji.
-#Preview(as: .systemSmall) {
-    ForecastWidget()
-} timeline: {
-    ForecastWidgetEntry(date: Date(), forecast: [], cityName: "Warszawa", temperature: "20 °C", weatherIcon: "01d")
-}
-
 #Preview(as: .systemMedium) {
     ForecastWidget()
 } timeline: {
-    ForecastWidgetEntry(date: Date(), forecast: [], cityName: "Warszawa", temperature: "20 °C", weatherIcon: "01d")
+    ForecastWidgetEntry(
+        date: Date(),
+        forecast: [
+            ForecastDay(date: Date(), temperature: "18°", weatherIcon: "01d"),
+            ForecastDay(date: Date().addingTimeInterval(3600), temperature: "20°", weatherIcon: "02d"),
+            ForecastDay(date: Date().addingTimeInterval(7200), temperature: "21°", weatherIcon: "03d"),
+            ForecastDay(date: Date().addingTimeInterval(10800), temperature: "19°", weatherIcon: "04d"),
+            ForecastDay(date: Date().addingTimeInterval(14400), temperature: "17°", weatherIcon: "09d")
+        ],
+        cityName: "Warszawa",
+        weatherIcon: "01d"
+    )
 }
