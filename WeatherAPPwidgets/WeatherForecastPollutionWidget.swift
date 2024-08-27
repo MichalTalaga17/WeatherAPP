@@ -33,6 +33,32 @@ struct WeatherForecastPollutionProvider: TimelineProvider {
     private let api = API.shared
     @ObservedObject private var locationManager = LocationManager()
     
+    enum UpdateFrequency: String, Identifiable, CaseIterable {
+        case minutes5 = "5 Minutes"
+        case minutes10 = "10 Minutes"
+        case minutes30 = "30 Minutes"
+        case hourly = "Hourly"
+        
+        var id: String { self.rawValue }
+        var timeInterval: TimeInterval {
+            switch self {
+            case .minutes5:
+                return 5 * 60 // 5 minut
+            case .minutes10:
+                return 10 * 60 // 10 minut
+            case .minutes30:
+                return 30 * 60 // 30 minut
+            case .hourly:
+                return 60 * 60 // 1 godzina
+            }
+        }
+    }
+
+    private var weatherUpdateFrequency: UpdateFrequency {
+        let storedValue = UserDefaults.standard.string(forKey: "weatherUpdateFrequency") ?? UpdateFrequency.hourly.rawValue
+        return UpdateFrequency(rawValue: storedValue) ?? .hourly
+    }
+
     func placeholder(in context: Context) -> WeatherForecastPollutionEntry {
         WeatherForecastPollutionEntry(
             date: Date(),
@@ -62,9 +88,8 @@ struct WeatherForecastPollutionProvider: TimelineProvider {
     
     func getTimeline(in context: Context, completion: @escaping (Timeline<WeatherForecastPollutionEntry>) -> Void) {
         fetchCombinedData { entry in
-            let nextUpdateDate = Calendar.current.date(byAdding: .minute, value: 15, to: Date())!
-            let timeline = Timeline(entries: [entry], policy: .after(nextUpdateDate))
-            
+            let refreshDate = Calendar.current.date(byAdding: .second, value: Int(weatherUpdateFrequency.timeInterval), to: Date()) ?? Date()
+            let timeline = Timeline(entries: [entry], policy: .after(refreshDate))
             completion(timeline)
         }
     }

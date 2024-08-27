@@ -21,7 +21,33 @@ struct AirQualityWidgetEntry: TimelineEntry {
 struct AirQualityWidgetProvider: TimelineProvider {
     @ObservedObject private var locationManager = LocationManager()
     private let api = API.shared
+
+    enum UpdateFrequency: String, Identifiable, CaseIterable {
+        case minutes5 = "5 Minutes"
+        case minutes10 = "10 Minutes"
+        case minutes30 = "30 Minutes"
+        case hourly = "Hourly"
+        
+        var id: String { self.rawValue }
+        var timeInterval: TimeInterval {
+            switch self {
+            case .minutes5:
+                return 5 * 60 // 5 minut
+            case .minutes10:
+                return 10 * 60 // 10 minut
+            case .minutes30:
+                return 30 * 60 // 30 minut
+            case .hourly:
+                return 60 * 60 // 1 godzina
+            }
+        }
+    }
     
+    private var updateFrequency: UpdateFrequency {
+        let storedValue = UserDefaults.standard.string(forKey: "airQualityUpdateFrequency") ?? UpdateFrequency.hourly.rawValue
+        return UpdateFrequency(rawValue: storedValue) ?? .hourly
+    }
+
     func placeholder(in context: Context) -> AirQualityWidgetEntry {
         AirQualityWidgetEntry(
             date: Date(),
@@ -40,7 +66,8 @@ struct AirQualityWidgetProvider: TimelineProvider {
     
     func getTimeline(in context: Context, completion: @escaping (Timeline<AirQualityWidgetEntry>) -> Void) {
         fetchAirQuality { entry in
-            let timeline = Timeline(entries: [entry], policy: .atEnd)
+            let refreshDate = Calendar.current.date(byAdding: .second, value: Int(updateFrequency.timeInterval), to: Date()) ?? Date()
+            let timeline = Timeline(entries: [entry], policy: .after(refreshDate))
             completion(timeline)
         }
     }
@@ -138,7 +165,6 @@ struct AirQualityWidgetEntryView: View {
             }
             Spacer()
         }
-        
     }
     
     var mediumView: some View {
@@ -195,7 +221,7 @@ struct AirQualityWidgetEntryView: View {
                 VStack(spacing: 2){
                     Text("\(String(format: "%.0f", entry.components.pm2_5))")
                         .font(.callout .bold())
-                    Text("PM25")
+                    Text("PM2.5")
                         .font(.caption2)
                 }
                 .frame(maxWidth: .infinity)
