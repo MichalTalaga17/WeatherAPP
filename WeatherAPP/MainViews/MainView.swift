@@ -36,13 +36,14 @@ struct MainView: View {
         NavigationView {
             ZStack {
                 
-                if backgroundStyle == .gradient {
-                    backgroundView(for: currentWeather?.weather.first?.icon ?? "01d")
-                        .edgesIgnoringSafeArea(.all)
-                } else {
-                    Color.clear
-                        .edgesIgnoringSafeArea(.all)
-                }
+//                if backgroundStyle == .gradient {
+//                    backgroundView(for: currentWeather?.weather.first?.icon ?? "01d")
+//                        .edgesIgnoringSafeArea(.all)
+//                } else {
+//                    Color.clear
+//                        .edgesIgnoringSafeArea(.all)
+//                }
+                NightSkyView()
                 
                 if let errorMessage = errorMessage {
                     errorView(errorMessage: errorMessage)
