@@ -79,7 +79,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		4757D08C2C7D2AD000744CA6 /* SunriseWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SunriseWidget.swift; sourceTree = "<group>"; };
 		478FE0662C729EE0003A5654 /* GradientBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientBackground.swift; sourceTree = "<group>"; };
 		478FE06E2C738AB8003A5654 /* City.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = City.swift; sourceTree = "<group>"; };
 		478FE0702C73D62F003A5654 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
@@ -181,7 +180,6 @@
 				47BCAA442C7B1D7700DF4831 /* ForecastWidget.swift */,
 				47BCAA0D2C77E45D00DF4831 /* WeatherWidget.swift */,
 				47BCAA4E2C7BAED200DF4831 /* WeatherForecastPollutionWidget.swift */,
-				4757D08C2C7D2AD000744CA6 /* SunriseWidget.swift */,
 				47BCAA472C7B494B00DF4831 /* AirQualityWidget.swift */,
 				47BCAA392C79D1C700DF4831 /* LocationTempWidget.swift */,
 				47BCAA0F2C77E45D00DF4831 /* AppIntent.swift */,

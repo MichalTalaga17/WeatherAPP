@@ -1,240 +1,163 @@
 //
-//  SunriseSunsetWidget.swift
+//  SunTimesWidget.swift
 //  WeatherAPPwidgets
 //
-//  Created by Michał Talaga on 22/08/2024.
+//  Created by Michał Talaga on 26/08/2024.
 //
 
 import SwiftUI
 import WidgetKit
 import CoreLocation
 
-// MARK: - SunriseSunsetWidget Entry
-/// Struktura przechowująca dane dla widgetu.
-struct SunriseSunsetWidgetEntry: TimelineEntry {
+// MARK: - SunTimesEntry
+/// Struktura przechowująca dane dla widżetu.
+struct SunTimesEntry: TimelineEntry {
     let date: Date
     let sunriseTime: String
     let sunsetTime: String
-    let cityName: String
-    let weatherIcon: String
-    let weatherDescription: String
+    let locationName: String
 }
 
-// MARK: - SunriseSunsetWidget Provider
-/// Provider dostarczający dane dla widgetu, w tym zarządzający lokalizacją i pobieraniem danych pogodowych.
-struct SunriseSunsetWidgetProvider: TimelineProvider {
+// MARK: - SunTimesProvider
+/// Provider dostarczający dane dla widżetu.
+struct SunTimesProvider: TimelineProvider {
     @ObservedObject private var locationManager = LocationManager()
     private let api = API.shared
     
-    /// Funkcja zwracająca dane przykładowe dla widoku w trybie podglądu.
-    func placeholder(in context: Context) -> SunriseSunsetWidgetEntry {
-        SunriseSunsetWidgetEntry(
+    /// Funkcja zwracająca dane przykładowe dla widżetu w trybie podglądu.
+    func placeholder(in context: Context) -> SunTimesEntry {
+        SunTimesEntry(
             date: Date(),
             sunriseTime: "--:--",
             sunsetTime: "--:--",
-            cityName: "Nieznane",
-            weatherIcon: "01d",
-            weatherDescription: "Brak danych"
+            locationName: "Nieznane"
         )
     }
     
-    /// Funkcja zwracająca dane dla widoku w trybie podglądu.
-    func getSnapshot(in context: Context, completion: @escaping (SunriseSunsetWidgetEntry) -> Void) {
-        fetchSunriseSunset { sunriseTime, sunsetTime, cityName, weatherIcon, weatherDescription in
-            let entry = SunriseSunsetWidgetEntry(
+    /// Funkcja zwracająca dane dla widżetu w trybie podglądu.
+    func getSnapshot(in context: Context, completion: @escaping (SunTimesEntry) -> Void) {
+        fetchSunTimes { sunriseTime, sunsetTime, locationName in
+            let entry = SunTimesEntry(
                 date: Date(),
                 sunriseTime: sunriseTime,
                 sunsetTime: sunsetTime,
-                cityName: cityName,
-                weatherIcon: weatherIcon,
-                weatherDescription: weatherDescription
+                locationName: locationName
             )
             completion(entry)
         }
     }
     
-    /// Funkcja zwracająca dane dla harmonogramu widgetu.
-    func getTimeline(in context: Context, completion: @escaping (Timeline<SunriseSunsetWidgetEntry>) -> Void) {
-        fetchSunriseSunset { sunriseTime, sunsetTime, cityName, weatherIcon, weatherDescription in
-            let entry = SunriseSunsetWidgetEntry(
+    /// Funkcja zwracająca dane dla harmonogramu widżetu.
+    func getTimeline(in context: Context, completion: @escaping (Timeline<SunTimesEntry>) -> Void) {
+        fetchSunTimes { sunriseTime, sunsetTime, locationName in
+            let entry = SunTimesEntry(
                 date: Date(),
                 sunriseTime: sunriseTime,
                 sunsetTime: sunsetTime,
-                cityName: cityName,
-                weatherIcon: weatherIcon,
-                weatherDescription: weatherDescription
+                locationName: locationName
             )
-            let nextUpdateDate = Calendar.current.date(byAdding: .minute, value: 15, to: Date())!
-            let timeline = Timeline(entries: [entry], policy: .after(nextUpdateDate))
+            let nextUpdate = Calendar.current.date(byAdding: .hour, value: 1, to: Date())!
+            let timeline = Timeline(entries: [entry], policy: .after(nextUpdate))
             completion(timeline)
         }
     }
     
-    /// Funkcja pobierająca czas wschodu i zachodu słońca oraz inne dane pogodowe.
-    private func fetchSunriseSunset(completion: @escaping (String, String, String, String, String) -> Void) {
+    /// Funkcja pobierająca czas wschodu i zachodu słońca.
+    private func fetchSunTimes(completion: @escaping (String, String, String) -> Void) {
         locationManager.requestLocation { result in
             switch result {
             case .success(let location):
-                print("Lokalizacja pobrana pomyślnie: \(location.coordinate.latitude), \(location.coordinate.longitude)")
+                let latitude = location.coordinate.latitude
+                let longitude = location.coordinate.longitude
                 
-                if locationManager.cityName != "Unknown" {
-                    print("Nazwa miasta pobrana pomyślnie: \(locationManager.cityName)")
-                    
-                    api.fetchCurrentWeatherData(forCity: locationManager.cityName) { result in
-                        switch result {
-                        case .success(let data):
-                            let formatter = DateFormatter()
-                            formatter.timeStyle = .short
-                            formatter.timeZone = TimeZone(secondsFromGMT: data.timezone)
-                            
-                            let sunriseTime = formatter.string(from: Date(timeIntervalSince1970: TimeInterval(data.sys.sunrise)))
-                            let sunsetTime = formatter.string(from: Date(timeIntervalSince1970: TimeInterval(data.sys.sunset)))
-                            let weatherIcon = data.weather.first?.icon ?? "01d"
-                            let weatherDescription = data.weather.first?.description.capitalized ?? "Brak danych"
-                            
-                            completion(sunriseTime, sunsetTime, locationManager.cityName, weatherIcon, weatherDescription)
-                        case .failure(let error):
-                            print("Nie udało się pobrać danych pogodowych: \(error.localizedDescription)")
-                            completion("--:--", "--:--", locationManager.cityName, "01d", "Brak danych")
-                        }
+                api.fetchSunTimes(lat: latitude, lon: longitude) { result in
+                    switch result {
+                    case .success(let data):
+                        let formatter = DateFormatter()
+                        formatter.timeStyle = .short
+                        formatter.timeZone = TimeZone(secondsFromGMT: data.timezone)
+                        
+                        let sunriseTime = formatter.string(from: Date(timeIntervalSince1970: TimeInterval(data.sunrise)))
+                        let sunsetTime = formatter.string(from: Date(timeIntervalSince1970: TimeInterval(data.sunset)))
+                        let locationName = locationManager.cityName != "Unknown" ? locationManager.cityName : "Nieznane"
+                        
+                        completion(sunriseTime, sunsetTime, locationName)
+                    case .failure(let error):
+                        print("Błąd pobierania danych: \(error.localizedDescription)")
+                        completion("--:--", "--:--", "Nieznane")
                     }
-                } else {
-                    print("Nazwa miasta jest nieznana, nie można pobrać danych pogodowych.")
-                    completion("--:--", "--:--", "Nieznane", "01d", "Brak danych")
                 }
-                
             case .failure(let error):
-                print("Nie udało się pobrać lokalizacji: \(error.localizedDescription)")
-                completion("--:--", "--:--", "Nieznane", "01d", "Brak danych")
+                print("Błąd lokalizacji: \(error.localizedDescription)")
+                completion("--:--", "--:--", "Nieznane")
             }
         }
     }
 }
 
-// MARK: - SunriseSunsetWidget View
-/// Widok dla widgetu, wyświetlający nazwę miasta, czas wschodu i zachodu słońca oraz inne dane pogodowe.
-struct SunriseSunsetWidgetEntryView: View {
-    var entry: SunriseSunsetWidgetEntry
-    
-    @Environment(\.widgetFamily) var widgetFamily
+// MARK: - SunTimesEntryView
+/// Widok dla widżetu, wyświetlający czasy wschodu i zachodu słońca oraz nazwę lokalizacji.
+struct SunTimesEntryView: View {
+    var entry: SunTimesProvider.Entry
     
     var body: some View {
-        switch widgetFamily {
-        case .systemSmall:
-            smallView
-        case .systemMedium:
-            mediumView
-        default:
-            smallView
-        }
-    }
-    
-    var smallView: some View {
-        HStack {
-            VStack(alignment: .leading) {
-                Text(entry.cityName)
-                    .font(.headline)
-                Text(entry.weatherDescription)
-                    .font(.subheadline)
-                    .foregroundColor(.gray)
-                Spacer()
-                HStack(alignment: .center, spacing: 20) {
-                    VStack {
-                        Text("Sunrise")
-                            .font(.caption)
-                        Text(entry.sunriseTime)
-                            .font(.title2.bold())
-                            .foregroundColor(.orange)
-                    }
-                    VStack {
-                        Text("Sunset")
-                            .font(.caption)
-                        Text(entry.sunsetTime)
-                            .font(.title2.bold())
-                            .foregroundColor(.red)
-                    }
-                }
-                .padding(.horizontal, 7)
-                .padding(.vertical, 10)
-                .background(Color.orange.opacity(0.2))
-                .clipShape(RoundedRectangle(cornerRadius: 10))
-            }
-            Spacer()
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-    }
-    
-    var mediumView: some View {
         VStack(alignment: .leading) {
-            HStack(alignment: .top) {
-                VStack(alignment: .leading) {
-                    Text(entry.cityName)
-                        .font(.headline)
-                    Text(entry.weatherDescription)
-                        .font(.subheadline)
-                        .foregroundColor(.gray)
-                }
-                Spacer()
-                HStack {
-                    IconConvert(for: entry.weatherIcon, useWeatherColors: false)
-                        .scaleEffect(1.2)
-                }
-            }
-            
-            Spacer()
-            
+            Text(entry.locationName)
+                .font(.headline)
+                .padding(.bottom, 4)
             HStack {
-                VStack {
+                VStack(alignment: .leading) {
                     Text("Sunrise")
                         .font(.caption)
+                        .foregroundColor(.gray)
                     Text(entry.sunriseTime)
-                        .font(.callout.bold())
+                        .font(.title2.bold())
                         .foregroundColor(.orange)
                 }
                 Spacer()
-                VStack {
+                VStack(alignment: .leading) {
                     Text("Sunset")
                         .font(.caption)
+                        .foregroundColor(.gray)
                     Text(entry.sunsetTime)
-                        .font(.callout.bold())
+                        .font(.title2.bold())
                         .foregroundColor(.red)
                 }
             }
-            .padding(.horizontal, 7)
-            .padding(.vertical, 15)
-            .background(Color.orange.opacity(0.2))
-            .clipShape(RoundedRectangle(cornerRadius: 10))
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .padding()
+        .background(Color(UIColor.systemBackground).opacity(0.7))
+        .cornerRadius(10)
     }
 }
 
-// MARK: - SunriseSunsetWidget Configuration
-/// Konfiguracja widgetu, w tym jego wyświetlana nazwa i opis.
-struct SunriseSunsetWidget: Widget {
-    let kind: String = "SunriseSunsetWidget"
+// MARK: - SunTimesWidget
+/// Konfiguracja widżetu, w tym jego wyświetlana nazwa i opis.
+struct SunTimesWidget: Widget {
+    let kind: String = "SunTimesWidget"
     
     var body: some WidgetConfiguration {
-        StaticConfiguration(kind: kind, provider: SunriseSunsetWidgetProvider()) { entry in
-            SunriseSunsetWidgetEntryView(entry: entry)
+        StaticConfiguration(kind: kind, provider: SunTimesProvider()) { entry in
+            SunTimesEntryView(entry: entry)
                 .containerBackground(.fill.tertiary, for: .widget)
         }
-        .configurationDisplayName("Widget wschodu i zachodu słońca")
-        .description("Wyświetla czas wschodu i zachodu słońca na podstawie lokalizacji.")
+        .configurationDisplayName("Sun Times Widget")
+        .description("Displays the sunrise and sunset times for your location.")
         .supportedFamilies([.systemSmall, .systemMedium])
     }
 }
 
 // MARK: - Preview
-/// Podgląd widgetu w trybie edycji.
+/// Podgląd widżetu w trybie edycji.
 #Preview(as: .systemSmall) {
-    SunriseSunsetWidget()
+    SunTimesWidget()
 } timeline: {
-    SunriseSunsetWidgetEntry(date: Date(), sunriseTime: "06:00 AM", sunsetTime: "08:00 PM", cityName: "Warszawa", weatherIcon: "01d", weatherDescription: "Słonecznie")
+    SunTimesEntry(date: Date(), sunriseTime: "06:00 AM", sunsetTime: "08:00 PM", locationName: "Warszawa")
 }
 
 #Preview(as: .systemMedium) {
-    SunriseSunsetWidget()
+    SunTimesWidget()
 } timeline: {
-    SunriseSunsetWidgetEntry(date: Date(), sunriseTime: "06:00 AM", sunsetTime: "08:00 PM", cityName: "Warszawa", weatherIcon: "01d", weatherDescription: "Słonecznie")
+    SunTimesEntry(date: Date(), sunriseTime: "06:00 AM", sunsetTime: "08:00 PM", locationName: "Warszawa")
 }
+

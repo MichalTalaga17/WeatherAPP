@@ -16,7 +16,6 @@ struct WeatherEntry: TimelineEntry {
     let displayOption: DisplayOption
 }
 
-
 struct WeatherProvider: AppIntentTimelineProvider {
     @ObservedObject private var locationManager = LocationManager()
     private let api = API.shared
@@ -62,6 +61,12 @@ struct WeatherProvider: AppIntentTimelineProvider {
                                 value = "\(data.rain?.hour1 ?? 0) mm"
                             case .cloudiness:
                                 value = "\(data.clouds.all)%"
+                            case .sunriseSunset:
+                                let formatter = DateFormatter()
+                                formatter.timeStyle = .short
+                                let sunrise = formatter.string(from: Date(timeIntervalSince1970: TimeInterval(data.sys.sunrise)))
+                                let sunset = formatter.string(from: Date(timeIntervalSince1970: TimeInterval(data.sys.sunset)))
+                                value = "Sunrise: \(sunrise)\nSunset: \(sunset)"
                             }
                             continuation.resume(returning: WeatherEntry(date: currentDate, cityName: locationManager.cityName, value: value, displayOption: displayOption))
                         case .failure:
@@ -90,7 +95,7 @@ struct WeatherEntryView: View {
                 Spacer()
                 VStack(alignment: .leading) {
                     Text(entry.value)
-                        .font(.title2.bold())
+                        .font(entry.displayOption == .sunriseSunset ? .footnote : .title2.bold())
                         .foregroundStyle(Color.blue)
                     
                 }
@@ -117,6 +122,8 @@ extension DisplayOption {
             return "Precipitation"
         case .cloudiness:
             return "Cloudiness"
+        case .sunriseSunset:
+            return "Sunrise & Sunset"
         }
     }
 }
@@ -138,5 +145,5 @@ struct WeatherWidget: Widget {
 #Preview(as: .systemSmall) {
     WeatherWidget()
 } timeline: {
-    WeatherEntry(date: Date(), cityName: "Warszawa", value: "1200 hPa", displayOption: .precipitation )
+    WeatherEntry(date: Date(), cityName: "Warszawa", value: "Sunrise: 6:12 AM\nSunset: 8:14 PM", displayOption: .sunriseSunset)
 }

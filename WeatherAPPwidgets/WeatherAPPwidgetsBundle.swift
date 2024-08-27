@@ -16,6 +16,5 @@ struct WeatherAPPwidgetsBundle: WidgetBundle {
         ForecastWidget()
         AirQualityWidget()
         WeatherForecastPollutionWidget()
-        
     }
 }
