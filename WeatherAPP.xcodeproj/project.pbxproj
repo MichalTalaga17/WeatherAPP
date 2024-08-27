@@ -10,6 +10,7 @@
 		478FE0672C729EE0003A5654 /* GradientBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478FE0662C729EE0003A5654 /* GradientBackground.swift */; };
 		478FE06F2C738AB8003A5654 /* City.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478FE06E2C738AB8003A5654 /* City.swift */; };
 		478FE0712C73D62F003A5654 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478FE0702C73D62F003A5654 /* MainView.swift */; };
+		479501992C7E0EC800FCAD8A /* test.swift in Sources */ = {isa = PBXBuildFile; fileRef = 479501982C7E0EC800FCAD8A /* test.swift */; };
 		47B3FF612C6F960200F179EA /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47B3FF602C6F960200F179EA /* SettingsView.swift */; };
 		47B3FF632C6F972600F179EA /* WeatherView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47B3FF622C6F972600F179EA /* WeatherView.swift */; };
 		47B3FF662C6FAB4D00F179EA /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47B3FF652C6FAB4D00F179EA /* AboutView.swift */; };
@@ -82,6 +83,8 @@
 		478FE0662C729EE0003A5654 /* GradientBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientBackground.swift; sourceTree = "<group>"; };
 		478FE06E2C738AB8003A5654 /* City.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = City.swift; sourceTree = "<group>"; };
 		478FE0702C73D62F003A5654 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
+		479501972C7E0C0C00FCAD8A /* WeatherAPP.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = WeatherAPP.entitlements; sourceTree = "<group>"; };
+		479501982C7E0EC800FCAD8A /* test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = test.swift; sourceTree = "<group>"; };
 		47B3FF602C6F960200F179EA /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		47B3FF622C6F972600F179EA /* WeatherView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherView.swift; sourceTree = "<group>"; };
 		47B3FF652C6FAB4D00F179EA /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
@@ -211,6 +214,7 @@
 		47EC68B52C5D50AC001BA302 /* WeatherAPP */ = {
 			isa = PBXGroup;
 			children = (
+				479501972C7E0C0C00FCAD8A /* WeatherAPP.entitlements */,
 				47B3FF692C6FB3A600F179EA /* Info.plist */,
 				47EC68B62C5D50AC001BA302 /* WeatherAPPApp.swift */,
 				47B3FF782C6FEEAA00F179EA /* IconConvert.swift */,
@@ -241,6 +245,7 @@
 			children = (
 				47EC68B82C5D50AC001BA302 /* SearchView.swift */,
 				47B3FF602C6F960200F179EA /* SettingsView.swift */,
+				479501982C7E0EC800FCAD8A /* test.swift */,
 				47B3FF622C6F972600F179EA /* WeatherView.swift */,
 				478FE0702C73D62F003A5654 /* MainView.swift */,
 			);
@@ -388,6 +393,7 @@
 				47B3FF752C6FE59E00F179EA /* PollutionData.swift in Sources */,
 				478FE0712C73D62F003A5654 /* MainView.swift in Sources */,
 				47BCAA2F2C77E9DF00DF4831 /* CurrentData.swift in Sources */,
+				479501992C7E0EC800FCAD8A /* test.swift in Sources */,
 				47B3FF712C6FE55600F179EA /* API.swift in Sources */,
 				47B3FF662C6FAB4D00F179EA /* AboutView.swift in Sources */,
 				47BCAA372C789ED000DF4831 /* AppIntent.swift in Sources */,
@@ -588,6 +594,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				CODE_SIGN_ENTITLEMENTS = WeatherAPP/WeatherAPP.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"WeatherAPP/Preview Content\"";
@@ -614,6 +622,7 @@
 				MARKETING_VERSION = 2.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = me.michaltalaga.WeatherAPP;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -631,6 +640,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				CODE_SIGN_ENTITLEMENTS = WeatherAPP/WeatherAPP.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"WeatherAPP/Preview Content\"";
@@ -657,6 +668,7 @@
 				MARKETING_VERSION = 2.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = me.michaltalaga.WeatherAPP;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
