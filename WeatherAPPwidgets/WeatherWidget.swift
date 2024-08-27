@@ -1,6 +1,6 @@
 //
-//  WeatherAPPwidgets.swift
-//  WeatherAPPwidgets
+//  WeatherWidget.swift
+//  WeatherAPP
 //
 //  Created by Michał Talaga on 22/08/2024.
 //
@@ -16,9 +16,35 @@ struct WeatherEntry: TimelineEntry {
     let displayOption: DisplayOption
 }
 
+
 struct WeatherProvider: AppIntentTimelineProvider {
+    enum UpdateFrequency: String, Identifiable, CaseIterable {
+        case minutes5 = "5 Minutes"
+        case minutes10 = "10 Minutes"
+        case minutes30 = "30 Minutes"
+        case hourly = "Hourly"
+        
+        var id: String { self.rawValue }
+        var timeInterval: TimeInterval {
+            switch self {
+            case .minutes5:
+                return 5 * 60 // 5 minut
+            case .minutes10:
+                return 10 * 60 // 10 minut
+            case .minutes30:
+                return 30 * 60 // 30 minut
+            case .hourly:
+                return 60 * 60 // 1 godzina
+            }
+        }
+    }
     @ObservedObject private var locationManager = LocationManager()
     private let api = API.shared
+
+    private var weatherUpdateFrequency: UpdateFrequency {
+        let storedValue = UserDefaults.standard.string(forKey: "weatherUpdateFrequency") ?? UpdateFrequency.hourly.rawValue
+        return UpdateFrequency(rawValue: storedValue) ?? .hourly
+    }
 
     func placeholder(in context: Context) -> WeatherEntry {
         WeatherEntry(date: Date(), cityName: "Unknown", value: "--", displayOption: .humidity)
@@ -30,7 +56,10 @@ struct WeatherProvider: AppIntentTimelineProvider {
 
     func timeline(for configuration: WeatherConfigurationIntent, in context: Context) async -> Timeline<WeatherEntry> {
         let entry = await fetchWeatherData(for: configuration)
-        return Timeline(entries: [entry], policy: .atEnd)
+        
+        let refreshDate = Calendar.current.date(byAdding: .second, value: Int(weatherUpdateFrequency.timeInterval), to: entry.date) ?? Date()
+        
+        return Timeline(entries: [entry], policy: .after(refreshDate))
     }
 
     private func fetchWeatherData(for configuration: WeatherConfigurationIntent) async -> WeatherEntry {

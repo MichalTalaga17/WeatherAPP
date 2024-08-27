@@ -17,9 +17,14 @@ struct SettingsView: View {
     @AppStorage("airQuality") private var airQuality: Bool = true
     @AppStorage("dataSavingMode") private var dataSavingMode: Bool = false
     @AppStorage("language") private var language: Language = .english
-    @AppStorage("weatherUpdateFrequency") private var weatherUpdateFrequency: UpdateFrequency = .hourly
     @AppStorage("defaultCity") private var defaultCity: String = "Your location"
     @AppStorage("mainIcon") private var mainIcon: String = ""
+    
+    // UserDefaults for weatherUpdateFrequency
+    @State private var weatherUpdateFrequency: UpdateFrequency = {
+        let storedValue = UserDefaults.standard.string(forKey: "weatherUpdateFrequency") ?? UpdateFrequency.hourly.rawValue
+        return UpdateFrequency(rawValue: storedValue) ?? .hourly
+    }()
     
     // Query Property for Favorite Cities
     @Query private var cities: [FavouriteCity]
@@ -94,12 +99,14 @@ struct SettingsView: View {
     private var preferencesSection: some View {
         Section(header: Text("Preferences")) {
             Picker("Widgets update Frequency", selection: $weatherUpdateFrequency) {
-                Text("15 Minutes").tag(UpdateFrequency.minutes15)
+                Text("5 Minutes").tag(UpdateFrequency.minutes5)
+                Text("10 Minutes").tag(UpdateFrequency.minutes10)
                 Text("30 Minutes").tag(UpdateFrequency.minutes30)
                 Text("Hourly").tag(UpdateFrequency.hourly)
-                Text("Daily").tag(UpdateFrequency.daily)
             }
-            .disabled(true)
+            .onChange(of: weatherUpdateFrequency) { newValue in
+                UserDefaults.standard.set(newValue.rawValue, forKey: "weatherUpdateFrequency")
+            }
         }
     }
     
@@ -160,10 +167,10 @@ enum WindSpeedUnits: String, Identifiable, CaseIterable {
 }
 
 enum UpdateFrequency: String, Identifiable, CaseIterable {
-    case minutes15 = "15 Minutes"
+    case minutes5 = "5 Minutes"
+    case minutes10 = "10 Minutes"
     case minutes30 = "30 Minutes"
     case hourly = "Hourly"
-    case daily = "Daily"
     
     var id: String { self.rawValue }
 }
@@ -189,4 +196,3 @@ enum BackgroundStyle: String, CaseIterable, Identifiable {
 #Preview {
     SettingsView()
 }
-
