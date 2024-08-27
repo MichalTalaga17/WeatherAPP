@@ -13,7 +13,7 @@ struct MainView: View {
     // MARK: - Properties
     @AppStorage("airQuality") private var airQuality: Bool = true
     @AppStorage("iconsColorsBasedOnWeather") private var iconsColorsBasedOnWeather: Bool = true
-    @AppStorage("backgroundStyle") private var backgroundStyle: BackgroundStyle = .gradient
+    @AppStorage("backgroundStyle") private var backgroundStyle: BackgroundStyle = .none
     @AppStorage("mainIcon") private var mainIcon: String = ""
     @AppStorage("defaultCity") private var defaultCity: String = "Your location"
     
@@ -36,14 +36,16 @@ struct MainView: View {
         NavigationView {
             ZStack {
                 
-//                if backgroundStyle == .gradient {
-//                    backgroundView(for: currentWeather?.weather.first?.icon ?? "01d")
-//                        .edgesIgnoringSafeArea(.all)
-//                } else {
-//                    Color.clear
-//                        .edgesIgnoringSafeArea(.all)
-//                }
-                NightSkyView()
+                if backgroundStyle == .gradient {
+                    backgroundView(for: currentWeather?.weather.first?.icon ?? "01d")
+                        .edgesIgnoringSafeArea(.all)
+                } else if backgroundStyle == .animated{
+                    NightSkyView()
+                } else{
+                    Color.clear
+                        .edgesIgnoringSafeArea(.all)
+                }
+                
                 
                 if let errorMessage = errorMessage {
                     errorView(errorMessage: errorMessage)
@@ -258,7 +260,7 @@ struct MainView: View {
                 }
                 .padding(10)
                 .padding(.horizontal)
-                .background(Color.white.opacity(0.2))
+                .background(.material)
                 .cornerRadius(20)
             }
             .padding(.bottom)
@@ -284,7 +286,7 @@ struct MainView: View {
                 }
                 .padding(.horizontal)
                 .padding(.vertical, 5)
-                .background(Color.white.opacity(0.2))
+                .background(.material)
                 .cornerRadius(8)
                 
                 VStack {
