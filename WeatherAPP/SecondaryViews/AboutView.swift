@@ -22,7 +22,7 @@ struct AboutView: View {
                         .font(.body)
                         .lineSpacing(4)
                     
-                    Text("Version 1.0.0")
+                    Text("Version 2.0")
                         .font(.subheadline)
                         .foregroundColor(.gray)
                 }
@@ -31,6 +31,7 @@ struct AboutView: View {
             Section(header: Text("Links")) {
                 NavigationLink("Privacy Policy", destination: PrivacyPolicyView())
                 Link("Contact Support", destination: URL(string: "mailto:michal.talaga.programming@gmail.com")!)
+                Link("GitHub project", destination: URL(string: "https://github.com/MichalTalaga17/WeatherAPP")!)
             }
             
             

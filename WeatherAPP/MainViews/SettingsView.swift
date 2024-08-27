@@ -98,15 +98,32 @@ struct SettingsView: View {
     
     private var preferencesSection: some View {
         Section(header: Text("Preferences")) {
-            Picker("Widgets update Frequency", selection: $weatherUpdateFrequency) {
-                Text("5 Minutes").tag(UpdateFrequency.minutes5)
-                Text("10 Minutes").tag(UpdateFrequency.minutes10)
-                Text("30 Minutes").tag(UpdateFrequency.minutes30)
-                Text("Hourly").tag(UpdateFrequency.hourly)
-            }
-            .onChange(of: weatherUpdateFrequency) { newValue in
-                UserDefaults.standard.set(newValue.rawValue, forKey: "weatherUpdateFrequency")
-            }
+            Toggle("Data Saving Mode", isOn: $dataSavingMode)
+                .onChange(of: dataSavingMode) { newValue in
+                    if newValue {
+                        // Ustaw częstotliwość odświeżania na godzinę, jeśli jest włączony tryb oszczędzania danych
+                        if weatherUpdateFrequency != .hourly {
+                            weatherUpdateFrequency = .hourly
+                        }
+                        UserDefaults.standard.set(weatherUpdateFrequency.rawValue, forKey: "weatherUpdateFrequency")
+                    }
+                }
+            
+           
+                Picker("Widgets update Frequency", selection: $weatherUpdateFrequency) {
+                    Text("5 Minutes").tag(UpdateFrequency.minutes5)
+                    Text("10 Minutes").tag(UpdateFrequency.minutes10)
+                    Text("30 Minutes").tag(UpdateFrequency.minutes30)
+                    Text("Hourly").tag(UpdateFrequency.hourly)
+                }
+                .disabled(dataSavingMode)
+                .onChange(of: weatherUpdateFrequency) { newValue in
+                    if dataSavingMode && newValue != .hourly {
+                        // Jeśli tryb oszczędzania danych jest włączony, wymuszamy godzinne odświeżanie
+                        weatherUpdateFrequency = .hourly
+                    }
+                    UserDefaults.standard.set(weatherUpdateFrequency.rawValue, forKey: "weatherUpdateFrequency")
+                }
         }
     }
     
@@ -119,11 +136,9 @@ struct SettingsView: View {
             }
             .disabled(true)
             
-            Toggle("Data Saving Mode", isOn: $dataSavingMode)
-                .disabled(true)
+            
             
             Toggle("Air Quality Information", isOn: $airQuality)
-                .disabled(true)
         }
     }
     
