@@ -99,31 +99,34 @@ struct SettingsView: View {
     private var preferencesSection: some View {
         Section(header: Text("Preferences")) {
             Toggle("Data Saving Mode", isOn: $dataSavingMode)
-                .onChange(of: dataSavingMode) { newValue in
-                    if newValue {
+                .onChange(of: dataSavingMode) {
+                    if dataSavingMode {
                         // Ustaw częstotliwość odświeżania na godzinę, jeśli jest włączony tryb oszczędzania danych
                         if weatherUpdateFrequency != .hourly {
                             weatherUpdateFrequency = .hourly
+                            UserDefaults.standard.set(weatherUpdateFrequency.rawValue, forKey: "weatherUpdateFrequency")
                         }
-                        UserDefaults.standard.set(weatherUpdateFrequency.rawValue, forKey: "weatherUpdateFrequency")
                     }
                 }
             
-           
-                Picker("Widgets update Frequency", selection: $weatherUpdateFrequency) {
-                    Text("5 Minutes").tag(UpdateFrequency.minutes5)
-                    Text("10 Minutes").tag(UpdateFrequency.minutes10)
-                    Text("30 Minutes").tag(UpdateFrequency.minutes30)
-                    Text("Hourly").tag(UpdateFrequency.hourly)
-                }
-                .disabled(dataSavingMode)
-                .onChange(of: weatherUpdateFrequency) { newValue in
-                    if dataSavingMode && newValue != .hourly {
-                        // Jeśli tryb oszczędzania danych jest włączony, wymuszamy godzinne odświeżanie
-                        weatherUpdateFrequency = .hourly
-                    }
+            // Wyświetl Picker tylko wtedy, gdy Data Saving Mode jest wyłączony
+            Picker("Widgets update Frequency", selection: $weatherUpdateFrequency) {
+                Text("5 Minutes").tag(UpdateFrequency.minutes5)
+                Text("10 Minutes").tag(UpdateFrequency.minutes10)
+                Text("30 Minutes").tag(UpdateFrequency.minutes30)
+                Text("Hourly").tag(UpdateFrequency.hourly)
+            }
+            .disabled(dataSavingMode)
+            .onChange(of: weatherUpdateFrequency) {
+                // Sprawdź, czy tryb oszczędzania danych jest włączony i wymuś godzinne odświeżanie, jeśli tak
+                if dataSavingMode && weatherUpdateFrequency != .hourly {
+                    weatherUpdateFrequency = .hourly
+                    UserDefaults.standard.set(weatherUpdateFrequency.rawValue, forKey: "weatherUpdateFrequency")
+                } else {
+                    // Zapisz zmienioną częstotliwość odświeżania w UserDefaults
                     UserDefaults.standard.set(weatherUpdateFrequency.rawValue, forKey: "weatherUpdateFrequency")
                 }
+            }
         }
     }
     

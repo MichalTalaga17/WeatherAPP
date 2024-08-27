@@ -58,7 +58,7 @@ struct LocationTempWidgetProvider: TimelineProvider {
     private func fetchWeatherData(completion: @escaping (LocationTempWidgetEntry) -> Void) {
         locationManager.requestLocation { result in
             switch result {
-            case .success(let location):
+            case .success(_):
                 guard locationManager.cityName != "Unknown" else {
                     completion(LocationTempWidgetEntry(
                         date: Date(),
@@ -192,9 +192,13 @@ struct LocationTempWidgetEntryView: View {
             
             HStack {
                 weatherDataView(entry.temperature, "thermometer")
-                weatherDataView(entry.humidity, "drop.fill")
+                Spacer()
                 weatherDataView(entry.windSpeed, "wind")
+                Spacer()
                 weatherDataView(entry.pressure, "gauge")
+                Spacer()
+                weatherDataView(entry.humidity, "drop.fill")
+                Spacer()
                 weatherDataView(entry.precipitation, "cloud.rain.fill")
             }
             .foregroundStyle(Color.blue)
