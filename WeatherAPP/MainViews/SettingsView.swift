@@ -32,15 +32,6 @@ struct SettingsView: View {
     var body: some View {
         NavigationView {
             ZStack {
-                // Background Gradient
-                if backgroundStyle == .gradient {
-                    gradientBackground()
-                        .edgesIgnoringSafeArea(.all)
-                } else {
-                    Color.clear
-                        .edgesIgnoringSafeArea(.all)
-                }
-                
                 Form {
                     defaultCitySection
                     unitsSection
@@ -85,6 +76,7 @@ struct SettingsView: View {
             Picker("Background Style", selection: $backgroundStyle) {
                 Text("None").tag(BackgroundStyle.none)
                 Text("Gradient").tag(BackgroundStyle.gradient)
+                Text("Animated").tag(BackgroundStyle.animated)
             }
         }
     }
