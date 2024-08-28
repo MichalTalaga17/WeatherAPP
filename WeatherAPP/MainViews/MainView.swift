@@ -13,7 +13,7 @@ struct MainView: View {
     // MARK: - Properties
     @AppStorage("airQuality") private var airQuality: Bool = true
     @AppStorage("iconsColorsBasedOnWeather") private var iconsColorsBasedOnWeather: Bool = true
-    @AppStorage("backgroundStyle") private var backgroundStyle: BackgroundStyle = .none
+    @AppStorage("backgroundStyle") private var backgroundStyle: BackgroundStyle = .animated
     @AppStorage("mainIcon") private var mainIcon: String = ""
     @AppStorage("defaultCity") private var defaultCity: String = "Your location"
     
@@ -56,7 +56,6 @@ struct MainView: View {
                                 if let cityName = self.cityName {
                                     weatherView(for: cityName)
                                         .onAppear {
-                                            // Ensure cityName is set before loading weather data
                                             fetchCityName(from: location) { resolvedCityName in
                                                 self.cityName = resolvedCityName
                                                 self.loadWeatherData(for: resolvedCityName)
@@ -309,7 +308,7 @@ struct MainView: View {
                 }
                 .padding(.horizontal)
                 .padding(.vertical, 5)
-                .background(Color.white.opacity(0.2))
+                .background(.material)
                 .cornerRadius(8)
             }
             
@@ -324,7 +323,7 @@ struct MainView: View {
                 }
             }
             .padding()
-            .background(Color.white.opacity(0.2))
+            .background(.material)
             .cornerRadius(8)
         }
     }
@@ -346,7 +345,7 @@ struct MainView: View {
             }
         }
         .padding()
-        .background(Color.white.opacity(0.2))
+        .background(.material)
         .cornerRadius(8)
     }
     

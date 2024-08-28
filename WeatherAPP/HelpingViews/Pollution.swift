@@ -27,7 +27,7 @@ struct PollutionDataView: View {
             }
         }
         .padding()
-        .background(Color.white.opacity(0.2))
+        .background(.material)
         .cornerRadius(8)
     }
 }

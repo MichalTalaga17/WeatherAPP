@@ -216,7 +216,7 @@ struct WeatherView: View {
                 }
                 .padding(10)
                 .padding(.horizontal)
-                .background(Color.white.opacity(0.2))
+                .background(.material)
                 .cornerRadius(20)
             }
             .padding(.bottom)
@@ -251,7 +251,7 @@ struct WeatherView: View {
         }
         .padding(.horizontal)
         .padding(.vertical, 5)
-        .background(Color.white.opacity(0.2))
+        .background(.material)
         .cornerRadius(8)
     }
     
@@ -276,7 +276,7 @@ struct WeatherView: View {
         }
         .padding(.horizontal)
         .padding(.vertical, 5)
-        .background(Color.white.opacity(0.2))
+        .background(.material)
         .cornerRadius(8)
     }
     
@@ -292,7 +292,7 @@ struct WeatherView: View {
             }
         }
         .padding()
-        .background(Color.white.opacity(0.2))
+        .background(.material)
         .cornerRadius(8)
     }
     
@@ -313,7 +313,7 @@ struct WeatherView: View {
             }
         }
         .padding()
-        .background(Color.white.opacity(0.2))
+        .background(.material)
         .cornerRadius(8)
     }
     private func backgroundView(for icon: String) -> some View {
@@ -344,5 +344,5 @@ func getPrecipitationInfo(_ weather: CurrentData) -> String {
 
 // MARK: - Preview
 #Preview {
-    WeatherView(cityName: "London")
+    WeatherView(cityName: "Zembrzyce")
 }

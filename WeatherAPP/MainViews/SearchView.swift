@@ -69,7 +69,7 @@ struct SearchView: View {
                 NavigationLink(destination: WeatherView(cityName: city.name)) {
                     cityRow(for: city)
                 }
-                .background(Color.white.opacity(0.2))
+                .background(.material)
                 .cornerRadius(15)
                 .task {
                     await fetchWeatherData(for: city)
