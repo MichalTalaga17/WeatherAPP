@@ -10,7 +10,7 @@
 		478FE0672C729EE0003A5654 /* GradientBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478FE0662C729EE0003A5654 /* GradientBackground.swift */; };
 		478FE06F2C738AB8003A5654 /* City.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478FE06E2C738AB8003A5654 /* City.swift */; };
 		478FE0712C73D62F003A5654 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478FE0702C73D62F003A5654 /* MainView.swift */; };
-		479501992C7E0EC800FCAD8A /* test.swift in Sources */ = {isa = PBXBuildFile; fileRef = 479501982C7E0EC800FCAD8A /* test.swift */; };
+		479501992C7E0EC800FCAD8A /* NightSkyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 479501982C7E0EC800FCAD8A /* NightSkyView.swift */; };
 		47B3FF612C6F960200F179EA /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47B3FF602C6F960200F179EA /* SettingsView.swift */; };
 		47B3FF632C6F972600F179EA /* WeatherView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47B3FF622C6F972600F179EA /* WeatherView.swift */; };
 		47B3FF662C6FAB4D00F179EA /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47B3FF652C6FAB4D00F179EA /* AboutView.swift */; };
@@ -49,7 +49,8 @@
 		47BCAA492C7B494C00DF4831 /* AirQualityWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47BCAA472C7B494B00DF4831 /* AirQualityWidget.swift */; };
 		47BCAA4F2C7BAED200DF4831 /* WeatherForecastPollutionWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47BCAA4E2C7BAED200DF4831 /* WeatherForecastPollutionWidget.swift */; };
 		47BCAA502C7BAED200DF4831 /* WeatherForecastPollutionWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47BCAA4E2C7BAED200DF4831 /* WeatherForecastPollutionWidget.swift */; };
-		47DEA3F02C7F311600C281D5 /* SunBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47DEA3EF2C7F311600C281D5 /* SunBackground.swift */; };
+		47DEA3F02C7F311600C281D5 /* DaySkyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47DEA3EF2C7F311600C281D5 /* DaySkyView.swift */; };
+		47DEA3F32C7F415A00C281D5 /* RainDayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47DEA3F22C7F415A00C281D5 /* RainDayView.swift */; };
 		47EC68B72C5D50AC001BA302 /* WeatherAPPApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47EC68B62C5D50AC001BA302 /* WeatherAPPApp.swift */; };
 		47EC68B92C5D50AC001BA302 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47EC68B82C5D50AC001BA302 /* SearchView.swift */; };
 		47EC68BD2C5D50AD001BA302 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 47EC68BC2C5D50AD001BA302 /* Assets.xcassets */; };
@@ -85,7 +86,7 @@
 		478FE06E2C738AB8003A5654 /* City.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = City.swift; sourceTree = "<group>"; };
 		478FE0702C73D62F003A5654 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		479501972C7E0C0C00FCAD8A /* WeatherAPP.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = WeatherAPP.entitlements; sourceTree = "<group>"; };
-		479501982C7E0EC800FCAD8A /* test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = test.swift; sourceTree = "<group>"; };
+		479501982C7E0EC800FCAD8A /* NightSkyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NightSkyView.swift; sourceTree = "<group>"; };
 		47B3FF602C6F960200F179EA /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		47B3FF622C6F972600F179EA /* WeatherView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherView.swift; sourceTree = "<group>"; };
 		47B3FF652C6FAB4D00F179EA /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
@@ -112,7 +113,8 @@
 		47BCAA442C7B1D7700DF4831 /* ForecastWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForecastWidget.swift; sourceTree = "<group>"; };
 		47BCAA472C7B494B00DF4831 /* AirQualityWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirQualityWidget.swift; sourceTree = "<group>"; };
 		47BCAA4E2C7BAED200DF4831 /* WeatherForecastPollutionWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherForecastPollutionWidget.swift; sourceTree = "<group>"; };
-		47DEA3EF2C7F311600C281D5 /* SunBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SunBackground.swift; sourceTree = "<group>"; };
+		47DEA3EF2C7F311600C281D5 /* DaySkyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaySkyView.swift; sourceTree = "<group>"; };
+		47DEA3F22C7F415A00C281D5 /* RainDayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RainDayView.swift; sourceTree = "<group>"; };
 		47EC68B32C5D50AC001BA302 /* WeatherAPP.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WeatherAPP.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		47EC68B62C5D50AC001BA302 /* WeatherAPPApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherAPPApp.swift; sourceTree = "<group>"; };
 		47EC68B82C5D50AC001BA302 /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
@@ -194,6 +196,16 @@
 			path = WeatherAPPwidgets;
 			sourceTree = "<group>";
 		};
+		47DEA3F12C7F3A7300C281D5 /* AnimatedBackgrounds */ = {
+			isa = PBXGroup;
+			children = (
+				47DEA3EF2C7F311600C281D5 /* DaySkyView.swift */,
+				479501982C7E0EC800FCAD8A /* NightSkyView.swift */,
+				47DEA3F22C7F415A00C281D5 /* RainDayView.swift */,
+			);
+			path = AnimatedBackgrounds;
+			sourceTree = "<group>";
+		};
 		47EC68AA2C5D50AC001BA302 = {
 			isa = PBXGroup;
 			children = (
@@ -223,6 +235,7 @@
 				478FE06E2C738AB8003A5654 /* City.swift */,
 				47B3FF7A2C6FEF4F00F179EA /* Converters.swift */,
 				478FE0662C729EE0003A5654 /* GradientBackground.swift */,
+				47DEA3F12C7F3A7300C281D5 /* AnimatedBackgrounds */,
 				47B3FF6D2C6FE43700F179EA /* LoctionManager.swift */,
 				47B3FF6A2C6FB5FB00F179EA /* HelpingViews */,
 				47B3FF642C6FAB2A00F179EA /* SecondaryViews */,
@@ -247,8 +260,6 @@
 			children = (
 				47EC68B82C5D50AC001BA302 /* SearchView.swift */,
 				47B3FF602C6F960200F179EA /* SettingsView.swift */,
-				479501982C7E0EC800FCAD8A /* test.swift */,
-				47DEA3EF2C7F311600C281D5 /* SunBackground.swift */,
 				47B3FF622C6F972600F179EA /* WeatherView.swift */,
 				478FE0702C73D62F003A5654 /* MainView.swift */,
 			);
@@ -379,6 +390,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				47B3FF7B2C6FEF4F00F179EA /* Converters.swift in Sources */,
+				47DEA3F32C7F415A00C281D5 /* RainDayView.swift in Sources */,
 				47BCAA482C7B494C00DF4831 /* AirQualityWidget.swift in Sources */,
 				47B3FF792C6FEEAA00F179EA /* IconConvert.swift in Sources */,
 				47BCAA452C7B1D7700DF4831 /* ForecastWidget.swift in Sources */,
@@ -396,8 +408,8 @@
 				47B3FF752C6FE59E00F179EA /* PollutionData.swift in Sources */,
 				478FE0712C73D62F003A5654 /* MainView.swift in Sources */,
 				47BCAA2F2C77E9DF00DF4831 /* CurrentData.swift in Sources */,
-				47DEA3F02C7F311600C281D5 /* SunBackground.swift in Sources */,
-				479501992C7E0EC800FCAD8A /* test.swift in Sources */,
+				47DEA3F02C7F311600C281D5 /* DaySkyView.swift in Sources */,
+				479501992C7E0EC800FCAD8A /* NightSkyView.swift in Sources */,
 				47B3FF712C6FE55600F179EA /* API.swift in Sources */,
 				47B3FF662C6FAB4D00F179EA /* AboutView.swift in Sources */,
 				47BCAA372C789ED000DF4831 /* AppIntent.swift in Sources */,
