@@ -1,6 +1,14 @@
 import SwiftUI
 import Combine
 
+// Cloudiness Enum
+enum Cloudiness {
+    case clear
+    case few
+    case scattered
+    case overcast
+}
+
 // StarFieldAnimator
 class StarFieldAnimator: ObservableObject {
     class StarModel: Identifiable {
@@ -37,6 +45,7 @@ class StarFieldAnimator: ObservableObject {
         }
     }
 }
+
 private struct Star: Shape {
     var origin: CGPoint
     var size: CGFloat
@@ -61,21 +70,135 @@ private struct Star: Shape {
     }
 }
 
-// Cloud Shape
-private struct Cloud: View {
+// Sun View
+private struct Sun: View {
+    @State private var pulse = false
+    
     var body: some View {
-        Ellipse()
-            .fill(Color.white.opacity(0.1))
-            .blur(radius: 30)
-            .frame(width: 200, height: 100)
-            .opacity(0.5)
+        ZStack {
+            Circle()
+                .strokeBorder(
+                    LinearGradient(
+                        gradient: Gradient(colors: [Color.white.opacity(0.6), Color.yellow.opacity(0.3), Color.clear]),
+                        startPoint: .center,
+                        endPoint: .bottom
+                    ),
+                    lineWidth: 50
+                )
+                .frame(width: 300, height: 300)
+                .blur(radius: 50)
+            
+            Circle()
+                .fill(
+                    LinearGradient(
+                        gradient: Gradient(colors: [Color.white.opacity(0.8), Color.yellow.opacity(0.7)]),
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                )
+                .frame(width: 150, height: 150)
+                .blur(radius: 30)
+                .scaleEffect(pulse ? 1.1 : 1.0)
+                .onAppear {
+                    withAnimation(Animation.easeInOut(duration: 2).repeatForever(autoreverses: true)) {
+                        pulse = true
+                    }
+                }
+        }
+    }
+}
+
+// Cloud View
+private struct Cloud: View {
+    var cloudiness: Cloudiness
+
+    var body: some View {
+        let opacity: Double
+        let blurRadius: CGFloat
+        let offset: CGFloat
+        
+        switch cloudiness {
+        case .clear:
+            opacity = 0.0
+            blurRadius = 0
+            offset = 0
+        case .few:
+            opacity = 0.2
+            blurRadius = 20
+            offset = 20
+        case .scattered:
+            opacity = 0.5
+            blurRadius = 30
+            offset = 30
+        case .overcast:
+            opacity = 0.8
+            blurRadius = 40
+            offset = 40
+        }
+
+        return ZStack {
+            Ellipse()
+                .fill(Color.white.opacity(opacity))
+                .blur(radius: blurRadius)
+                .frame(width: 200, height: 100)
+                .offset(x: offset, y: 0)
+            
+            // Add more cloud ellipses as needed to simulate the cloudiness
+        }
+    }
+}
+
+// DaySkyView
+private struct DaySkyView: View {
+    var cloudiness: Cloudiness
+
+    var body: some View {
+        ZStack {
+            LinearGradient(
+                gradient: Gradient(colors: [
+                    Color(red: 0.2, green: 0.6, blue: 0.85),
+                    Color(red: 0.6, green: 0.85, blue: 1.0)
+                ]),
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
+
+            Sun()
+                .offset(x: 0, y: -250)
+
+            Cloud(cloudiness: cloudiness)
+                .offset(x: -150, y: -300)
+            Cloud(cloudiness: cloudiness)
+                .offset(x: 180, y: -330)
+            Cloud(cloudiness: cloudiness)
+                .offset(x: 80, y: -150)
+
+            LinearGradient(
+                gradient: Gradient(stops: [
+                    .init(color: Color.clear, location: 0.0),
+                    .init(color: Color.white.opacity(0.1), location: 0.6),
+                    .init(color: Color.white.opacity(0.3), location: 1.0)
+                ]),
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .blendMode(.overlay)
+            .ignoresSafeArea()
+            
+            RadialGradient(gradient: Gradient(colors: [Color.white.opacity(0.15), Color.clear]), center: .center, startRadius: 10, endRadius: 400)
+                .blendMode(.plusLighter)
+                .offset(x: 0, y: -250)
+                .ignoresSafeArea()
+        }
     }
 }
 
 // NightSkyView
-struct NightSkyView: View {
+private struct NightSkyView: View {
     @StateObject private var starFieldAnimator = StarFieldAnimator(starCount: 200)
     @State private var animationTimer = Timer.publish(every: 1.5, on: .main, in: .common).autoconnect()
+    var cloudiness: Cloudiness
 
     var body: some View {
         ZStack {
@@ -97,11 +220,11 @@ struct NightSkyView: View {
             }
 
             // Clouds
-            Cloud()
+            Cloud(cloudiness: cloudiness)
                 .offset(x: -100, y: -50)
                 .blur(radius: 20)
                 .animation(.linear(duration: 20).repeatForever(autoreverses: true), value: UUID())
-            Cloud()
+            Cloud(cloudiness: cloudiness)
                 .offset(x: 150, y: -150)
                 .blur(radius: 30)
                 .animation(.linear(duration: 25).repeatForever(autoreverses: true), value: UUID())
@@ -131,8 +254,21 @@ struct NightSkyView: View {
     }
 }
 
-// Preview
-#Preview {
-    NightSkyView()
+// Main View
+struct SkyView: View {
+    var day: Bool
+    var cloudiness: Cloudiness
+
+    var body: some View {
+        if day {
+            DaySkyView(cloudiness: cloudiness)
+        } else {
+            NightSkyView(cloudiness: cloudiness)
+        }
+    }
 }
 
+// Preview
+#Preview {
+    SkyView(day: false, cloudiness: .clear)
+}
