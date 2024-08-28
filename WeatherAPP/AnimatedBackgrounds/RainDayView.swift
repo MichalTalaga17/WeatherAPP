@@ -1,10 +1,5 @@
 import SwiftUI
 
-// Enum for Precipitation Type
-enum PrecipitationType {
-    case rain, snow, hail
-}
-
 // View for a Single Precipitation Particle
 private struct PrecipitationParticle: View {
     @State private var dropFall = false

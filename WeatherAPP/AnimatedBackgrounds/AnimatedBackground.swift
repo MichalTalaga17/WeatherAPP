@@ -7,6 +7,11 @@
 
 import SwiftUI
 
+
+enum PrecipitationType {
+    case rain, snow, hail
+}
+
 func animatedBackground(for iconName: String) -> LinearGradient {
     let iconCode = iconMap.first(where: { $0.value == iconName })?.key ?? "default"
     let isDay = iconCode.hasSuffix("d")
