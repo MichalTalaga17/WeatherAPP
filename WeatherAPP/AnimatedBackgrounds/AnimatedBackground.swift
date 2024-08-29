@@ -7,141 +7,79 @@
 
 import SwiftUI
 
-
 enum PrecipitationType {
     case rain, snow, hail
 }
 
-func animatedBackground(for iconName: String) -> LinearGradient {
-    let iconCode = iconMap.first(where: { $0.value == iconName })?.key ?? "default"
-    let isDay = iconCode.hasSuffix("d")
-    
-    let gradient: LinearGradient
-    
-    switch iconName {
-    case "01d":
-        gradient = LinearGradient(
-            gradient: Gradient(colors: [Color.yellow.opacity(0.3), Color.blue.opacity(0.3)]),
-            startPoint: .top,
-            endPoint: .bottom
-        )
+enum Cloudiness {
+    case clear
+    case few
+    case scattered
+    case broken
+    case overcast
+}
+
+func animatedBackground(for iconName: String) -> some View {
+    let iconCode = iconName.prefix(3)
+    let isDay = iconName.hasSuffix("d")
+
+    switch iconCode {
+    case "01d", "01n":
+        return AnyView(SkyView(day: isDay, cloudiness: .clear))
         
-    case "01n":
-        gradient = LinearGradient(
-            gradient: Gradient(colors: [Color.white.opacity(0.4), Color.black.opacity(0.3)]),
-            startPoint: .top,
-            endPoint: .bottom
-        )
-        
-    case "02d":
-        gradient = LinearGradient(
-            gradient: Gradient(colors: [Color.yellow.opacity(0.2), Color.gray.opacity(0.7)]),
-            startPoint: .top,
-            endPoint: .bottom
-        )
-        
-    case "02n":
-        gradient = LinearGradient(
-            gradient: Gradient(colors: [Color.gray.opacity(0.4), Color.black.opacity(0.6)]),
-            startPoint: .top,
-            endPoint: .bottom
-        )
+    case "02d", "02n":
+        return AnyView(SkyView(day: isDay, cloudiness: .few))
         
     case "03d", "03n":
-        gradient = LinearGradient(
-            gradient: Gradient(colors: [Color.gray.opacity(0.2), isDay ? Color.gray.opacity(0.4) : Color.black.opacity(0.5)]),
-            startPoint: .top,
-            endPoint: .bottom
-        )
+        return AnyView(SkyView(day: isDay, cloudiness: .scattered))
         
     case "04d", "04n":
-        gradient = LinearGradient(
-            gradient: Gradient(colors: [Color.gray.opacity(0.6), isDay ? Color.gray.opacity(0.5) : Color.black.opacity(0.6)]),
-            startPoint: .top,
-            endPoint: .bottom
-        )
+        return AnyView(SkyView(day: isDay, cloudiness: .broken))
         
-    case "09d":
-        gradient = LinearGradient(
-            gradient: Gradient(colors: [Color.gray.opacity(0.7), Color.blue.opacity(0.5)]),
-            startPoint: .top,
-            endPoint: .bottom
-        )
+    case "09d", "09n":
+        return AnyView(RainyDaySkyView(isDaytime: isDay, cloudiness: 0.7, precipitationType: .rain, precipitationIntensity: 150))
         
-    case "09n":
-        gradient = LinearGradient(
-            gradient: Gradient(colors: [Color.blue.opacity(0.3), Color.gray.opacity(0.7)]),
-            startPoint: .top,
-            endPoint: .bottom
-        )
+    case "10d", "10n":
+        return AnyView(RainyDaySkyView(isDaytime: isDay, cloudiness: 0.8, precipitationType: .rain, precipitationIntensity: 100))
         
-    case "10d":
-        gradient = LinearGradient(
-            gradient: Gradient(colors: [Color.yellow.opacity(0.15), Color.blue.opacity(0.35)]),
-            startPoint: .top,
-            endPoint: .bottom
-        )
+    case "11d", "11n":
+        return AnyView(ThunderstormView(isDaytime: isDay, cloudiness: 1.0, precipitationType: .rain, precipitationIntensity: 200))
         
-    case "10n":
-        gradient = LinearGradient(
-            gradient: Gradient(colors: [Color.blue.opacity(0.15), Color.black.opacity(0.4)]),
-            startPoint: .top,
-            endPoint: .bottom
-        )
+    case "13d", "13n":
+        return AnyView(RainyDaySkyView(isDaytime: isDay, cloudiness: 0.9, precipitationType: .snow, precipitationIntensity: 300))
         
-    case "11d":
-        gradient = LinearGradient(
-            gradient: Gradient(colors: [Color.white.opacity(0.5), Color.gray.opacity(0.8)]),
-            startPoint: .top,
-            endPoint: .bottom
-        )
-        
-    case "11n":
-        gradient = LinearGradient(
-            gradient: Gradient(colors: [Color.gray.opacity(0.9), Color.black.opacity(0.6)]),
-            startPoint: .top,
-            endPoint: .bottom
-        )
-        
-    case "13d":
-        gradient = LinearGradient(
-            gradient: Gradient(colors: [Color.white.opacity(0.7), Color.blue.opacity(0.2)]),
-            startPoint: .top,
-            endPoint: .bottom
-        )
-        
-    case "13n":
-        gradient = LinearGradient(
-            gradient: Gradient(colors: [Color.black.opacity(0.5), Color.white.opacity(0.5)]),
-            startPoint: .top,
-            endPoint: .bottom
-        )
-        
-    case "50d":
-        gradient = LinearGradient(
-            gradient: Gradient(colors: [Color.yellow.opacity(0.2), Color.gray.opacity(0.8)]),
-            startPoint: .top,
-            endPoint: .bottom
-        )
-        
-    case "50n":
-        gradient = LinearGradient(
-            gradient: Gradient(colors: [Color.gray.opacity(0.8), Color.black.opacity(0.4)]),
-            startPoint: .top,
-            endPoint: .bottom
-        )
+    case "50d", "50n":
+        return AnyView(FoggyView(isDaytime: isDay))
         
     default:
-        gradient = isDay ? LinearGradient(
-            gradient: Gradient(colors: [Color.yellow.opacity(0.4), Color.blue.opacity(0.3)]),
-            startPoint: .top,
-            endPoint: .bottom
-        ) : LinearGradient(
-            gradient: Gradient(colors: [Color.black.opacity(0.8), Color.blue.opacity(0.2)]),
-            startPoint: .top,
-            endPoint: .bottom
-        )
+        return AnyView(Color.clear)
     }
+}
+
+// Example FoggyView for Mist (50d and 50n)
+struct FoggyView: View {
+    let isDaytime: Bool
     
-    return gradient
+    var body: some View {
+        ZStack {
+            LinearGradient(
+                gradient: Gradient(colors: isDaytime
+                    ? [Color.white.opacity(0.7), Color.gray.opacity(0.5)]
+                    : [Color.gray.opacity(0.7), Color.black.opacity(0.5)]),
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
+
+            Rectangle()
+                .fill(Color.white.opacity(0.2))
+                .blur(radius: 10)
+                .edgesIgnoringSafeArea(.all)
+        }
+    }
+}
+
+// Example Usage
+#Preview {
+    animatedBackground(for: "11d")
 }

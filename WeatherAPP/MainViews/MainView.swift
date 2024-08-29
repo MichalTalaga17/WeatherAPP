@@ -40,7 +40,7 @@ struct MainView: View {
                     backgroundView(for: currentWeather?.weather.first?.icon ?? "01d")
                         .edgesIgnoringSafeArea(.all)
                 } else if backgroundStyle == .animated{
-                    //RainyDaySkyView()
+                    animatedBackground(for: currentWeather?.weather.first?.icon ?? "01d")
                 } else{
                     Color.clear
                         .edgesIgnoringSafeArea(.all)

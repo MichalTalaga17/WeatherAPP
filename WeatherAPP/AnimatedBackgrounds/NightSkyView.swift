@@ -1,15 +1,6 @@
 import SwiftUI
 import Combine
 
-// Cloudiness Enum
-enum Cloudiness {
-    case clear
-    case few
-    case scattered
-    case overcast
-}
-
-// StarFieldAnimator
 class StarFieldAnimator: ObservableObject {
     class StarModel: Identifiable {
         var position: CGPoint
@@ -70,7 +61,6 @@ private struct Star: Shape {
     }
 }
 
-// Sun View
 private struct Sun: View {
     @State private var pulse = false
     
@@ -108,7 +98,6 @@ private struct Sun: View {
     }
 }
 
-// Cloud View
 private struct Cloud: View {
     var cloudiness: Cloudiness
 
@@ -130,6 +119,10 @@ private struct Cloud: View {
             opacity = 0.5
             blurRadius = 30
             offset = 30
+        case .broken:
+            opacity = 0.65
+            blurRadius = 35
+            offset = 35
         case .overcast:
             opacity = 0.8
             blurRadius = 40
@@ -143,7 +136,6 @@ private struct Cloud: View {
                 .frame(width: 200, height: 100)
                 .offset(x: offset, y: 0)
             
-            // Add more cloud ellipses as needed to simulate the cloudiness
         }
     }
 }
@@ -194,7 +186,6 @@ private struct DaySkyView: View {
     }
 }
 
-// NightSkyView
 private struct NightSkyView: View {
     @StateObject private var starFieldAnimator = StarFieldAnimator(starCount: 200)
     @State private var animationTimer = Timer.publish(every: 1.5, on: .main, in: .common).autoconnect()
@@ -202,7 +193,6 @@ private struct NightSkyView: View {
 
     var body: some View {
         ZStack {
-            // Background gradient
             LinearGradient(
                 gradient: Gradient(colors: [Color(red: 0.05, green: 0.05, blue: 0.2), Color.black]),
                 startPoint: .top,
@@ -210,7 +200,6 @@ private struct NightSkyView: View {
             )
             .ignoresSafeArea()
             
-            // Stars
             ForEach(starFieldAnimator.stars) { star in
                 let blurAmount = min(1, 1 * star.position.y)
                 Star(origin: star.position, size: star.size, brightness: star.brightness)
@@ -219,7 +208,6 @@ private struct NightSkyView: View {
                     .animation(.easeInOut(duration: Double.random(in: 1.5...2.5)).repeatForever(autoreverses: true), value: star.size)
             }
 
-            // Clouds
             Cloud(cloudiness: cloudiness)
                 .offset(x: -100, y: -50)
                 .blur(radius: 20)
@@ -229,7 +217,6 @@ private struct NightSkyView: View {
                 .blur(radius: 30)
                 .animation(.linear(duration: 25).repeatForever(autoreverses: true), value: UUID())
 
-            // Gradient Overlay
             LinearGradient(
                 gradient: Gradient(stops: [
                     .init(color: Color.clear, location: 0.0),
@@ -254,7 +241,6 @@ private struct NightSkyView: View {
     }
 }
 
-// Main View
 struct SkyView: View {
     var day: Bool
     var cloudiness: Cloudiness
@@ -268,7 +254,6 @@ struct SkyView: View {
     }
 }
 
-// Preview
 #Preview {
     SkyView(day: false, cloudiness: .clear)
 }

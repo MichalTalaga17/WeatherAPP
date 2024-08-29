@@ -1,6 +1,5 @@
 import SwiftUI
 
-// View for a Single Precipitation Particle
 private struct PrecipitationParticle: View {
     @State private var dropFall = false
     let type: PrecipitationType
@@ -35,10 +34,10 @@ private struct PrecipitationParticle: View {
         }
     }
 }
-// View for Precipitation Effect
+
 private struct PrecipitationView: View {
     let type: PrecipitationType
-    let intensity: Int // Number of particles
+    let intensity: Int
     
     var body: some View {
         ZStack {
@@ -51,21 +50,18 @@ private struct PrecipitationView: View {
     }
 }
 
-// Main View for Rainy Day Sky with Precipitation Effects
 struct RainyDaySkyView: View {
     let isDaytime: Bool
-    let cloudiness: Double // 0.0 (clear) to 1.0 (fully overcast)
+    let cloudiness: Double
     let precipitationType: PrecipitationType
-    let precipitationIntensity: Int // Number of precipitation particles
+    let precipitationIntensity: Int
     
     var body: some View {
         ZStack {
-            // Background gradient simulating sky based on day/night and cloudiness
             LinearGradient(
                 gradient: Gradient(colors: [
-                    isDaytime ? Color.blue.opacity(1.0 - cloudiness) : Color.black.opacity(1.0 - cloudiness), // Sky color
-                    Color.gray.opacity(cloudiness), // Cloud layer
-                    Color.gray.opacity(cloudiness + 0.2) // Darker cloud base
+                    isDaytime ? Color.blue.opacity(1.0 - cloudiness) : Color.black.opacity(1.0 - cloudiness/2),
+                    Color.gray.opacity(cloudiness + 0.2)
                 ]),
                 startPoint: .top,
                 endPoint: .bottom
@@ -82,9 +78,9 @@ struct RainyDaySkyView: View {
 // Preview
 #Preview {
     RainyDaySkyView(
-        isDaytime: false,
-        cloudiness: 0,
-        precipitationType: .hail,
-        precipitationIntensity: 100
+        isDaytime: true,
+        cloudiness: 0.8,
+        precipitationType: .snow,
+        precipitationIntensity: 300
     )
 }

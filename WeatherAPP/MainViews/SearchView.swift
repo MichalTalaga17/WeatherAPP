@@ -27,6 +27,9 @@ struct SearchView: View {
                 if backgroundStyle == .gradient {
                     backgroundView(for: mainIcon)
                         .edgesIgnoringSafeArea(.all)
+                } else if backgroundStyle == .animated {
+                    animatedBackground(for: mainIcon)
+                        .edgesIgnoringSafeArea(.all)
                 } else {
                     Color.clear
                         .edgesIgnoringSafeArea(.all)

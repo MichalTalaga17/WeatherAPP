@@ -35,10 +35,9 @@ private struct PrecipitationParticle: View {
     }
 }
 
-// View for Precipitation Effect
 private struct PrecipitationView: View {
     let type: PrecipitationType
-    let intensity: Int // Number of particles
+    let intensity: Int
     
     var body: some View {
         ZStack {
@@ -51,18 +50,17 @@ private struct PrecipitationView: View {
     }
 }
 
-// View for Lightning Effect
 private struct Lightning: View {
     @State private var showFlash = false
-    let flashInterval: TimeInterval // Interval between flashes in seconds
-    let flashDuration: TimeInterval = 0.1 // Duration of the flash
+    @State private var currentFlashInterval: TimeInterval = Double.random(in: 5...12)
+    let flashDuration: TimeInterval = 0.1
     
     var body: some View {
         Rectangle()
             .fill(Color.white.opacity(showFlash ? 0.8 : 0))
             .edgesIgnoringSafeArea(.all)
             .onAppear {
-                Timer.scheduledTimer(withTimeInterval: flashInterval, repeats: true) { _ in
+                Timer.scheduledTimer(withTimeInterval: currentFlashInterval, repeats: true) { _ in
                     withAnimation(Animation.easeInOut(duration: flashDuration)) {
                         showFlash = true
                     }
@@ -71,6 +69,7 @@ private struct Lightning: View {
                             showFlash = false
                         }
                     }
+                    currentFlashInterval = Double.random(in: 5...12)
                 }
             }
     }
@@ -81,7 +80,6 @@ struct ThunderstormView: View {
     let cloudiness: Double
     let precipitationType: PrecipitationType
     let precipitationIntensity: Int
-    let lightningInterval: TimeInterval
 
     var body: some View {
         ZStack {
@@ -97,19 +95,16 @@ struct ThunderstormView: View {
             PrecipitationView(type: precipitationType, intensity: precipitationIntensity)
                 .offset(y: 0)
             
-            
-            Lightning(flashInterval: lightningInterval)
+            Lightning()
         }
     }
 }
 
-// Preview
 #Preview {
     ThunderstormView(
         isDaytime: true,
         cloudiness: 0,
         precipitationType: .rain,
-        precipitationIntensity: 100,
-        lightningInterval: 10
+        precipitationIntensity: 100
     )
 }

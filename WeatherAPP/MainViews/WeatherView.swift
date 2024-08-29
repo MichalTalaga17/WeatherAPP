@@ -13,7 +13,7 @@ struct WeatherView: View {
     // MARK: - Properties
     @AppStorage("airQuality") private var airQuality: Bool = true
     @AppStorage("iconsColorsBasedOnWeather") private var iconsColorsBasedOnWeather: Bool = true
-    @AppStorage("backgroundStyle") private var backgroundStyle: BackgroundStyle = .gradient
+    @AppStorage("backgroundStyle") private var backgroundStyle: BackgroundStyle = .animated
     
     @Environment(\.modelContext) private var modelContext
     @StateObject private var locationManager = LocationManager()
@@ -38,6 +38,9 @@ struct WeatherView: View {
             ZStack {
                 if backgroundStyle == .gradient {
                     backgroundView(for: currentWeather?.weather.first?.icon ?? "01d")
+                        .edgesIgnoringSafeArea(.all)
+                } else if backgroundStyle == .animated {
+                    animatedBackground(for: currentWeather?.weather.first?.icon ?? "01d")
                         .edgesIgnoringSafeArea(.all)
                 } else {
                     Color.clear
@@ -230,6 +233,17 @@ struct WeatherView: View {
         }
     }
     
+    func formatUnixTimeToHourAndMinute(_ unixTime: TimeInterval, timezone: Int) -> String {
+        let date = Date(timeIntervalSince1970: unixTime)
+        let timeZone = TimeZone(secondsFromGMT: timezone) ?? TimeZone.current
+
+        let dateFormatter = DateFormatter()
+        dateFormatter.timeZone = timeZone
+        dateFormatter.dateFormat = "HH:mm"
+
+        return dateFormatter.string(from: date)
+    }
+
     private func weatherInfoView(_ weather: CurrentData) -> some View {
         VStack {
             Spacer()
@@ -238,11 +252,11 @@ struct WeatherView: View {
                 HStack(spacing: 30) {
                     VStack {
                         IconConvert(for: "sunrise.fill", useWeatherColors: iconsColorsBasedOnWeather)
-                        Text(formatUnixTimeToHourAndMinute(weather.sys.sunrise, timezone: weather.timezone))
+                        Text(formatUnixTimeToHourAndMinute(TimeInterval(weather.sys.sunrise), timezone: weather.timezone))
                     }
                     VStack {
                         IconConvert(for: "sunset.fill", useWeatherColors: iconsColorsBasedOnWeather)
-                        Text(formatUnixTimeToHourAndMinute(weather.sys.sunset, timezone: weather.timezone))
+                        Text(formatUnixTimeToHourAndMinute(TimeInterval(weather.sys.sunset), timezone: weather.timezone))
                     }
                 }
                 Spacer()
