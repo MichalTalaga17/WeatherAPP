@@ -2,6 +2,27 @@
 
 WeatherApp is a comprehensive weather application built with SwiftUI, leveraging `SwiftData` for efficient data management and `WidgetKit` to provide a dynamic and customizable widget experience on the home screen. This app allows users to search for cities, save favorite locations, and access detailed weather information.
 
+
+
+
+## Demos
+
+<p float="left">
+  <img src="https://github.com/user-attachments/assets/3652d7b9-6cb5-4431-ac7b-e1df5d04229a" width="20%" />
+  <img src="https://github.com/user-attachments/assets/13162e7a-f715-4d8a-853d-0d956fc3fe2b" width="20%" />
+  <img src="https://github.com/user-attachments/assets/bf0aa367-c541-4772-b8ac-678e384d4581" width="20%" />
+  <img src="https://github.com/user-attachments/assets/730bd725-bf0d-47ee-bef9-2525d577e2c2" width="20%" />
+  <img src="https://github.com/user-attachments/assets/24ac54c8-a758-435f-8a8d-b7e98fcf2db6" width="20%" />
+  <img src="https://github.com/user-attachments/assets/83229fd7-4854-4bbe-93d8-cd4996a3fcab" width="20%" />
+  <img src="https://github.com/user-attachments/assets/96f86e0c-bfc0-48f3-82a1-2290d263eeff" width="20%" />
+  <img src="https://github.com/user-attachments/assets/37735f07-9f37-41df-9442-bd8731e67871" width="20%" />
+  <img src="https://github.com/user-attachments/assets/33d03438-3a27-4c65-8f78-ced385b21c4c" width="20%" />
+</p>
+
+MP4 demos:
+- https://github.com/user-attachments/assets/2c619f37-2390-4dea-b211-11f5de8fc6a2
+- https://github.com/user-attachments/assets/e8b98cb8-869b-4ae8-8c33-38ef88b828cc
+
 ## Features
 
 - **Weather Search:** Search for weather information by entering city names using the OpenWeatherMap API.
